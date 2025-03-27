@@ -1,0 +1,149 @@
+﻿@model SchoolManagementSystem.Entities.User
+@{
+    ViewData["Title"] = "Chỉnh Sửa Người Dùng";
+    // Ngày giờ hiện tại: 2025-03-27 15:22:04
+    // Người dùng hiện tại: minhotaku
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa người dùng</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Chỉnh Sửa Người Dùng</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="Role" />
+                        <input type="hidden" asp-for="PasswordHash" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ID Người dùng</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" class="form-control bg-light" value="@Model.UserId" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Username" class="form-label fw-bold required">Tên đăng nhập</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="Username" class="form-control" required />
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Vai trò</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" class="form-control bg-light" value="@Model.Role" readonly />
+                            </div>
+                            <div class="form-text">Vai trò không thể thay đổi sau khi tạo.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="newPassword" class="form-label fw-bold">Mật khẩu mới</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" id="newPassword" name="newPassword" class="form-control"
+                                       placeholder="Để trống nếu không thay đổi" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Chỉ điền nếu muốn thay đổi mật khẩu.</div>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="confirmUpdate">
+                            <label class="form-check-label" for="confirmUpdate">
+                                Tôi xác nhận thay đổi thông tin người dùng này
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info text-white" id="updateButton" disabled>
+                                <i class="bi bi-save me-2"></i>Lưu Thay Đổi
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">ID: @Model.UserId</small>
+                        <small class="text-muted">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .card-footer {
+            border-radius: 0 0 10px 10px !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Xử lý nút hiển thị/ẩn mật khẩu
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            var passwordField = document.getElementById('newPassword');
+            var icon = this.querySelector('i');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+
+        // Xử lý checkbox xác nhận
+        document.getElementById('confirmUpdate').addEventListener('change', function() {
+            document.getElementById('updateButton').disabled = !this.checked;
+        });
+    </script>
+}

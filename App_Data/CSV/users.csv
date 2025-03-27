@@ -1,0 +1,3 @@
+UserId,Username,PasswordHash,Role
+a0dd5d37,minhpham0910,$2a$11$kQ/CuTa0YI1znjtN5mUPM.wNDUbek1BSSd59dms46.rnx39wa3I6e,faculty
+b97b5d2b,tieuvuonggia,$2a$11$H3tgS2FHUw6y7m57y/Wgve21qY/CQJdPv7WaQ4RZawGDkAqHieKoS,admin

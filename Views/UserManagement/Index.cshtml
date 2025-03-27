@@ -1,0 +1,262 @@
+﻿@model IEnumerable<SchoolManagementSystem.Entities.User>
+
+@{
+    ViewData["Title"] = "Quản Lý Người Dùng";
+    // Ngày giờ hiện tại: 2025-03-27 15:22:04
+    // Người dùng hiện tại: minhotaku
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Quản Lý Người Dùng</h2>
+            <p class="text-muted">Quản lý tất cả tài khoản người dùng trong hệ thống</p>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Register" class="btn btn-primary">
+                <i class="bi bi-person-plus-fill"></i> Tạo Người Dùng Mới
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-end">
+                        <select id="roleFilter" class="form-select me-2" style="max-width: 200px;">
+                            <option value="">Tất cả vai trò</option>
+                            <option value="student">Sinh viên</option>
+                            <option value="faculty">Giảng viên</option>
+                            <option value="admin">Quản trị viên</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên đăng nhập</th>
+                            <th>Vai trò</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var user in Model)
+                            {
+                                <tr class="user-row" data-role="@user.Role.ToLower()">
+                                    <td><span class="badge bg-secondary">@user.UserId</span></td>
+                                    <td>@user.Username</td>
+                                    <td>
+                                        @switch (user.Role.ToLower())
+                                        {
+                                            case "student":
+                                                <span class="badge bg-primary">Sinh viên</span>
+                                                break;
+                                            case "faculty":
+                                                <span class="badge bg-success">Giảng viên</span>
+                                                break;
+                                            case "admin":
+                                                <span class="badge bg-danger">Quản trị viên</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@user.Role</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil-square"></i> Chỉnh sửa
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-info"
+                                                    onclick="showUserDetails('@user.UserId', '@user.Username', '@user.Role')">
+                                                <i class="bi bi-info-circle"></i> Chi tiết
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-exclamation-circle display-6"></i>
+                                        <p class="mt-2">Không có người dùng nào trong hệ thống</p>
+                                        <a asp-action="Register" class="btn btn-sm btn-primary mt-2">
+                                            Tạo người dùng mới
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Hiển thị @(Model?.Count() ?? 0) người dùng</span>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Trước</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi tiết người dùng -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <div class="avatar-circle mx-auto">
+                        <span class="initials" id="userInitials">U</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ID người dùng:</label>
+                    <p id="modalUserId" class="form-control bg-light"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên đăng nhập:</label>
+                    <p id="modalUsername" class="form-control bg-light"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Vai trò:</label>
+                    <p id="modalRole" class="form-control bg-light"></p>
+                </div>
+                <div id="roleSpecificInfo" class="mb-3 d-none">
+                    <!-- Nội dung sẽ được điền bằng JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <a id="editUserLink" href="#" class="btn btn-primary">Chỉnh sửa</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #007bff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .initials {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Xử lý lọc theo vai trò
+        $(document).ready(function() {
+            $("#roleFilter").change(function() {
+                var selectedRole = $(this).val();
+
+                if (selectedRole === "") {
+                    $(".user-row").show();
+                } else {
+                    $(".user-row").hide();
+                    $(".user-row[data-role='" + selectedRole + "']").show();
+                }
+            });
+
+            // Xử lý tìm kiếm
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".user-row").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        // Hiển thị chi tiết người dùng
+        function showUserDetails(userId, username, role) {
+            $("#modalUserId").text(userId);
+            $("#modalUsername").text(username);
+
+            var roleDisplay = role;
+            switch(role.toLowerCase()) {
+                case "student":
+                    roleDisplay = "Sinh viên";
+                    break;
+                case "faculty":
+                    roleDisplay = "Giảng viên";
+                    break;
+                case "admin":
+                    roleDisplay = "Quản trị viên";
+                    break;
+            }
+
+            $("#modalRole").text(roleDisplay);
+            $("#userInitials").text(username.charAt(0).toUpperCase());
+            $("#editUserLink").attr("href", "/UserManagement/Edit/" + userId);
+
+            // Hiển thị modal
+            var userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+            userDetailsModal.show();
+        }
+    </script>
+}

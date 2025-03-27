@@ -1,0 +1,195 @@
+﻿@model SchoolManagementSystem.Entities.User
+@{
+    ViewData["Title"] = "Đăng Ký Người Dùng Mới";
+    // Ngày giờ hiện tại: 2025-03-27 15:22:04
+    // Người dùng hiện tại: minhotaku
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Đăng ký người dùng mới</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Đăng Ký Người Dùng Mới</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-bold required">Tên đăng nhập</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" required
+                                       placeholder="Nhập tên đăng nhập">
+                            </div>
+                            <div class="form-text">Tên đăng nhập phải là duy nhất trong hệ thống.</div>
+                            <div class="invalid-feedback">Vui lòng nhập tên đăng nhập.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold required">Mật khẩu</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required
+                                       placeholder="Nhập mật khẩu">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Mật khẩu nên có ít nhất 8 ký tự và bao gồm chữ hoa, chữ thường và số.</div>
+                            <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label fw-bold required">Xác nhận mật khẩu</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" class="form-control" id="confirmPassword" required
+                                       placeholder="Nhập lại mật khẩu">
+                            </div>
+                            <div class="invalid-feedback">Mật khẩu xác nhận không khớp.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="role" class="form-label fw-bold required">Vai trò</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <select class="form-select" id="role" name="role" required onchange="toggleProgramField()">
+                                    <option value="" selected disabled>Chọn vai trò</option>
+                                    <option value="student">Sinh viên</option>
+                                    <option value="faculty">Giảng viên</option>
+                                    <option value="admin">Quản trị viên</option>
+                                </select>
+                            </div>
+                            <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
+                        </div>
+
+                        <div class="mb-4" id="programField" style="display: none;">
+                            <label for="schoolProgramId" class="form-label fw-bold required">Chương trình học</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
+                                <select class="form-select" id="schoolProgramId" name="schoolProgramId">
+                                    <option value="" selected disabled>Chọn chương trình học</option>
+                                    @if (ViewBag.SchoolPrograms != null)
+                                    {
+                                        @foreach (var program in ViewBag.SchoolPrograms)
+                                        {
+                                            <option value="@program.SchoolProgramId">@program.SchoolProgramName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="invalid-feedback">Vui lòng chọn chương trình học.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-plus me-2"></i>Đăng Ký
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Hiển thị/ẩn trường chương trình học dựa trên vai trò
+        function toggleProgramField() {
+            var role = document.getElementById('role').value;
+            var programField = document.getElementById('programField');
+            var schoolProgramId = document.getElementById('schoolProgramId');
+
+            if (role.toLowerCase() === 'student') {
+                programField.style.display = 'block';
+                schoolProgramId.setAttribute('required', 'required');
+            } else {
+                programField.style.display = 'none';
+                schoolProgramId.removeAttribute('required');
+            }
+        }
+
+        // Hiển thị/ẩn mật khẩu
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            var passwordField = document.getElementById('password');
+            var icon = this.querySelector('i');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+
+        // Kiểm tra xác nhận mật khẩu
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            var password = document.getElementById('password').value;
+            var confirmPassword = this.value;
+
+            if (password !== confirmPassword) {
+                this.setCustomValidity('Mật khẩu xác nhận không khớp.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        // Kiểm tra form
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@model SchoolManagementSystem.Entities.User
+@{
+    ViewData["Title"] = "Xóa Người Dùng";
+    // Ngày giờ hiện tại: 2025-03-27 15:22:04
+    // Người dùng hiện tại: minhotaku
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Xóa người dùng</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác Nhận Xóa Người Dùng</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
+                        <p>Bạn đang chuẩn bị xóa người dùng này và toàn bộ dữ liệu liên quan. Hành động này không thể hoàn tác.</p>
+                        <hr>
+                        <p class="mb-0">Vui lòng đọc kỹ thông tin và xác nhận lại trước khi xóa.</p>
+                    </div>
+
+                    <div class="user-info-card p-3 mb-4 bg-light rounded">
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-3 mb-md-0">
+                                <div class="avatar-circle mx-auto">
+                                    <span class="initials">@(Model.Username.Substring(0, 1).ToUpper())</span>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <h5 class="mb-3 text-primary">Thông tin người dùng:</h5>
+                                <div class="mb-2">
+                                    <span class="fw-bold">ID người dùng:</span>
+                                    <span class="ms-2">@Model.UserId</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="fw-bold">Tên đăng nhập:</span>
+                                    <span class="ms-2">@Model.Username</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="fw-bold">Vai trò:</span>
+                                    <span class="ms-2">
+                                        @switch (Model.Role.ToLower())
+                                        {
+                                            case "student":
+                                                <span class="badge bg-primary">Sinh viên</span>
+                                                break;
+                                            case "faculty":
+                                                <span class="badge bg-success">Giảng viên</span>
+                                                break;
+                                            case "admin":
+                                                <span class="badge bg-danger">Quản trị viên</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@Model.Role</span>
+                                                break;
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.UserId" />
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete">
+                            <label class="form-check-label" for="confirmDelete">
+                                Tôi hiểu rằng hành động này không thể hoàn tác và đồng ý xóa người dùng này
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger" id="deleteButton" disabled>
+                                <i class="bi bi-trash me-2"></i>Xóa Người Dùng
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #dc3545;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .initials {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Xử lý checkbox xác nhận
+        document.getElementById('confirmDelete').addEventListener('change', function() {
+            document.getElementById('deleteButton').disabled = !this.checked;
+        });
+    </script>
+}
