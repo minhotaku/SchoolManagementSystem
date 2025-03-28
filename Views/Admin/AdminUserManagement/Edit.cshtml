@@ -1,0 +1,150 @@
+﻿@model SchoolManagementSystem.Models.UserEditViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Người Dùng";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="AdminUserManagement" asp-action="Index">Quản lý người dùng</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @Model.Username</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    @* Hiển thị lỗi validation tổng hợp *@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    @* Hiển thị thông báo lỗi từ TempData *@
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-controller="AdminUserManagement" asp-action="Edit" asp-route-id="@Model.UserId" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="CurrentRole" /> @* Gửi lại vai trò hiện tại *@
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ID Người dùng</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" class="form-control bg-light" value="@Model.UserId" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label fw-bold required"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="Username" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Role" class="form-label fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-check-fill"></i></span>
+                                <input asp-for="Role" class="form-control bg-light" readonly />
+                            </div>
+                            <div class="form-text">Vai trò không thể thay đổi sau khi tạo.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="Password" class="form-control" placeholder="Để trống nếu không muốn thay đổi" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        @* Chỉ hiển thị trường Chương trình học nếu người dùng là Sinh viên *@
+                        @if (Model.CurrentRole.Equals("Student", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="mb-4" id="programField">
+                                <label asp-for="SchoolProgramId" class="form-label fw-bold required"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
+                                    <select asp-for="SchoolProgramId" class="form-select" asp-items="@ViewBag.SchoolPrograms">
+                                        <option value="" selected disabled>-- Chọn chương trình học --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="SchoolProgramId" class="text-danger"></span>
+                            </div>
+                        }
+
+                        <hr />
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                @* Nút Hủy *@
+                                <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                @* Nút Lưu *@
+                                <i class="bi bi-save me-1"></i> Lưu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .required::after {
+            content: " *";
+            color: yellow;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Hiện/Ẩn mật khẩu
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            var passwordField = document.getElementById('Password');
+            var icon = this.querySelector('i');
+            var fieldType = passwordField.getAttribute('type');
+            if (fieldType === 'password') {
+                passwordField.setAttribute('type', 'text');
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                 passwordField.setAttribute('type', 'password');
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+
+         // Xử lý submit form validation
+         document.querySelector('form').addEventListener('submit', function(event) {
+              if (!this.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+              }
+              this.classList.add('was-validated');
+         });
+    </script>
+}

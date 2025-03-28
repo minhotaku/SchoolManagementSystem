@@ -1,0 +1,70 @@
+﻿@model SchoolManagementSystem.Entities.User
+@{
+    ViewData["Title"] = "Xác Nhận Xóa Sinh Viên";
+    var studentId = ViewBag.StudentIdToDelete as string; // Lấy StudentId từ ViewBag
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="StudentManagement" asp-action="Index">Quản lý Sinh Viên</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-4">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
+                        <p>Bạn có chắc chắn muốn xóa sinh viên <strong>@Model.Username</strong> không?</p>
+                        <p>Hành động này sẽ xóa vĩnh viễn tài khoản người dùng và bản ghi sinh viên liên quan. Hành động này không thể hoàn tác.</p>
+                    </div>
+                    <div class="mb-4 p-3 bg-light border rounded">
+                        <h6>Thông tin sinh viên sẽ bị xóa:</h6>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Tên đăng nhập:</dt>
+                            <dd class="col-sm-8">@Model.Username</dd>
+                            <dt class="col-sm-4">User ID:</dt>
+                            <dd class="col-sm-8"><span class="font-monospace">@Model.UserId</span></dd>
+                            @if (!string.IsNullOrEmpty(studentId)) // Hiển thị StudentId nếu có
+                            {
+                                <dt class="col-sm-4">Mã Sinh viên:</dt>
+                                <dd class="col-sm-8"><span class="font-monospace">@studentId</span></dd>
+                            }
+                        </dl>
+                    </div>
+                    <form asp-action="Delete" asp-route-id="@Model.UserId" method="post">
+                        @* Gửi UserId đi *@
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.UserId" />
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirmDeleteCheck" required>
+                            <label class="form-check-label" for="confirmDeleteCheck">Tôi xác nhận muốn xóa sinh viên này.</label>
+                        </div>
+                        <hr />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                @* Nút Hủy *@
+                                <i class="bi bi-x-circle me-1"></i> Không, quay lại
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteButton" disabled>
+                                @* Nút Xóa màu đỏ *@
+                                <i class="bi bi-trash-fill me-1"></i> Xóa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+     <script> const confirmCheck = document.getElementById('confirmDeleteCheck'); const deleteButton = document.getElementById('deleteButton'); deleteButton.disabled = true; confirmCheck.addEventListener('change', function() { deleteButton.disabled = !this.checked; }); document.querySelector('form').addEventListener('submit', function(event) { if (!confirmCheck.checked) { alert('Vui lòng xác nhận bạn muốn xóa.'); event.preventDefault(); event.stopPropagation(); } }); </script>
+}

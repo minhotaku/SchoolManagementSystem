@@ -1,0 +1,138 @@
+﻿@model IEnumerable<SchoolManagementSystem.Models.FacultyViewModel>
+@{
+    ViewData["Title"] = "Quản Lý Giảng Viên";
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    @* --- Tiêu đề và Nút Thêm --- *@
+    <div class="row mb-3 align-items-center">
+        <div class="col">
+            <h3><i class="bi bi-person-video3 me-2"></i>@ViewData["Title"]</h3>
+            <p class="text-muted mb-0">Danh sách giảng viên trong hệ thống.</p>
+        </div>
+        <div class="col-auto">
+            <a asp-controller="AdminUserManagement" asp-action="Create" class="btn btn-success">
+                @* Nút màu xanh lá *@
+                <i class="bi bi-plus-lg me-1"></i> Thêm Giảng Viên Mới
+            </a>
+        </div>
+    </div>
+
+    @* --- Hiển thị TempData messages --- *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["WarningMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @* --- Card chứa Bảng và Filter (Giao diện giống AdminUserManagement) --- *@
+    <div class="card shadow-sm">
+        <div class="card-header bg-light py-3">
+            @* --- Input Tìm kiếm --- *@
+            <div class="row g-2 align-items-center">
+                @* Đặt tìm kiếm và filter (nếu có) trên cùng hàng *@
+                <div class="col-md-8 col-lg-9">
+                    @* Cho ô tìm kiếm rộng hơn *@
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo Tên đăng nhập hoặc Mã GV...">
+                        <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    @* Để trống hoặc thêm filter khác *@
+                    @* Ví dụ: <select class="form-select"><option>Lọc theo Khoa...</option></select> *@
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 20%;">Mã Giảng Viên</th>
+                            <th style="width: 40%;">Tên đăng nhập</th> @* Giảm độ rộng 1 chút *@
+                            <th style="width: 40%;" class="text-center">Thao tác</th> @* Tăng độ rộng *@
+                        </tr>
+                    </thead>
+                    <tbody id="facultyTableBody">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var faculty in Model)
+                            {
+                                <tr class="faculty-row" data-username="@faculty.Username.ToLower()" data-facultyid="@faculty.FacultyId.ToLower()">
+                                    <td><span class="badge bg-secondary font-monospace">@faculty.FacultyId</span></td> @* Dùng badge cho ID *@
+                                    <td>@faculty.Username</td>
+                                    <td class="text-center">
+                                        @* Các nút thao tác có chữ *@
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-controller="FacultyManagement" asp-action="Edit" asp-route-id="@faculty.FacultyId" class="btn btn-outline-primary">
+                                                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                                            </a>
+                                            <a asp-controller="FacultyManagement" asp-action="Delete" asp-route-id="@faculty.UserId" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash me-1"></i> Xóa
+                                            </a>
+                                            @* Nút chi tiết nếu cần, nếu không có modal thì link đến trang Details *@
+                                            <a asp-controller="FacultyManagement" asp-action="Details" asp-route-id="@faculty.FacultyId" class="btn btn-outline-info">
+                                                <i class="bi bi-info-circle me-1"></i> Chi tiết
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="3" class="text-center py-4 text-muted">Không có giảng viên nào.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light text-muted">
+            Tổng số: <span id="facultyCount">@(Model?.Count() ?? 0)</span> giảng viên.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function filterFacultyTable() {
+                var searchTerm = $("#searchInput").val().toLowerCase();
+                var count = 0;
+                $("#facultyTableBody tr.faculty-row").each(function() {
+                    var rowUsername = $(this).data('username');
+                    var rowFacultyId = $(this).data('facultyid');
+                    var show = true;
+                    if (searchTerm && rowUsername.indexOf(searchTerm) === -1 && rowFacultyId.indexOf(searchTerm) === -1) { show = false; }
+                    $(this).toggle(show);
+                    if(show) count++;
+                });
+                $("#facultyCount").text(count);
+                 $("#noResultsRowFaculty").remove();
+                 if (count === 0 && $("#facultyTableBody tr.faculty-row").length > 0) {
+                     $("#facultyTableBody").append('<tr id="noResultsRowFaculty"><td colspan="3" class="text-center text-muted py-3">Không tìm thấy kết quả.</td></tr>');
+                 }
+            }
+            $("#searchInput").on("keyup", filterFacultyTable); // Trigger bằng nút thì đổi thành #searchButton click
+            $("#facultyCount").text($("#facultyTableBody tr.faculty-row").length);
+        });
+    </script>
+}

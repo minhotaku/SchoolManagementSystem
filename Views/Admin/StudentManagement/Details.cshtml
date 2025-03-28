@@ -1,0 +1,65 @@
+﻿@model SchoolManagementSystem.Models.StudentViewModel
+@{
+    ViewData["Title"] = "Chi Tiết Sinh Viên";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="StudentManagement" asp-action="Index">Quản lý Sinh Viên</a></li>
+            @* Chỉ hiển thị tên nếu Model không null *@
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @(Model?.Username ?? "Không rõ")</li>
+        </ol>
+    </nav>
+
+    @* Kiểm tra Model có null không trước khi hiển thị *@
+    @if (Model != null)
+    {
+        <h3><i class="bi bi-person-badge me-2"></i>@ViewData["Title"]</h3>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-8">
+                <dl class="row">
+                    @* Sử dụng đúng tên thuộc tính từ StudentViewModel *@
+                    <dt class="col-sm-4">Mã Sinh viên:</dt>
+                    <dd class="col-sm-8"><span class="font-monospace">@Model.StudentId</span></dd>
+
+                    <dt class="col-sm-4">Tên đăng nhập:</dt>
+                    <dd class="col-sm-8">@Model.Username</dd>
+
+                    <dt class="col-sm-4">Mã User:</dt>
+                    <dd class="col-sm-8"><span class="font-monospace">@Model.UserId</span></dd>
+
+                    <dt class="col-sm-4">Chương trình học:</dt>
+                    <dd class="col-sm-8">@Model.SchoolProgramName</dd>
+
+                    <dt class="col-sm-4">Mã Chương trình:</dt>
+                    <dd class="col-sm-8"><span class="font-monospace">@Model.SchoolProgramId</span></dd>
+                </dl>
+            </div>
+            <div class="col-md-4 text-center">
+                <div style="font-size: 6rem; color: #0d6efd;"> <i class="bi bi-mortarboard-fill"></i> </div>
+            </div>
+        </div>
+
+        <hr />
+        <div>
+            @* Link Edit trỏ đúng đến action Edit với StudentId *@
+            <a asp-action="Edit" asp-route-id="@Model.StudentId" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+            </a> |
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Không thể hiển thị chi tiết sinh viên. Dữ liệu không tìm thấy.</div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+        </a>
+    }
+</div>

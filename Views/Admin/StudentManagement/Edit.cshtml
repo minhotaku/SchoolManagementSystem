@@ -1,0 +1,161 @@
+﻿@model SchoolManagementSystem.Models.StudentEditViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Sinh Viên";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="StudentManagement" asp-action="Index">Quản lý Sinh Viên</a></li>
+            @* Chỉ hiển thị tên nếu Model không null *@
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @(Model?.Username ?? "Không rõ")</li>
+        </ol>
+    </nav>
+
+    @* Kiểm tra Model có null không trước khi hiển thị form *@
+    @if (Model != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-pencil-fill me-2"></i>@ViewData["Title"]</h4>
+                    </div>
+                    <div class="card-body">
+                        @* Hiển thị lỗi validation và TempData *@
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">@TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                        }
+
+                        @* Đảm bảo form trỏ đúng action và có route-id là StudentId *@
+                        <form asp-action="Edit" asp-route-id="@Model.StudentId" method="post">
+                            @Html.AntiForgeryToken()
+                            @* Gửi UserId đi để Controller biết user nào cần cập nhật *@
+                            <input type="hidden" asp-for="UserId" />
+                            @* Gửi StudentId đi để kiểm tra khớp và cho binding *@
+                            <input type="hidden" asp-for="StudentId" />
+
+                            <div class="mb-3">
+                                <label asp-for="StudentId" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    @* Hiển thị StudentId readonly *@
+                                    <input asp-for="StudentId" class="form-control bg-light" readonly />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Username" class="form-label fw-bold required"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    @* Input cho Username *@
+                                    <input asp-for="Username" class="form-control" />
+                                </div>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="SchoolProgramId" class="form-label fw-bold required"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
+                                    @* Dropdown cho SchoolProgramId, sử dụng ViewBag.SchoolProgramsList *@
+                                    <select asp-for="SchoolProgramId" class="form-select" asp-items="@ViewBag.SchoolProgramsList">
+                                        <option value="" selected disabled>-- Chọn chương trình học --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="SchoolProgramId" class="text-danger"></span>
+                                @* Hiển thị lỗi tải program list nếu có *@
+                                @if (TempData["ErrorMessageLoading"] != null)
+                                {
+                                    <div class="text-danger small mt-1">@TempData["ErrorMessageLoading"]</div>
+                                }
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    @* Input cho Password mới *@
+                                    <input asp-for="Password" class="form-control" placeholder="Để trống nếu không muốn thay đổi" />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                                <div class="form-text">Mật khẩu mới phải có ít nhất 6 ký tự (nếu thay đổi).</div>
+                            </div>
+
+                            <hr />
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                    @* Nút Hủy *@
+                                    <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    @* Nút Lưu *@
+                                    <i class="bi bi-save me-1"></i> Lưu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">Không thể tải thông tin để chỉnh sửa. Dữ liệu không tìm thấy.</div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+        </a>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .required::after {
+            content: " *";
+            color: yellow;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Script ẩn/hiện mật khẩu
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+             var passwordField = document.getElementById('Password');
+             var icon = this.querySelector('i');
+             var fieldType = passwordField.getAttribute('type');
+             if (fieldType === 'password') {
+                 passwordField.setAttribute('type', 'text');
+                 icon.classList.remove('bi-eye'); icon.classList.add('bi-eye-slash');
+             } else {
+                 passwordField.setAttribute('type', 'password');
+                 icon.classList.remove('bi-eye-slash'); icon.classList.add('bi-eye');
+             }
+         });
+
+        // Script xử lý Bootstrap validation
+        (function () {
+          'use strict'
+          var forms = document.querySelectorAll('.needs-validation')
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })();
+    </script>
+}
