@@ -1,0 +1,58 @@
+﻿@model SchoolManagementSystem.Models.EnrollmentViewModel
+@{ ViewData["Title"] = "Xác Nhận Hủy Đăng Ký"; }
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="EnrollmentManagement" asp-action="Index">Quản lý Đăng ký</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+     @if (Model != null) {
+         <div class="row justify-content-center">
+             <div class="col-md-8 col-lg-7">
+                 <div class="card shadow border-danger">
+                    <div class="card-header bg-danger text-white"><h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewData["Title"]</h4></div>
+                    <div class="card-body">
+                         @* --- Cảnh báo --- *@
+                         <div class="alert alert-warning mb-4">
+                            <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
+                             <p>Bạn có chắc muốn hủy đăng ký khóa học <strong>@Model.CourseName</strong> (@Model.CourseCode) của sinh viên <strong>@Model.StudentUsername</strong> (@Model.StudentCode) trong học kỳ <strong>@Model.Semester</strong>?</p>
+                            <p>Hành động này không thể hoàn tác.</p>
+                             @if (TempData["ErrorMessage"] != null) { <p class="mt-2 mb-0 text-danger fw-bold"><i class="bi bi-x-octagon-fill me-1"></i> @TempData["ErrorMessage"]</p> } @* Hiển thị lỗi nếu có điểm *@
+                         </div>
+
+                         @* --- Thông tin sẽ bị hủy --- *@
+                         <div class="mb-4 p-3 bg-light border rounded">
+                            <h6>Thông tin đăng ký sẽ bị hủy:</h6>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Mã Đăng ký:</dt> <dd class="col-sm-8"><span class="font-monospace">@Model.EnrollmentId</span></dd>
+                                <dt class="col-sm-4">Sinh viên:</dt> <dd class="col-sm-8">@Model.StudentUsername (@Model.StudentCode)</dd>
+                                <dt class="col-sm-4">Khóa học:</dt> <dd class="col-sm-8">@Model.CourseName (@Model.CourseCode)</dd>
+                                <dt class="col-sm-4">Học kỳ:</dt> <dd class="col-sm-8">@Model.Semester</dd>
+                            </dl>
+                         </div>
+
+                         <form asp-action="Delete" asp-route-id="@Model.EnrollmentId" method="post">
+                              @Html.AntiForgeryToken() <input type="hidden" name="id" value="@Model.EnrollmentId" />
+                              <div class="mb-3 form-check">
+                                  <input type="checkbox" class="form-check-input" id="confirmDeleteCheck" required>
+                                  <label class="form-check-label" for="confirmDeleteCheck">Tôi xác nhận muốn hủy đăng ký này.</label>
+                              </div>
+                              <hr />
+                              @* --- Nút Bấm --- *@
+                              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                 <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Không, quay lại</a>
+                                 <button type="submit" class="btn btn-danger" id="deleteButton" disabled><i class="bi bi-trash-fill me-1"></i> Có, hủy đăng ký</button>
+                              </div>
+                        </form>
+                    </div>
+                 </div>
+             </div>
+         </div>
+     } else { <div class="alert alert-danger">Lỗi tải thông tin hủy đăng ký.</div> <a asp-action="Index">Quay lại</a> }
+</div>
+ @section Scripts { <script> const confirmCheck = document.getElementById('confirmDeleteCheck'); const deleteButton = document.getElementById('deleteButton'); deleteButton.disabled = true; confirmCheck.addEventListener('change', function() { deleteButton.disabled = !this.checked; }); document.querySelector('form').addEventListener('submit', function(event) { if (!confirmCheck.checked) { alert('Vui lòng xác nhận.'); event.preventDefault(); event.stopPropagation(); } }); </script> }
