@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Data.Repositories.Implementation
 
         public SchoolProgramRepository(string basePath)
         {
-            _filePath = Path.Combine(basePath, "programs.csv");
+            _filePath = Path.Combine(basePath, "schoolprograms.csv");
             LoadData();
         }
 

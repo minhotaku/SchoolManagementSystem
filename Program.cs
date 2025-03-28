@@ -14,6 +14,19 @@ builder.Services.AddControllersWithViews();
 var csvBasePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "CSV");
 UnitOfWork.GetInstance(csvBasePath);
 
+
+// Session
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20); // Or your preferred timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
+
 var app = builder.Build();
 
 // Cấu hình middleware
@@ -31,6 +44,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
+
 
 app.UseAuthorization();
 

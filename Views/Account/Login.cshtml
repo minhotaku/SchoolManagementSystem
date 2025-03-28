@@ -1,0 +1,122 @@
+﻿@model SchoolManagementSystem.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>@ViewData["Title"]</h2>
+            <p class="text-muted">Enter your credentials to access the system</p>
+        </div>
+
+        <div class="login-body">
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Username" class="form-control" placeholder="Username" autocomplete="username" />
+                    <label asp-for="Username">Username</label>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Password" class="form-control" placeholder="Password" autocomplete="current-password" />
+                    <label asp-for="Password">Password</label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary login-btn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </button>
+                </div>
+
+                <!-- Uncomment if you need these features
+                <div class="login-footer mt-4">
+                    <div class="d-flex justify-content-between">
+                        <a href="#" class="text-decoration-none">Forgot password?</a>
+                        <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" class="text-decoration-none">Create account</a>
+                    </div>
+                </div>
+                -->
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem 1rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 2.5rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+            .login-header h2 {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 0.75rem;
+            }
+
+        .form-floating > .form-control {
+            padding: 1rem 0.75rem;
+        }
+
+        .login-btn {
+            padding: 0.75rem;
+            font-weight: 500;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+            .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+        .login-footer {
+            padding-top: 1rem;
+            border-top: 1px solid #f1f1f1;
+            font-size: 0.9rem;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        /* Optional: add a subtle background pattern */
+        body {
+            background-color: #f8f9fa;
+            background-image: radial-gradient(#dee2e6 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

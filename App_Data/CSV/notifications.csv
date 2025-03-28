@@ -1,1 +1,26 @@
 NotificationId,UserId,Message,Timestamp
+N001,U008,Welcome to the new semester!,08/30/2024 08:00:00
+N002,U009,Welcome to the new semester!,08/30/2024 08:00:00
+N003,U010,Welcome to the new semester!,08/30/2024 08:00:00
+N004,U011,Welcome to the new semester!,08/30/2024 08:00:00
+N005,U012,Welcome to the new semester!,08/30/2024 08:00:00
+N006,U013,Welcome to the new semester!,08/30/2024 08:00:00
+N007,U014,Welcome to the new semester!,08/30/2024 08:00:00
+N008,U015,Welcome to the new semester!,08/30/2024 08:00:00
+N009,U016,Welcome to the new semester!,08/30/2024 08:00:00
+N010,U017,Welcome to the new semester!,08/30/2024 08:00:00
+N011,U008,Your midterm grade for Introduction to Programming has been posted.,10/15/2024 15:30:00
+N012,U009,Your midterm grade for Introduction to Programming has been posted.,10/15/2024 15:30:00
+N013,U008,Your final grade for Introduction to Programming has been posted.,12/18/2024 09:15:00
+N014,U009,Your final grade for Introduction to Programming has been posted.,12/18/2024 09:15:00
+N015,U003,Please submit your course materials by August 25th.,08/20/2024 10:00:00
+N016,U004,Please submit your course materials by August 25th.,08/20/2024 10:00:00
+N017,U005,Please submit your course materials by August 25th.,08/20/2024 10:00:00
+N018,U008,Registration for Spring 2025 is now open.,11/01/2024 08:00:00
+N019,U009,Registration for Spring 2025 is now open.,11/01/2024 08:00:00
+N020,U010,Registration for Spring 2025 is now open.,11/01/2024 08:00:00
+N021,U003,Faculty meeting scheduled for September 5th at 2:00 PM.,09/01/2024 09:00:00
+N022,U004,Faculty meeting scheduled for September 5th at 2:00 PM.,09/01/2024 09:00:00
+N023,U005,Faculty meeting scheduled for September 5th at 2:00 PM.,09/01/2024 09:00:00
+N024,U001,System maintenance scheduled for August 28th at 10:00 PM.,08/25/2024 14:00:00
+N025,U002,System maintenance scheduled for August 28th at 10:00 PM.,08/25/2024 14:00:00

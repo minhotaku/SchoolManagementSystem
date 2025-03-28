@@ -1,1 +1,11 @@
 CourseId,CourseName,Credits,FacultyId
+C001,Introduction to Programming,3,F001
+C002,Data Structures and Algorithms,4,F001
+C003,Database Systems,3,F002
+C004,Web Development,3,F002
+C005,Computer Networks,3,F003
+C006,Operating Systems,4,F003
+C007,Machine Learning,4,F004
+C008,Artificial Intelligence,3,F004
+C009,Software Engineering,3,F005
+C010,Mobile App Development,3,F005
