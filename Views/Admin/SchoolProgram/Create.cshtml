@@ -1,0 +1,60 @@
+﻿@model SchoolManagementSystem.Models.SchoolProgramCreateViewModel
+@{
+    ViewData["Title"] = "Thêm Chương Trình Học Mới";
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Quản lý Chương trình</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    @* --- Card Form --- *@
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white"><h4 class="mb-0"><i class="bi bi-plus-circle-fill me-2"></i>@ViewData["Title"]</h4></div>
+                <div class="card-body">
+                    @* --- Validation & Error Messages --- *@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label asp-for="SchoolProgramName" class="form-label fw-bold required"></label>
+                            <div class="input-group"><span class="input-group-text"><i class="bi bi-card-heading"></i></span><input asp-for="SchoolProgramName" class="form-control" /></div>
+                            <span asp-validation-for="SchoolProgramName" class="text-danger"></span>
+                        </div>
+                        <hr />
+                        @* --- Nút Bấm --- *@
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-1"></i> Thêm Chương Trình</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+     <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

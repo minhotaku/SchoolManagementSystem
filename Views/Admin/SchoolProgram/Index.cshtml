@@ -1,0 +1,110 @@
+﻿@model IEnumerable<SchoolManagementSystem.Models.SchoolProgramViewModel>
+@{
+    ViewData["Title"] = "Quản Lý Chương Trình Học";
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    @* --- Tiêu đề và Nút Thêm --- *@
+    <div class="row mb-3 align-items-center">
+        <div class="col"><h3><i class="bi bi-mortarboard-fill me-2"></i>@ViewData["Title"]</h3><p class="text-muted mb-0">Danh sách các chương trình học trong hệ thống.</p></div>
+        <div class="col-auto"><a asp-controller="SchoolProgram" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm Chương Trình Mới</a></div>
+    </div>
+
+    @* --- TempData messages --- *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @* --- Card Bảng --- *@
+    <div class="card shadow-sm">
+        <div class="card-header bg-light py-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-8 col-lg-9">
+                    @* Ô tìm kiếm *@
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo tên hoặc mã chương trình...">
+                        <button class="btn btn-outline-secondary" type="button" id="searchButton"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3"></div>@* Để trống *@
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 15%;">Mã CT</th>
+                            <th style="width: 50%;">Tên Chương trình học</th>
+                            <th style="width: 15%;" class="text-center">Số SV</th>
+                            <th style="width: 20%;" class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="programTableBody">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var program in Model)
+                            {
+                                <tr class="program-row" data-name="@program.SchoolProgramName.ToLower()" data-id="@program.SchoolProgramId.ToLower()">
+                                    <td><span class="badge bg-secondary font-monospace">@program.SchoolProgramId</span></td>
+                                    <td>@program.SchoolProgramName</td>
+                                    <td class="text-center">@program.StudentCount</td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-controller="SchoolProgram" asp-action="Edit" asp-route-id="@program.SchoolProgramId" class="btn btn-outline-primary"><i class="bi bi-pencil-square me-1"></i> Sửa</a>
+                                            <a asp-controller="SchoolProgram" asp-action="Delete" asp-route-id="@program.SchoolProgramId" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Xóa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="4" class="text-center py-4 text-muted">Chưa có chương trình học nào.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light text-muted">Tổng số: <span id="programCount">@(Model?.Count() ?? 0)</span> chương trình.</div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // JS tìm kiếm tương tự các trang khác, đổi ID và data attribute
+        $(document).ready(function() {
+            function filterProgramTable() {
+                var searchTerm = $("#searchInput").val().toLowerCase();
+                var count = 0;
+                $("#programTableBody tr.program-row").each(function() {
+                    var rowName = $(this).data('name');
+                    var rowId = $(this).data('id');
+                    var show = true;
+                    if (searchTerm && rowName.indexOf(searchTerm) === -1 && rowId.indexOf(searchTerm) === -1) { show = false; }
+                    $(this).toggle(show);
+                    if(show) count++;
+                });
+                $("#programCount").text(count);
+                $("#noResultsRowProgram").remove();
+                if (count === 0 && $("#programTableBody tr.program-row").length > 0) {
+                    $("#programTableBody").append('<tr id="noResultsRowProgram"><td colspan="4" class="text-center text-muted py-3">Không tìm thấy kết quả.</td></tr>');
+                }
+            }
+            $("#searchInput").on("keyup", filterProgramTable); // Hoặc #searchButton click
+            $("#programCount").text($("#programTableBody tr.program-row").length);
+        });
+    </script>
+}

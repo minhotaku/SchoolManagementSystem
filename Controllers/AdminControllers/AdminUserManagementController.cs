@@ -149,7 +149,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
         }
 
-        // GET: /AdminUserManagement/Edit/{id}
+        // GET
         [HttpGet]
         public IActionResult Edit(string id)
         {
@@ -211,7 +211,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
         }
 
-        // POST: /AdminUserManagement/Edit/{id}
+        // POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, UserEditViewModel model)
@@ -242,10 +242,9 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
 
 
-            // --- Bỏ qua ModelState.Remove("Password") vì đã bỏ StringLength ---
 
             // --- Thêm kiểm tra độ dài mật khẩu thủ công NẾU mật khẩu được cung cấp ---
-            const int minPasswordLength = 6; // Định nghĩa độ dài tối thiểu
+            const int minPasswordLength = 6;
             if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength)
             {
                 // Thêm lỗi vào ModelState nếu mật khẩu nhập vào quá ngắn
@@ -260,7 +259,6 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Password field empty for user ID '{id}', skipping length check.");
             }
-            // --- Kết thúc kiểm tra mật khẩu thủ công ---
 
 
             // Kiểm tra ModelState tổng thể (bao gồm cả lỗi mật khẩu thủ công nếu có)
@@ -302,8 +300,8 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 existingUser.Username = model.Username;
 
                 // Chỉ hash và cập nhật mật khẩu nếu được cung cấp VÀ đã vượt qua kiểm tra độ dài
-                if (!string.IsNullOrEmpty(model.Password) && // Phải được cung cấp
-                    (!ModelState.ContainsKey(nameof(model.Password)) || !ModelState[nameof(model.Password)].Errors.Any())) // Và không có lỗi validation nào cho nó
+                if (!string.IsNullOrEmpty(model.Password) &&
+                    (!ModelState.ContainsKey(nameof(model.Password)) || !ModelState[nameof(model.Password)].Errors.Any()))
                 {
                     existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' updated password for user ID '{id}'.");
