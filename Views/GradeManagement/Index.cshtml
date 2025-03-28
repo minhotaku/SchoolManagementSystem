@@ -1,0 +1,45 @@
+﻿@model IEnumerable<SchoolManagementSystem.Entities.Enrollment>
+
+@{
+    ViewData["Title"] = "Grade Management";
+}
+
+<h2>Grade Management for Course @ViewBag.CourseId</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No enrollments found for this course.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Enrollment ID</th>
+                <th>Student ID</th>
+                <th>Semester</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var enrollment in Model)
+            {
+                <tr>
+                    <td>@(enrollment?.EnrollmentId ?? "N/A")</td>
+                    <td>@(enrollment?.StudentId ?? "N/A")</td>
+                    <td>@(enrollment?.Semester ?? "N/A")</td>
+                    <td>
+                        @if (enrollment != null)
+                        {
+                            <a asp-action="ManageGrades" asp-route-enrollmentId="@enrollment.EnrollmentId">Manage Grades</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<form asp-action="Details" asp-controller="CourseDetails" asp-route-id="@ViewBag.CourseId" method="get" style="display:inline;">
+    <button type="submit" class="btn btn-secondary">Back to Course</button>
+</form>
