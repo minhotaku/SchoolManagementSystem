@@ -1,0 +1,104 @@
+﻿@model IEnumerable<SchoolManagementSystem.Models.CourseEnrollmentReportViewModel>
+@{
+    ViewData["Title"] = "Báo Cáo Tình Hình Đăng Ký Khóa Học";
+    // Lấy giá trị học kỳ đã chọn từ ViewBag để hiển thị và giữ lại trong dropdown
+    string selectedSemester = ViewBag.SelectedSemester as string ?? ""; // Dùng chuỗi rỗng nếu null
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Báo cáo</li> @* Có thể tạo link trang báo cáo chính nếu có *@
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    @* --- Tiêu đề và Filter Form --- *@
+    <div class="row mb-3 align-items-center">
+        <div class="col">
+            <h3><i class="bi bi-bar-chart-line-fill me-2"></i>@ViewData["Title"]</h3>
+            <p class="text-muted mb-0">Thống kê số lượng sinh viên đăng ký cho từng khóa học.</p>
+            @* Hiển thị học kỳ đang lọc *@
+            @if (!string.IsNullOrEmpty(selectedSemester))
+            {
+                <span class="badge bg-info mt-1 fs-6">Học kỳ: @selectedSemester</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary mt-1 fs-6">Tất cả các học kỳ</span>
+            }
+        </div>
+        <div class="col-auto">
+            @* --- Form Filter theo học kỳ --- *@
+            <form method="get" asp-controller="Reports" asp-action="CourseEnrollmentReport" class="d-flex align-items-end">
+                <div>
+                    <label for="semesterFilter" class="form-label form-label-sm mb-0 me-2">Lọc theo Học Kỳ:</label> @* Thêm label *@
+                    @* Dropdown học kỳ, giữ lại giá trị đã chọn *@
+                    <select name="semesterFilter" id="semesterFilter" class="form-select form-select-sm d-inline-block w-auto" asp-items="@ViewBag.SemesterList" onchange="this.form.submit()">
+                        <option value="">-- Tất cả --</option>
+                    </select>
+                </div>
+                @* Nút Lọc (không cần nếu dùng onchange) *@
+                @* <button type="submit" class="btn btn-secondary btn-sm ms-2"><i class="bi bi-funnel-fill me-1"></i> Lọc</button> *@
+            </form>
+        </div>
+    </div>
+
+    @* --- TempData messages --- *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    }
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["WarningMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    }
+
+
+    @* --- Card chứa Bảng Báo cáo --- *@
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 15%;">Mã KH</th>
+                            <th style="width: 35%;">Tên Khóa Học</th>
+                            <th style="width: 10%;" class="text-center">Số TC</th>
+                            <th style="width: 20%;">Giảng viên</th>
+                            <th style="width: 20%;" class="text-center">Số SV Đăng ký</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><span class="badge bg-secondary font-monospace">@item.CourseId</span></td>
+                                    <td>@item.CourseName</td>
+                                    <td class="text-center">@item.Credits</td>
+                                    <td>@item.FacultyUsername</td>
+                                    <td class="text-center fw-bold fs-5 @(item.EnrollmentCount > 0 ? "text-success" : "text-muted")">@item.EnrollmentCount</td> @* Thêm màu cho số lượng *@
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Không có dữ liệu báo cáo @(!string.IsNullOrEmpty(selectedSemester) ? $"cho học kỳ {selectedSemester}" : "").</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light text-muted">
+            Tổng số: @(Model?.Count() ?? 0) khóa học được liệt kê@(!string.IsNullOrEmpty(selectedSemester) ? $" cho học kỳ {selectedSemester}" : "").
+        </div>
+    </div>
+</div>
