@@ -1,4 +1,4 @@
-﻿@model IEnumerable<(SchoolManagementSystem.Entities.Enrollment Enrollment, SchoolManagementSystem.Entities.Student Student, decimal AverageScore, string Classification, string SchoolProgramName)>
+﻿@model IEnumerable<(SchoolManagementSystem.Entities.Enrollment Enrollment, SchoolManagementSystem.Entities.Student Student, decimal AverageScore, string Classification, string SchoolProgramName, string Username)>
 
 @{
     ViewData["Title"] = "Student Management";
@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th>Student ID</th>
+            <th>Username</th> <!-- Thay User ID bằng Username -->
             <th>School Program</th>
             <th>Average Score</th>
             <th>Classification</th>
@@ -21,8 +22,9 @@
         {
             <tr>
                 <td>@item.Enrollment.StudentId</td>
+                <td>@item.Username</td> <!-- Hiển thị Username -->
                 <td>@item.SchoolProgramName</td>
-                <td>@item.AverageScore</td>
+                <td>@item.AverageScore.ToString("F2")</td> <!-- Hiển thị 2 chữ số thập phân -->
                 <td>@item.Classification</td>
                 <td>
                     <a asp-action="SendNotification" asp-route-studentId="@item.Enrollment.StudentId" asp-route-courseId="@item.Enrollment.CourseId">Send Notification</a>

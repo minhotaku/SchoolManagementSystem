@@ -4,6 +4,7 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Linq;
+using System.IO;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
@@ -16,6 +17,44 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
         {
             _facultyService = FacultyService.GetInstance();
             _unitOfWork = UnitOfWork.GetInstance();
+        }
+
+        // Hàm đọc Username từ users.csv dựa trên UserId
+        private string GetUsernameFromUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return "N/A"; // Trả về "N/A" nếu userId rỗng
+            }
+
+            // Sửa đường dẫn file users.csv để khớp với vị trí thực tế
+            string csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "CSV", "users.csv");
+            System.Diagnostics.Debug.WriteLine($"Looking for users.csv at: {csvFilePath}"); // Ghi log đường dẫn file
+
+            if (!System.IO.File.Exists(csvFilePath))
+            {
+                System.Diagnostics.Debug.WriteLine("users.csv not found!"); // Ghi log nếu file không tồn tại
+                return "N/A";
+            }
+
+            var lines = System.IO.File.ReadAllLines(csvFilePath);
+            foreach (var line in lines.Skip(1)) // Bỏ qua dòng tiêu đề
+            {
+                if (string.IsNullOrWhiteSpace(line)) // Kiểm tra dòng rỗng
+                {
+                    continue;
+                }
+
+                var columns = line.Split(',');
+                if (columns.Length >= 2 && columns[0].Trim() == userId.Trim()) // So sánh UserId
+                {
+                    System.Diagnostics.Debug.WriteLine($"Found Username: {columns[1].Trim()} for UserId: {userId}"); // Ghi log khi tìm thấy
+                    return columns[1].Trim(); // Trả về Username
+                }
+            }
+
+            System.Diagnostics.Debug.WriteLine($"UserId {userId} not found in users.csv!"); // Ghi log nếu không tìm thấy
+            return "N/A"; // Trả về "N/A" nếu không tìm thấy UserId
         }
 
         public IActionResult Index(string courseId)
@@ -51,7 +90,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             var enrollments = _facultyService.GetEnrollmentsByCourse(courseId) ?? new List<Enrollment>();
-            var studentDetails = new List<(Enrollment Enrollment, Student Student, decimal AverageScore, string Classification, string SchoolProgramName)>();
+            var studentDetails = new List<(Enrollment Enrollment, Student Student, decimal AverageScore, string Classification, string SchoolProgramName, string Username)>();
 
             foreach (var enrollment in enrollments)
             {
@@ -59,9 +98,11 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 if (student != null)
                 {
                     var averageScore = _facultyService.CalculateAverageScore(enrollment.EnrollmentId);
-                    var classification = _facultyService.ClassifyResult(averageScore);
+                    var roundedAverageScore = Math.Round(averageScore, 2); // Làm tròn điểm trung bình tới 2 chữ số thập phân
+                    var classification = _facultyService.ClassifyResult(roundedAverageScore);
                     var schoolProgramName = _facultyService.GetSchoolProgramName(student.SchoolProgramId);
-                    studentDetails.Add((enrollment, student, averageScore, classification, schoolProgramName));
+                    var username = GetUsernameFromUserId(student.UserId); // Lấy Username từ UserId
+                    studentDetails.Add((enrollment, student, roundedAverageScore, classification, schoolProgramName, username));
                 }
             }
 
