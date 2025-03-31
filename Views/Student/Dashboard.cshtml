@@ -1,0 +1,202 @@
+﻿@model SchoolManagementSystem.Models.StudentViewModel
+@{
+    ViewData["Title"] = "Trang chủ học sinh";
+}
+
+<div class="container py-4">
+    <!-- Phần thông tin học sinh -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 64px; height: 64px; font-size: 24px;">
+                            @Model.StudentName[0]
+                        </div>
+                        <div>
+                            <h3 class="card-title mb-0">@Model.StudentName</h3>
+                            <p class="text-muted mb-0">Mã sinh viên: @Model.StudentId</p>
+                            <p class="text-muted mb-0">Chương trình: @Model.ProgramName</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phần Dashboard chính -->
+    <div class="row">
+        <!-- Cột bên trái: Khóa học và Điểm số gần đây -->
+        <div class="col-md-8">
+            <!-- Khóa học đã đăng ký -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-book me-2"></i>Khóa học đã đăng ký
+                    </h5>
+                    <a asp-controller="Student" asp-action="Courses" class="btn btn-sm btn-outline-primary">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Courses != null && Model.Courses.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã khóa học</th>
+                                        <th>Tên khóa học</th>
+                                        <th>Tín chỉ</th>
+                                        <th>Học kỳ</th>
+                                        <th>Giảng viên</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var course in Model.Courses.Take(3))
+                                    {
+                                        <tr>
+                                            <td>@course.CourseId</td>
+                                            <td>
+                                                <a asp-controller="Student" asp-action="CourseDetail" asp-route-id="@course.CourseId">
+                                                    @course.CourseName
+                                                </a>
+                                            </td>
+                                            <td>@course.Credits</td>
+                                            <td>@course.Semester</td>
+                                            <td>@course.FacultyName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Bạn chưa đăng ký khóa học nào.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Điểm số gần đây -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-graph-up me-2"></i>Điểm số gần đây
+                    </h5>
+                    <a asp-controller="Student" asp-action="Grades" class="btn btn-sm btn-outline-primary">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentGrades != null && Model.RecentGrades.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Khóa học</th>
+                                        <th>Học kỳ</th>
+                                        <th>Điểm trung bình</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var grade in Model.RecentGrades)
+                                    {
+                                        <tr>
+                                            <td>@grade.CourseName</td>
+                                            <td>@grade.Semester</td>
+                                            <td>
+                                                <span class="badge bg-@(grade.AverageScore >= 80 ? "success" : (grade.AverageScore >= 60 ? "warning" : "danger"))">
+                                                    @grade.AverageScore
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a asp-controller="Student" asp-action="GradeDetail" asp-route-id="@grade.EnrollmentId" class="btn btn-sm btn-outline-info">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Chưa có dữ liệu điểm.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột bên phải: Thông báo -->
+        <div class="col-md-4">
+            <!-- Thông báo gần đây -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-bell me-2"></i>Thông báo gần đây
+                    </h5>
+                    <a asp-controller="Student" asp-action="Notifications" class="btn btn-sm btn-outline-primary">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Notifications != null && Model.Notifications.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var notification in Model.Notifications)
+                            {
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1 text-truncate">@notification.Message</h6>
+                                        <small class="text-muted">@notification.FormattedTimestamp</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-3">
+                            <div class="alert alert-info">
+                                Không có thông báo mới.
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Liên kết nhanh -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-link-45deg me-2"></i>Liên kết nhanh
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Student" asp-action="Profile" class="btn btn-outline-primary">
+                            <i class="bi bi-person me-2"></i>Hồ sơ cá nhân
+                        </a>
+                        <a asp-controller="Student" asp-action="Courses" class="btn btn-outline-primary">
+                            <i class="bi bi-book me-2"></i>Danh sách khóa học
+                        </a>
+                        <a asp-controller="Student" asp-action="Grades" class="btn btn-outline-primary">
+                            <i class="bi bi-graph-up me-2"></i>Bảng điểm
+                        </a>
+                        <a asp-controller="Student" asp-action="Notifications" class="btn btn-outline-primary">
+                            <i class="bi bi-bell me-2"></i>Thông báo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

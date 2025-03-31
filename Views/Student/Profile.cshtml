@@ -1,0 +1,270 @@
+﻿@model SchoolManagementSystem.Models.StudentProfileViewModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Cột thông tin cá nhân -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-circle me-2"></i>Thông tin cá nhân
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px; font-size: 36px;">
+                        @Model.Username[0]
+                    </div>
+                    <h4 class="mb-1">@Model.Username</h4>
+                    <p class="text-muted mb-3">@Model.StudentId</p>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" id="changeAvatarBtn">
+                            <i class="bi bi-camera me-1"></i>Thay đổi ảnh đại diện
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="bi bi-key me-1"></i>Đổi mật khẩu
+                        </button>
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Chương trình học</small>
+                            <span>@Model.ProgramName</span>
+                        </div>
+                        <i class="bi bi-mortarboard text-primary"></i>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Số khóa học đã đăng ký</small>
+                            <span>@Model.TotalCourses</span>
+                        </div>
+                        <i class="bi bi-book text-primary"></i>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">Ngày nhập học</small>
+                            <span>@Model.EnrollmentDate</span>
+                        </div>
+                        <i class="bi bi-calendar-check text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột thông tin chi tiết và cài đặt -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Thông tin chi tiết
+                    </h5>
+                    <a asp-controller="Student" asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                        </div>
+                    }
+
+                    <!-- Tabs điều hướng -->
+                    <ul class="nav nav-tabs mb-4" id="profileTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal"
+                                    type="button" role="tab" aria-controls="personal" aria-selected="true">
+                                Thông tin cá nhân
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education"
+                                    type="button" role="tab" aria-controls="education" aria-selected="false">
+                                Thông tin học tập
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings"
+                                    type="button" role="tab" aria-controls="settings" aria-selected="false">
+                                Cài đặt
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Nội dung tabs -->
+                    <div class="tab-content" id="profileTabContent">
+                        <!-- Tab thông tin cá nhân -->
+                        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                            <form id="personalInfoForm">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="fullName" class="form-label">Họ và tên</label>
+                                        <input type="text" class="form-control" id="fullName" value="@Model.Username" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="studentId" class="form-label">Mã sinh viên</label>
+                                        <input type="text" class="form-control" id="studentId" value="@Model.StudentId" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>Để cập nhật thông tin cá nhân khác, vui lòng liên hệ với phòng đào tạo.
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i>Lưu thay đổi
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Tab thông tin học tập -->
+                        <div class="tab-pane fade" id="education" role="tabpanel" aria-labelledby="education-tab">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Thông tin chương trình học</h6>
+                                            <table class="table table-borderless">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Chương trình:</th>
+                                                        <td>@Model.ProgramName</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Khóa:</th>
+                                                        <td>@Model.EnrollmentDate.Substring(0, 4)</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Tổng quan học tập</h6>
+                                            <table class="table table-borderless">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Số khóa học đã đăng ký:</th>
+                                                        <td>@Model.TotalCourses</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Trạng thái học tập:</th>
+                                                        <td><span class="badge bg-success">Đang học</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Đường dẫn nhanh</h6>
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Student" asp-action="Courses" class="btn btn-outline-primary">
+                                            <i class="bi bi-book me-1"></i>Xem danh sách khóa học
+                                        </a>
+                                        <a asp-controller="Student" asp-action="Grades" class="btn btn-outline-primary">
+                                            <i class="bi bi-graph-up me-1"></i>Xem bảng điểm
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab cài đặt -->
+                        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                            <div class="mb-4">
+                                <h6>Cài đặt tài khoản</h6>
+                                <div class="list-group">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Xác thực hai lớp</h6>
+                                            <p class="mb-0 text-muted small">Bảo vệ tài khoản của bạn với xác thực hai lớp</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Thông báo hệ thống</h6>
+                                            <p class="mb-0 text-muted small">Nhận thông báo từ hệ thống</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="systemNotifications" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h6>Bảo mật</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-secondary">
+                                        <i class="bi bi-key me-1"></i>Đổi mật khẩu
+                                    </button>
+                                    <button class="btn btn-outline-danger">
+                                        <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất khỏi tất cả các thiết bị
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted small text-end">
+                    Truy cập bởi: minhotaku | Thời gian: 2025-03-29 15:29:23
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Xử lý nút thay đổi ảnh đại diện
+            $("#changeAvatarBtn").click(function() {
+                // Hiển thị thông báo chức năng đang phát triển
+                alert("Chức năng đang được phát triển!");
+            });
+
+            // Xử lý form thông tin cá nhân
+            $("#personalInfoForm").submit(function(e) {
+                e.preventDefault();
+                // Hiển thị thông báo thành công (demo)
+                $('<div class="alert alert-success alert-dismissible fade show mt-3" role="alert">' +
+                  'Cập nhật thông tin cá nhân thành công!' +
+                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>' +
+                  '</div>').insertBefore($(this));
+            });
+
+            // Xử lý toggles
+            $(".form-check-input").change(function() {
+                const settingName = $(this).attr('id');
+                const isEnabled = $(this).prop('checked');
+                console.log(`Setting ${settingName} is now ${isEnabled ? 'enabled' : 'disabled'}`);
+                // Xử lý thay đổi cài đặt
+            });
+        });
+    </script>
+}

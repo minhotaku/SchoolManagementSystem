@@ -1,0 +1,146 @@
+﻿@model SchoolManagementSystem.Models.CourseViewModel
+@{
+    ViewData["Title"] = "Chi tiết khóa học";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Dashboard">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Courses">Khóa học</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.CourseName</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+                <i class="bi bi-book me-2"></i>Thông tin khóa học
+            </h4>
+            <div>
+                <a asp-controller="Student" asp-action="Courses" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left me-1"></i>Quay lại
+                </a>
+                <a asp-controller="Student" asp-action="GradeDetail" asp-route-id="@Model.EnrollmentId" class="btn btn-primary">
+                    <i class="bi bi-graph-up me-1"></i>Xem điểm
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th class="w-25">Mã khóa học:</th>
+                                <td>@Model.CourseId</td>
+                            </tr>
+                            <tr>
+                                <th>Tên khóa học:</th>
+                                <td>@Model.CourseName</td>
+                            </tr>
+                            <tr>
+                                <th>Số tín chỉ:</th>
+                                <td>@Model.Credits</td>
+                            </tr>
+                            <tr>
+                                <th>Học kỳ:</th>
+                                <td>@Model.Semester</td>
+                            </tr>
+                            <tr>
+                                <th>Giảng viên:</th>
+                                <td>@Model.FacultyName</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Thông tin học tập</h5>
+                            <p class="card-text">
+                                <strong>Mã đăng ký:</strong> @Model.EnrollmentId
+                            </p>
+                            <p class="card-text">
+                                <strong>Trạng thái:</strong> <span class="badge bg-success">Đang học</span>
+                            </p>
+                            <p class="card-text">
+                                <strong>Tiến độ:</strong>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin bổ sung về khóa học -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clipboard-check me-2"></i>Mô tả khóa học
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Đây là thông tin mô tả chi tiết về khóa học @Model.CourseName.
+                        Bạn sẽ được học các kiến thức cơ bản và nâng cao về lĩnh vực này.
+                    </p>
+                    <p>Khóa học bao gồm các nội dung chính như:</p>
+                    <ul>
+                        <li>Kiến thức nền tảng</li>
+                        <li>Thực hành và ứng dụng</li>
+                        <li>Nghiên cứu và phát triển</li>
+                        <li>Đánh giá và tổng kết</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-check me-2"></i>Lịch học và Deadline
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary me-2">Buổi học</span>
+                                Thứ 2, 7:30 - 9:30
+                            </div>
+                            <span class="text-muted">Phòng A1.01</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary me-2">Buổi học</span>
+                                Thứ 5, 13:30 - 15:30
+                            </div>
+                            <span class="text-muted">Phòng A2.05</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-danger me-2">Deadline</span>
+                                Bài tập giữa kỳ
+                            </div>
+                            <span class="text-muted">15/04/2025</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-danger me-2">Deadline</span>
+                                Bài tập cuối kỳ
+                            </div>
+                            <span class="text-muted">30/05/2025</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

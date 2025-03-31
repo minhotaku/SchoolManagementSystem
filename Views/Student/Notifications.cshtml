@@ -1,0 +1,173 @@
+﻿@model List<SchoolManagementSystem.Models.NotificationViewModel>
+@{
+    ViewData["Title"] = "Thông báo";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+                <i class="bi bi-bell me-2"></i>Thông báo
+            </h4>
+            <a asp-controller="Student" asp-action="Dashboard" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại
+            </a>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                </div>
+            }
+
+            <!-- Điều khiển lọc thông báo -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" id="filterAll">Tất cả</button>
+                        <button type="button" class="btn btn-outline-primary" id="filterUnread">Chưa đọc</button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-secondary" id="markAllAsRead">
+                        <i class="bi bi-check-all me-1"></i>Đánh dấu tất cả đã đọc
+                    </button>
+                </div>
+            </div>
+
+            <!-- Danh sách thông báo -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="list-group" id="notificationsList">
+                    @foreach (var notification in Model)
+                    {
+                        <div class="list-group-item list-group-item-action notification-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="notification-indicator me-2">
+                                            <i class="bi bi-circle-fill text-primary" style="font-size: 10px;"></i>
+                                        </div>
+                                        <h6 class="mb-1">@notification.Message</h6>
+                                    </div>
+                                    <small class="text-muted">@notification.FormattedTimestamp</small>
+                                </div>
+                                <div class="notification-actions">
+                                    <button class="btn btn-sm btn-outline-secondary mark-read-btn">
+                                        <i class="bi bi-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-notification-btn"
+                                            data-notification-id="@notification.NotificationId">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Phân trang -->
+                <nav aria-label="Phân trang thông báo" class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Trang trước</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Trang sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="bi bi-bell-slash" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5>Không có thông báo nào</h5>
+                    <p class="text-muted">Bạn sẽ nhận được thông báo khi có cập nhật mới</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Xử lý lọc thông báo
+            $("#filterAll").click(function() {
+                $(this).addClass('active');
+                $("#filterUnread").removeClass('active');
+                $(".notification-item").show();
+            });
+
+            $("#filterUnread").click(function() {
+                $(this).addClass('active');
+                $("#filterAll").removeClass('active');
+                // Giả định: các thông báo đã đọc có class 'read-notification'
+                $(".notification-item").show();
+                $(".notification-item.read-notification").hide();
+            });
+
+            // Đánh dấu đã đọc
+            $(".mark-read-btn").click(function() {
+                const notificationItem = $(this).closest('.notification-item');
+                notificationItem.addClass('read-notification');
+                notificationItem.find('.notification-indicator i').removeClass('text-primary').addClass('text-muted');
+                $(this).attr('disabled', true);
+            });
+
+            // Đánh dấu tất cả đã đọc
+            $("#markAllAsRead").click(function() {
+                $(".notification-item").addClass('read-notification');
+                $(".notification-indicator i").removeClass('text-primary').addClass('text-muted');
+                $(".mark-read-btn").attr('disabled', true);
+            });
+
+            // Xóa thông báo (demo)
+            $(".delete-notification-btn").click(function() {
+                const notificationId = $(this).data('notification-id');
+                // Thêm code xác nhận xóa thực tế
+                $(this).closest('.notification-item').fadeOut(300, function() { $(this).remove(); });
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .notification-item {
+            transition: background-color 0.3s ease;
+        }
+
+            .notification-item:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+
+            .notification-item.read-notification .notification-indicator i {
+                color: #6c757d !important;
+            }
+
+        .notification-actions {
+            visibility: hidden;
+        }
+
+        .notification-item:hover .notification-actions {
+            visibility: visible;
+        }
+    </style>
+}

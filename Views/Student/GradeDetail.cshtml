@@ -1,0 +1,252 @@
+﻿@model SchoolManagementSystem.Models.GradeViewModel
+@{
+    ViewData["Title"] = "Chi tiết điểm số";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Dashboard">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Grades">Bảng điểm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết điểm @Model.CourseName</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+                <i class="bi bi-graph-up me-2"></i>Chi tiết điểm khóa học
+            </h4>
+            <div>
+                <a asp-controller="Student" asp-action="Grades" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left me-1"></i>Quay lại
+                </a>
+                <a asp-controller="Student" asp-action="CourseDetail" asp-route-id="@Model.CourseId" class="btn btn-primary">
+                    <i class="bi bi-book me-1"></i>Xem khóa học
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th class="w-25">Khóa học:</th>
+                                <td>@Model.CourseName</td>
+                            </tr>
+                            <tr>
+                                <th>Mã khóa học:</th>
+                                <td>@Model.CourseId</td>
+                            </tr>
+                            <tr>
+                                <th>Học kỳ:</th>
+                                <td>@Model.Semester</td>
+                            </tr>
+                            <tr>
+                                <th>Điểm trung bình:</th>
+                                <td>
+                                    <span class="badge bg-@(Model.AverageScore >= 80 ? "success" : (Model.AverageScore >= 60 ? "warning" : "danger")) p-2">
+                                        @Model.AverageScore
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Đánh giá tổng quan</h5>
+                            <p>
+                                <strong>Xếp loại:</strong>
+                                @{
+                                    string gradeLevel = "";
+                                    if (Model.AverageScore >= 90) gradeLevel = "A (Xuất sắc)";
+                                    else if (Model.AverageScore >= 80) gradeLevel = "B (Giỏi)";
+                                    else if (Model.AverageScore >= 70) gradeLevel = "C (Khá)";
+                                    else if (Model.AverageScore >= 60) gradeLevel = "D (Trung bình)";
+                                    else gradeLevel = "F (Không đạt)";
+                                }
+                                <span class="badge bg-@(Model.AverageScore >= 80 ? "success" : (Model.AverageScore >= 60 ? "warning" : "danger"))">
+                                    @gradeLevel
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Trạng thái:</strong>
+                                @if (Model.AverageScore >= 60)
+                                {
+                                    <span class="badge bg-success">Đạt</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Chưa đạt</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="mb-3">Chi tiết thành phần điểm</h5>
+
+            <!-- Biểu đồ điểm -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="gradeChart" width="400" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng thành phần điểm -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Thành phần</th>
+                            <th>Điểm</th>
+                            <th>Đánh giá</th>
+                            <th>Tỷ trọng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var componentsWeights = new Dictionary<string, int>
+                        {
+                        { "Midterm", 30 },
+                        { "Final", 50 },
+                        { "Assignment", 20 }
+                        };
+                        }
+
+                        @foreach (var component in Model.Components)
+                        {
+                            <tr>
+                                <td>@component.Component</td>
+                                <td>
+                                    <span class="badge bg-@(component.Score >= 80 ? "success" : (component.Score >= 60 ? "warning" : "danger"))">
+                                        @component.Score
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-@(component.Score >= 80 ? "success" : (component.Score >= 60 ? "warning" : "danger"))"
+                                             role="progressbar" style="width: @(component.Score)%;"
+                                             aria-valuenow="@component.Score" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var weight = 0;
+                                        if (componentsWeights.ContainsKey(component.Component))
+                                        {
+                                            weight = componentsWeights[component.Component];
+                                        }
+                                    }
+                                    @weight%
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ghi chú -->
+            <div class="card bg-light mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">Ghi chú:</h6>
+                    <ul class="mb-0">
+                        <li>Thang điểm: 0-100</li>
+                        <li>A (Xuất sắc): 90-100</li>
+                        <li>B (Giỏi): 80-89</li>
+                        <li>C (Khá): 70-79</li>
+                        <li>D (Trung bình): 60-69</li>
+                        <li>F (Không đạt): 0-59</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lấy dữ liệu điểm từ Model
+            const components = @Html.Raw(Json.Serialize(Model.Components.Select(c => c.Component)));
+            const scores = @Html.Raw(Json.Serialize(Model.Components.Select(c => c.Score)));
+
+            // Tạo biểu đồ
+            const ctx = document.getElementById('gradeChart').getContext('2d');
+            const gradeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: components,
+                    datasets: [{
+                        label: 'Điểm số',
+                        data: scores,
+                        backgroundColor: scores.map(score =>
+                            score >= 80 ? 'rgba(40, 167, 69, 0.7)' :
+                            score >= 60 ? 'rgba(255, 193, 7, 0.7)' :
+                            'rgba(220, 53, 69, 0.7)'
+                        ),
+                        borderColor: scores.map(score =>
+                            score >= 80 ? 'rgb(40, 167, 69)' :
+                            score >= 60 ? 'rgb(255, 193, 7)' :
+                            'rgb(220, 53, 69)'
+                        ),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Điểm số'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Thành phần'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Điểm: ${context.raw}/100`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Thêm thông tin người dùng và thời gian truy cập
+            const userInfo = {
+                username: 'minhotaku',
+                accessTime: '2025-03-29 15:18:41'
+            };
+
+            // Thêm footer thông tin truy cập
+            const footerElement = document.createElement('div');
+            footerElement.className = 'mt-4 text-muted small text-end';
+            footerElement.innerHTML = `Truy cập bởi: ${userInfo.username} | Thời gian: ${userInfo.accessTime}`;
+            document.querySelector('.card-body').appendChild(footerElement);
+        });
+    </script>
+}
