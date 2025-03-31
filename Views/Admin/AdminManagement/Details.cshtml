@@ -1,0 +1,25 @@
+﻿@model SchoolManagementSystem.Models.AdminViewModel
+@{ ViewData["Title"] = "Chi Tiết Quản Trị Viên"; }
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">@* Breadcrumb *@</nav>
+    @if (Model != null) {
+        <h3><i class="bi bi-person-lock me-2"></i>@ViewData["Title"]: @Model.Username</h3> <hr />
+        <dl class="row">
+            <dt class="col-sm-3">Mã Admin:</dt><dd class="col-sm-9">@Model.AdminId</dd>
+            <dt class="col-sm-3">Tên đăng nhập:</dt><dd class="col-sm-9">@Model.Username</dd>
+            <dt class="col-sm-3">User ID:</dt><dd class="col-sm-9">@Model.UserId</dd>
+        </dl> <hr />
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.AdminId" class="btn btn-primary">Chỉnh sửa</a> |
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Không thể hiển thị chi tiết quản trị viên. Dữ liệu không tìm thấy.</div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+        </a>
+    }
+</div>

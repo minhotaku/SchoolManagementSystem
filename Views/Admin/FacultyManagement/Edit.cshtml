@@ -1,0 +1,108 @@
+﻿@model SchoolManagementSystem.Models.FacultyEditViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Giảng Viên";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">@* Breadcrumb *@</nav>
+    @if (Model != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white"><h4 class="mb-0">@ViewData["Title"]</h4></div>
+                    <div class="card-body">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger...">@TempData["ErrorMessage"]</div>
+                        }
+
+                        <form asp-action="Edit" asp-route-id="@Model.FacultyId" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="UserId" />
+                            <input type="hidden" asp-for="FacultyId" /> @* Cần để kiểm tra khớp id *@
+
+                            <div class="mb-3">
+                                @* FacultyId Readonly *@
+                                <label asp-for="FacultyId" class="form-label fw-bold"></label>
+                                <input asp-for="FacultyId" class="form-control bg-light" readonly />
+                            </div>
+                            <div class="mb-3">
+                                @* Username *@
+                                <label asp-for="Username" class="form-label fw-bold required"></label>
+                                <input asp-for="Username" class="form-control" />
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                @* Password *@
+                                <label asp-for="Password" class="form-label fw-bold"></label>
+                                <input asp-for="Password" class="form-control" placeholder="Để trống nếu không đổi" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <hr />
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                    @* Nút Hủy *@
+                                    <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    @* Nút Lưu *@
+                                    <i class="bi bi-save me-1"></i> Lưu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">Không thể tải thông tin để chỉnh sửa. Dữ liệu không tìm thấy.</div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+        </a>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .required::after {
+            content: " *";
+            color: yellow;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Hiện/Ẩn mật khẩu
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            var passwordField = document.getElementById('Password');
+            var icon = this.querySelector('i');
+            var fieldType = passwordField.getAttribute('type');
+            if (fieldType === 'password') {
+                passwordField.setAttribute('type', 'text');
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                 passwordField.setAttribute('type', 'password');
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+
+         // Xử lý submit form validation
+         document.querySelector('form').addEventListener('submit', function(event) {
+              if (!this.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+              }
+              this.classList.add('was-validated');
+         });
+    </script>
+}

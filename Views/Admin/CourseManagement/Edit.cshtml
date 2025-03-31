@@ -1,0 +1,107 @@
+﻿@model SchoolManagementSystem.Models.CourseEditViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Khóa Học";
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="CourseManagement" asp-action="Index">Quản lý Khóa học</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @(Model?.CourseName ?? "...")</li>
+        </ol>
+    </nav>
+
+    @if (Model != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white"><h4 class="mb-0"><i class="bi bi-pencil-fill me-2"></i>@ViewData["Title"]</h4></div>
+                    <div class="card-body">
+                        @* --- Validation & Error Messages --- *@
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show">...</div>
+                        }
+
+                        <form asp-action="Edit" asp-route-id="@Model.CourseId" method="post">
+                            @Html.AntiForgeryToken() <input type="hidden" asp-for="CourseId" />
+
+                            @* --- Mã Khóa Học (Readonly) --- *@
+                            <div class="mb-3">
+                                <label asp-for="CourseId" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                                    <input asp-for="CourseId" class="form-control bg-light" readonly />
+                                </div>
+                            </div>
+
+                            @* --- Tên Khóa Học --- *@
+                            <div class="mb-3">
+                                <label asp-for="CourseName" class="form-label fw-bold required"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+                                    <input asp-for="CourseName" class="form-control" />
+                                </div>
+                                <span asp-validation-for="CourseName" class="text-danger"></span>
+                            </div>
+
+                            @* --- Số Tín Chỉ và Giảng Viên --- *@
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Credits" class="form-label fw-bold required"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                                        <input asp-for="Credits" type="number" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="Credits" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="FacultyId" class="form-label fw-bold required"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person-video3"></i></span>
+                                        <select asp-for="FacultyId" class="form-select" asp-items="@ViewBag.FacultyList">
+                                            <option value="" selected disabled>-- Chọn giảng viên --</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="FacultyId" class="text-danger"></span>
+                                    @if (TempData["ErrorMessageLoading"] != null)
+                                    {
+                                        <div class="text-danger small mt-1">@TempData["ErrorMessageLoading"]</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <hr />
+                            @* --- Nút Bấm --- *@
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu Thay Đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">Lỗi tải thông tin khóa học.</div> <a asp-action="Index">Quay lại</a>
+    }
+</div>
+@section Styles {
+     <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

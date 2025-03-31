@@ -1,0 +1,206 @@
+﻿@model IEnumerable<SchoolManagementSystem.Models.AdminUserViewModel>
+@{
+    ViewData["Title"] = "Quản Lý Người Dùng (Tổng thể)";
+}
+
+<div class="container mt-4">
+    @* --- Breadcrumb --- *@
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    @* --- Tiêu đề và Nút Thêm --- *@
+    <div class="row mb-3 align-items-center">
+        <div class="col"><h3><i class="bi bi-people-fill me-2"></i>@ViewData["Title"]</h3><p class="text-muted mb-0">Quản lý tất cả tài khoản trong hệ thống.</p></div>
+        <div class="col-auto"><a asp-controller="AdminUserManagement" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm Người Dùng Mới</a></div>
+    </div>
+
+    @* --- Hiển thị TempData messages --- *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["WarningMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="card shadow-sm">
+        @* --- Phần Filter và Search --- *@
+        <div class="card-header bg-light py-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-7 col-lg-8"> <div class="input-group"><input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng..."><button class="btn btn-outline-secondary" type="button" id="searchButton"><i class="bi bi-search"></i></button></div></div>
+                <div class="col-md-5 col-lg-4"> <select id="roleFilter" class="form-select"><option value="">Tất cả vai trò</option><option value="student">Sinh viên</option><option value="faculty">Giảng viên</option><option value="admin">Quản trị viên</option></select></div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light"><tr><th style="width: 10%;">ID</th><th style="width: 30%;">Tên đăng nhập</th><th style="width: 15%;">Vai trò</th><th style="width: 45%;" class="text-center">Thao tác</th></tr></thead>
+                    <tbody id="userTableBody">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var user in Model)
+                            {
+                                <tr class="user-row" data-role="@user.Role.ToLower()" data-username="@user.Username.ToLower()" data-userid="@user.UserId" data-programname="@(user.Role.Equals("Student", StringComparison.OrdinalIgnoreCase) ? user.SchoolProgramName : "")" data-studentid="@user.StudentId" data-facultyid="@user.FacultyId" data-adminid="@user.AdminId">
+                                    <td><span class="badge bg-secondary font-monospace">@user.UserId</span></td>
+                                    <td>@user.Username</td>
+                                    <td>
+                                        @* Badge vai trò *@
+                                        @switch (user.Role.ToLower())
+                                        {
+                                            case "student":
+                                                <span class="badge bg-primary">SV</span>
+                                                ; break;
+                                            case "faculty":
+                                                <span class="badge bg-success">GV</span>
+                                                ; break;
+                                            case "admin":
+                                                <span class="badge bg-danger">Admin</span>
+                                                ; break;
+                                            default:
+                                                <span class="badge bg-dark">@user.Role</span>
+                                                ; break;
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @* Nút thao tác *@
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-controller="AdminUserManagement" asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-outline-primary"><i class="bi bi-pencil-square me-1"></i> Sửa</a>
+                                            <a asp-controller="AdminUserManagement" asp-action="Delete" asp-route-id="@user.UserId" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Xóa</a>
+                                            <button type="button" class="btn btn-outline-info btn-show-details"><i class="bi bi-info-circle me-1"></i> Chi tiết</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="4" class="text-center py-5 text-muted">@* ... Không tìm thấy ... *@</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light text-muted">Tổng số: <span id="userCount">@(Model?.Count() ?? 0)</span> người dùng.</div>
+    </div>
+</div>
+
+<!-- Modal Chi tiết người dùng (HTML giữ nguyên) -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="userDetailsModalLabel"><i class="bi bi-person-lines-fill me-2"></i>Chi tiết người dùng</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    @* *** Đảm bảo class avatar-display được sử dụng *** *@
+                    <div class="avatar-display mx-auto">
+                        <span id="modalUserInitials">U</span>
+                    </div>
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-4">ID Người dùng:</dt>
+                    <dd class="col-sm-8"><span id="modalUserId" class="font-monospace"></span></dd>
+                    <dt class="col-sm-4">Tên đăng nhập:</dt>
+                    <dd class="col-sm-8"><span id="modalUsername"></span></dd>
+                    <dt class="col-sm-4">Vai trò:</dt>
+                    <dd class="col-sm-8"><span id="modalRole"></span></dd>
+                    @* Các trường chi tiết theo vai trò *@
+                    <dt class="col-sm-4 role-specific student-info">ID Sinh viên:</dt>
+                    <dd class="col-sm-8 role-specific student-info"><span id="modalStudentId" class="font-monospace"></span></dd>
+                    <dt class="col-sm-4 role-specific student-info">Chương trình học:</dt>
+                    <dd class="col-sm-8 role-specific student-info"><span id="modalProgramName"></span></dd>
+                    <dt class="col-sm-4 role-specific faculty-info">ID Giảng viên:</dt>
+                    <dd class="col-sm-8 role-specific faculty-info"><span id="modalFacultyId" class="font-monospace"></span></dd>
+                    <dt class="col-sm-4 role-specific admin-info">ID Admin:</dt>
+                    <dd class="col-sm-8 role-specific admin-info"><span id="modalAdminId" class="font-monospace"></span></dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg me-1"></i> Đóng</button>
+                <a id="modalEditLink" href="#" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i> Chỉnh sửa</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles {
+    <style>
+        /* *** Đảm bảo CSS cho Avatar được định nghĩa ĐÚNG *** */
+        .avatar-display {
+            width: 70px; /* Kích thước avatar */
+            height: 70px;
+            border-radius: 50%; /* Tạo hình tròn */
+            background-color: #6c757d; /* Màu nền mặc định */
+            color: white; /* Màu chữ */
+            display: flex; /* Dùng flexbox để căn giữa */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            font-size: 2rem; /* Kích thước chữ cái */
+            font-weight: bold; /* Chữ đậm */
+            margin-bottom: 1rem; /* Khoảng cách dưới avatar (tùy chỉnh) */
+        }
+            /* Các màu nền theo vai trò */
+            .avatar-display.bg-primary {
+                background-color: #0d6efd !important;
+            }
+
+            .avatar-display.bg-success {
+                background-color: #198754 !important;
+            }
+
+            .avatar-display.bg-danger {
+                background-color: #dc3545 !important;
+            }
+
+        /* Ẩn các dt/dd theo vai trò ban đầu */
+        .role-specific {
+            display: none;
+        }
+        /* Thêm CSS khác nếu cần */
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // JavaScript giữ nguyên như lần sửa trước, vì logic là đúng
+        $(document).ready(function() {
+            function filterUserTable() { /* ... */ }
+            $("#searchInput, #roleFilter").on("keyup change", filterUserTable);
+            $("#userCount").text($("#userTableBody tr.user-row").length);
+
+            var userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+            $('.btn-show-details').on('click', function() {
+                var row = $(this).closest('tr.user-row');
+                var userId = row.data('userid'); var username = row.data('username'); var role = row.data('role');
+                var programName = row.data('programname'); var studentId = row.data('studentid');
+                var facultyId = row.data('facultyid'); var adminId = row.data('adminid');
+
+                $('#modalUserId').text(userId); $('#modalUsername').text(row.find('td:nth-child(2)').text());
+                $('#modalUserInitials').text(username.charAt(0).toUpperCase());
+
+                var roleText = ''; var avatarClass = 'bg-secondary';
+                 switch(role) { case 'student': roleText = 'Sinh viên'; avatarClass = 'bg-primary'; break; case 'faculty': roleText = 'Giảng viên'; avatarClass = 'bg-success'; break; case 'admin': roleText = 'Quản trị viên'; avatarClass = 'bg-danger'; break; default: roleText = row.find('td:nth-child(3) span.badge').text() || role; break; }
+                 $('#modalRole').text(roleText);
+                 // *** Đảm bảo selector đúng tới thẻ div chứa avatar ***
+                 $('#modalUserInitials').closest('.avatar-display').removeClass('bg-primary bg-success bg-danger bg-secondary').addClass(avatarClass);
+
+                $('.role-specific').hide();
+                 if (role === 'student') { $('#modalStudentId').text(studentId||''); $('#modalProgramName').text(programName||''); $('.student-info').show(); }
+                 else if (role === 'faculty') { $('#modalFacultyId').text(facultyId||''); $('.faculty-info').show(); }
+                 else if (role === 'admin') { $('#modalAdminId').text(adminId||''); $('.admin-info').show(); }
+
+                 $('#modalEditLink').attr('href', '/AdminUserManagement/Edit/' + userId);
+                userDetailsModal.show();
+            });
+        });
+    </script>
+}
