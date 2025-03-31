@@ -8,6 +8,7 @@ using System.IO;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Route("faculty/student-management")]  // Định nghĩa route cho StudentManagementController
     public class StudentManagementController : Controller
     {
         private readonly IFacultyService _facultyService;
@@ -55,6 +56,8 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             return "N/A";
         }
 
+        [Route("")]  // Route: faculty/student-management
+        [Route("index")]  // Route: faculty/student-management/index
         public IActionResult Index(string courseId)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
@@ -103,10 +106,11 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/StudentManagement/Index.cshtml", studentDetails);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/StudentManagement/Index.cshtml", studentDetails);
         }
 
         [HttpGet]
+        [Route("send-notification/{studentId}/{courseId}")]  // Route: faculty/student-management/send-notification/{studentId}/{courseId}
         public IActionResult SendNotification(string studentId, string courseId)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
@@ -141,10 +145,11 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.StudentId = studentId;
             ViewBag.UserId = student.UserId;
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/StudentManagement/SendNotification.cshtml");  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/StudentManagement/SendNotification.cshtml");
         }
 
         [HttpPost]
+        [Route("send-notification")]  // Route: faculty/student-management/send-notification (POST)
         public IActionResult SendNotification(string userId, string message, string courseId)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");

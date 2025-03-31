@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Route("faculty/teaching-report")]  // Định nghĩa route cho TeachingReportController
     public class TeachingReportController : Controller
     {
         private readonly IFacultyService _facultyService;
@@ -15,6 +16,8 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             _facultyService = FacultyService.GetInstance();
         }
 
+        [Route("")]  // Route: faculty/teaching-report
+        [Route("index")]  // Route: faculty/teaching-report/index
         public IActionResult Index()
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
@@ -46,7 +49,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 reportData.Add((course, enrollments.Count(), roundedClassAverage, classificationStats));
             }
 
-            return View("~/Views/Facultys/TeachingReport/Index.cshtml", reportData);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/TeachingReport/Index.cshtml", reportData);
         }
     }
 }

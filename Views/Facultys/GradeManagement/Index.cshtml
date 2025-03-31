@@ -31,7 +31,7 @@ else
                     <td>
                         @if (enrollment != null)
                         {
-                            <a asp-action="ManageGrades" asp-route-enrollmentId="@enrollment.EnrollmentId">Manage Grades</a>
+                            <a asp-action="ManageGrades" asp-controller="GradeManagement" asp-route-enrollmentId="@enrollment.EnrollmentId">Manage Grades</a>
                         }
                     </td>
                 </tr>

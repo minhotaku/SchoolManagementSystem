@@ -4,6 +4,7 @@ using SchoolManagementSystem.Services.Interfaces;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Route("faculty/course-details")]  // Định nghĩa route cho CourseDetailsController
     public class CourseDetailsController : Controller
     {
         private readonly IFacultyService _facultyService;
@@ -13,16 +14,15 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             _facultyService = FacultyService.GetInstance();
         }
 
+        [Route("{id}")]  // Route: faculty/course-details/{id}
         public IActionResult Details(string id)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Details", "CourseDetails", new { id }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -51,7 +51,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return Forbid();
             }
 
-            return View("~/Views/Facultys/CourseDetails/Details.cshtml", course);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/CourseDetails/Details.cshtml", course);
         }
     }
 }

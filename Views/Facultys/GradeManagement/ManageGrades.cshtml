@@ -4,7 +4,6 @@
     ViewData["Title"] = "Manage Grades";
 }
 
-<!-- Thêm Font Awesome để sử dụng biểu tượng -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
@@ -22,20 +21,19 @@
         }
 
     .edit-icon::before {
-        content: "✏️"; /* Biểu tượng bút chì */
+        content: "✏️";
         font-size: 18px;
     }
 
     .delete-icon {
-        color: #dc3545; /* Màu đỏ */
+        color: #dc3545;
         font-size: 18px;
     }
 
         .delete-icon:hover {
-            color: #c82333; /* Màu đỏ đậm hơn khi hover */
+            color: #c82333;
         }
 
-    /* CSS cho modal */
     .modal {
         display: none;
         position: fixed;
@@ -52,7 +50,7 @@
     .modal-content {
         background-color: #fff;
         padding: 20px;
-        border: 2px solid #dc3545; /* Viền đỏ */
+        border: 2px solid #dc3545;
         border-radius: 8px;
         width: 400px;
         text-align: center;
@@ -60,7 +58,7 @@
     }
 
         .modal-content .warning-icon {
-            color: #dc3545; /* Màu đỏ cho biểu tượng cảnh báo */
+            color: #dc3545;
             font-size: 40px;
             margin-bottom: 10px;
         }
@@ -113,11 +111,11 @@
                 <td>@grade.Component</td>
                 <td>@grade.Score</td>
                 <td>
-                    <form asp-action="EditGrade" asp-route-id="@grade.GradeId" method="get" style="display:inline;">
+                    <form asp-action="EditGrade" asp-controller="GradeManagement" asp-route-id="@grade.GradeId" method="get" style="display:inline;">
                         <button type="submit" class="action-icon edit-icon" title="Edit"></button>
                     </form>
                     <button type="button" class="action-icon delete-icon" onclick="showDeleteModal('@grade.GradeId')" title="Delete">
-                        <i class="fas fa-trash-alt"></i> <!-- Biểu tượng thùng rác từ Font Awesome -->
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </td>
             </tr>
@@ -131,16 +129,15 @@
     <p>Classification: @ViewBag.Classification</p>
 </div>
 
-<a asp-action="AddGrade" asp-route-enrollmentId="@ViewBag.EnrollmentId" class="btn btn-primary">Add Grade</a>
-<a asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="btn btn-primary">Back to List</a>
+<a asp-action="AddGrade" asp-controller="GradeManagement" asp-route-enrollmentId="@ViewBag.EnrollmentId" class="btn btn-primary">Add Grade</a>
+<a asp-action="Index" asp-controller="GradeManagement" asp-route-courseId="@ViewBag.CourseId" class="btn btn-primary">Back to List</a>
 
-<!-- Modal xác nhận xóa -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <span class="warning-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <h4>Confirm Deletion</h4>
         <p>Are you sure you want to delete this grade?</p>
-        <form id="deleteForm" asp-action="DeleteGrade" method="post" style="display:inline;">
+        <form id="deleteForm" asp-action="DeleteGrade" asp-controller="GradeManagement" method="post" style="display:inline;">
             <input type="hidden" name="id" id="gradeIdToDelete" />
             <button type="submit" class="btn btn-danger">Delete</button>
             <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
@@ -158,7 +155,6 @@
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    // Đóng modal khi nhấn ra ngoài
     window.onclick = function (event) {
         var modal = document.getElementById('deleteModal');
         if (event.target == modal) {

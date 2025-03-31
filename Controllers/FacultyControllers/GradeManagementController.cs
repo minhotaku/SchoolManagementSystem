@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Route("faculty/grade-management")]  // Định nghĩa route cho GradeManagementController
     public class GradeManagementController : Controller
     {
         private readonly IFacultyService _facultyService;
@@ -18,16 +19,16 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             _unitOfWork = UnitOfWork.GetInstance();
         }
 
+        [Route("")]  // Route: faculty/grade-management
+        [Route("index")]  // Route: faculty/grade-management/index
         public IActionResult Index(string courseId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "GradeManagement", new { courseId }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -52,20 +53,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
 
             var enrollments = _facultyService.GetEnrollmentsByCourse(courseId) ?? new List<Enrollment>();
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/GradeManagement/Index.cshtml", enrollments);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/GradeManagement/Index.cshtml", enrollments);
         }
 
         [HttpGet]
+        [Route("manage-grades/{enrollmentId}")]  // Route: faculty/grade-management/manage-grades/{enrollmentId}
         public IActionResult ManageGrades(string enrollmentId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("ManageGrades", "GradeManagement", new { enrollmentId }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -99,24 +99,23 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.CourseId = enrollment.CourseId;
             ViewBag.AverageScore = roundedAverageScore;
             ViewBag.Classification = classification;
-            return View("~/Views/Facultys/GradeManagement/ManageGrades.cshtml", grades);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/GradeManagement/ManageGrades.cshtml", grades);
         }
 
         [HttpGet]
+        [Route("add-grade/{enrollmentId}")]  // Route: faculty/grade-management/add-grade/{enrollmentId}
         public IActionResult AddGrade(string enrollmentId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement", new { enrollmentId }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement", new { enrollmentId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Add 🙂Grade", "GradeManagement", new { enrollmentId }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -137,20 +136,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             var grade = new Grade { EnrollmentId = enrollmentId };
-            return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);
         }
 
         [HttpPost]
+        [Route("add-grade")]  // Route: faculty/grade-management/add-grade (POST)
         public IActionResult AddGrade(Grade grade)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement") });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -172,7 +170,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 {
                     System.Diagnostics.Debug.WriteLine($"ModelState Error: {error}");
                 }
-                return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);  // Chỉ định đường dẫn view
+                return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);
             }
 
             var enrollment = _unitOfWork.Enrollments.GetById(grade.EnrollmentId);
@@ -191,16 +189,15 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
         }
 
         [HttpGet]
+        [Route("edit-grade/{id}")]  // Route: faculty/grade-management/edit-grade/{id}
         public IActionResult EditGrade(string id)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement", new { id }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -230,20 +227,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return Forbid();
             }
 
-            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);
         }
 
         [HttpPost]
+        [Route("edit-grade")]  // Route: faculty/grade-management/edit-grade (POST)
         public IActionResult EditGrade(Grade grade)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement") });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -268,20 +264,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return RedirectToAction("ManageGrades", new { enrollmentId = grade.EnrollmentId });
             }
 
-            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);
         }
 
         [HttpPost]
+        [Route("delete-grade")]  // Route: faculty/grade-management/delete-grade (POST)
         public IActionResult DeleteGrade(string id)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("DeleteGrade", "GradeManagement", new { id }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {

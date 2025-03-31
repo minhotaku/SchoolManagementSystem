@@ -22,7 +22,7 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-controller="GradeManagement" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Grades</a>
-    <a asp-action="Index" asp-controller="StudentManagement" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Students</a>
-    <a asp-action="Index" asp-controller="Faculty" asp-all-route-Id="@Model.CourseId" class="btn btn-primary">Back to List</a>  <!-- Sửa Faculty thành FacultyManagement -->
+    <a asp-controller="GradeManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Grades</a>
+    <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Students</a>
+    <a asp-controller="Faculty" asp-action="Index" asp-all-route-Id="@Model.CourseId" class="btn btn-primary">Back to List</a>
 </div>
