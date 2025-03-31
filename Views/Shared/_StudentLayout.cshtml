@@ -1,0 +1,165 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hệ Thống Thông Tin Sinh Viên</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/student.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+
+    <!-- Add this inline script to prevent sidebar flickering during page transitions -->
+    <script>
+        // Apply sidebar state immediately before page loads
+        (function() {
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            if (savedState === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="layout-container">
+        <!-- Sidebar with clickable logo for toggle -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-logo" id="sidebar-toggle">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    <span class="sidebar-logo-text">Dashboard</span>
+                </h3>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Dashboard") == true ? "active" : "")"
+                       asp-controller="Student" asp-action="Dashboard">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Tổng quan</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Courses") == true && !Context.Request.Path.Value?.Contains("/CourseDetail") == true ? "active" : "")"
+                       asp-controller="Student" asp-action="Courses">
+                        <i class="bi bi-book"></i>
+                        <span>Khóa học</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Grades") == true && !Context.Request.Path.Value?.Contains("/GradeDetail") == true ? "active" : "")"
+                       asp-controller="Student" asp-action="Grades">
+                        <i class="bi bi-award"></i>
+                        <span>Điểm số</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Notifications") == true ? "active" : "")"
+                       asp-controller="Student" asp-action="Notifications">
+                        <i class="bi bi-bell"></i>
+                        <span>Thông báo</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Profile") == true ? "active" : "")"
+                       asp-controller="Student" asp-action="Profile">
+                        <i class="bi bi-person"></i>
+                        <span>Hồ sơ</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                @{
+                    // Get username from session
+                    var currentUsername = Context.Session.GetString("_Username");
+                }
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+                    <span>@currentUsername</span>
+                </div>
+                <div class="sidebar-actions">
+                    <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-logout" title="Đăng xuất">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h1>@ViewData["Title"]</h1>
+                </div>
+                <div class="header-actions">
+                    <!-- Notification icon without badge counter -->
+                    <div class="notification-icon">
+                        <a href="#" title="Thông báo">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-container">
+                @RenderBody()
+            </div>
+
+            <!-- Footer with Fixed Date -->
+            <footer class="main-footer">
+                <div class="footer-left">
+                    © 2025 - Hệ Thống Quản Lý Trường Học
+                </div>
+       
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Improved sidebar toggle functionality to prevent flickering
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+
+            // Apply saved state immediately when DOM is loaded
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            if (savedState === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+                document.documentElement.classList.add('sidebar-collapsed');
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                document.documentElement.classList.remove('sidebar-collapsed');
+            }
+
+            // Function to toggle sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                document.documentElement.classList.toggle('sidebar-collapsed');
+
+                // Store preference in localStorage
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+            }
+
+            // Add click event listener to the logo/icon
+            toggleBtn.addEventListener('click', toggleSidebar);
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

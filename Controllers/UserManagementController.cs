@@ -15,7 +15,7 @@ namespace SchoolManagementSystem.Controllers
         private readonly IUnitOfWork _unitOfWork;
 
         // Ngày giờ hiện tại UTC và thông tin người dùng hiện tại
-        private readonly DateTime _currentDateTime = new DateTime(2025, 03, 27, 15, 34, 30);
+        private readonly DateTime _currentDateTime = new DateTime(2025, 03, 31, 10, 28, 53);
         private readonly string _currentUserLogin = "minhotaku";
 
         /// <summary>
@@ -25,6 +25,9 @@ namespace SchoolManagementSystem.Controllers
         {
             _userManagementService = UserManagementService.GetInstance();
             _unitOfWork = UnitOfWork.GetInstance();
+
+            // Set the layout for all actions in this controller
+            ViewData["Layout"] = "_AdminLayout";
         }
 
         /// <summary>

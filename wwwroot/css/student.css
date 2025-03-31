@@ -1,0 +1,497 @@
+﻿/* Add these rules at the top of your existing CSS file */
+
+/* Prevent sidebar flickering during page transitions */
+html.sidebar-collapsed .sidebar {
+    width: var(--sidebar-collapsed-width) !important;
+    transition: none;
+}
+
+html.sidebar-collapsed .main-content {
+    margin-left: var(--sidebar-collapsed-width) !important;
+    transition: none;
+}
+
+/* This will be applied after initial rendering */
+html.sidebar-collapsed.transitions-enabled .sidebar,
+html.sidebar-collapsed.transitions-enabled .main-content {
+    transition: all var(--transition-speed);
+}
+
+/* When sidebar is collapsed */
+html.sidebar-collapsed .sidebar .sidebar-logo-text,
+html.sidebar-collapsed .sidebar .sidebar-link span,
+html.sidebar-collapsed .sidebar .user-info span {
+    display: none;
+}
+
+html.sidebar-collapsed .sidebar .sidebar-link {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+    html.sidebar-collapsed .sidebar .sidebar-link i {
+        margin-right: 0;
+    }
+
+html.sidebar-collapsed .sidebar .sidebar-footer {
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+html.sidebar-collapsed .sidebar .user-info {
+    justify-content: center;
+}
+
+    html.sidebar-collapsed .sidebar .user-info i {
+        margin-right: 0;
+    }
+
+html.sidebar-collapsed .sidebar .sidebar-actions {
+    display: none;
+}
+
+/* Add this to your existing js/site.js file or create it if it doesn't exist */
+
+
+.footer-left {
+    text-align: center;
+    width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
+}
+
+
+:root {
+    /* Subtle, modern color palette */
+    --sidebar-width: 250px;
+    --sidebar-collapsed-width: 70px;
+    --primary-color: #3b82f6; /* Softer blue */
+    --primary-hover: #2563eb;
+    --sidebar-bg: #1e293b; /* Dark slate blue - more subtle */
+    --sidebar-hover: #334155; /* Lighter shade for hover */
+    --sidebar-active: #475569; /* Even lighter for active state */
+    --text-sidebar: #e2e8f0;
+    --secondary-color: #f1f5f9;
+    --accent-color: #64748b;
+    --light-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+    --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+
+
+
+/* Layout Container */
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+/* Sidebar Styles - More Subtle Design */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--text-sidebar);
+    transition: all var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    overflow-x: hidden;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+    .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+
+.sidebar-header {
+    padding: 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    font-weight: 500;
+    cursor: pointer; /* Indicate it's clickable */
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed);
+    width: 100%;
+}
+
+    .sidebar-logo:hover {
+        background-color: var(--sidebar-hover);
+    }
+
+    .sidebar-logo i {
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+    }
+
+.sidebar-nav {
+    list-style: none;
+    padding: 1rem 0.75rem;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-sidebar);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all var(--transition-speed);
+    border-radius: var(--border-radius);
+    font-weight: 400;
+}
+
+    .sidebar-link i {
+        font-size: 1.25rem;
+        min-width: 1.5rem;
+        margin-right: 1rem;
+        text-align: center;
+    }
+
+    .sidebar-link:hover {
+        color: white;
+        background-color: var(--sidebar-hover);
+    }
+
+    .sidebar-link.active {
+        color: white;
+        background-color: var(--sidebar-active);
+    }
+
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    .user-info i {
+        font-size: 1.25rem;
+        margin-right: 0.75rem;
+    }
+
+    .user-info span {
+        font-weight: 400;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.sidebar-actions {
+    display: flex;
+}
+
+.btn-logout {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-sidebar);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-speed);
+}
+
+    .btn-logout:hover {
+        background-color: var(--sidebar-hover);
+    }
+
+/* When sidebar is collapsed */
+.sidebar.collapsed .sidebar-logo-text,
+.sidebar.collapsed .sidebar-link span,
+.sidebar.collapsed .user-info span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-link {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+    .sidebar.collapsed .sidebar-link i {
+        margin-right: 0;
+    }
+
+.sidebar.collapsed .sidebar-footer {
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.sidebar.collapsed .user-info {
+    justify-content: center;
+}
+
+    .sidebar.collapsed .user-info i {
+        margin-right: 0;
+    }
+
+.sidebar.collapsed .sidebar-actions {
+    display: none;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--light-bg);
+}
+
+    .main-content.expanded {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+/* Header Styles */
+.main-header {
+    background-color: var(--card-bg);
+    padding: 1rem 2rem;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.notification-icon a {
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all var(--transition-speed);
+}
+
+    .notification-icon a:hover {
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+    }
+
+/* Content Container */
+.content-container {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+/* Footer Styles */
+.main-footer {
+    padding: 1rem 2rem;
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .sidebar {
+        width: var(--sidebar-collapsed-width);
+        transform: translateX(0);
+    }
+
+    .sidebar-logo-text,
+    .sidebar-link span,
+    .user-info span {
+        display: none;
+    }
+
+    .sidebar-link {
+        justify-content: center;
+        padding: 0.75rem;
+    }
+
+        .sidebar-link i {
+            margin-right: 0;
+        }
+
+    .main-content {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+    /* For medium screens, when expanded should cover part of the screen */
+    .sidebar.expanded {
+        width: var(--sidebar-width);
+        transform: translateX(0);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+        .sidebar.expanded .sidebar-logo-text,
+        .sidebar.expanded .sidebar-link span,
+        .sidebar.expanded .user-info span {
+            display: inline;
+        }
+
+        .sidebar.expanded .sidebar-link {
+            justify-content: flex-start;
+            padding: 0.75rem 1.5rem;
+        }
+
+            .sidebar.expanded .sidebar-link i {
+                margin-right: 1rem;
+            }
+
+        .sidebar.expanded .sidebar-footer {
+            justify-content: space-between;
+        }
+
+        .sidebar.expanded .sidebar-actions {
+            display: flex;
+        }
+}
+
+@media (max-width: 576px) {
+    .main-header {
+        padding: 1rem;
+    }
+
+    .content-container {
+        padding: 1rem;
+    }
+
+    .main-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    /* For mobile, sidebar should start hidden and slide in when expanded */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+        .sidebar.expanded {
+            transform: translateX(0);
+        }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+}
+
+/* Card and Component Styles */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 1.5rem;
+    border: none;
+}
+
+.card-header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+    color: var(--text-primary);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+
+/* Form Controls */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+/* Modern Table Styling */
+.table {
+    color: var(--text-primary);
+}
+
+.table-light {
+    color: var(--text-primary);
+    background-color: var(--secondary-color);
+}
+
+.table thead th {
+    font-weight: 600;
+    border-bottom-width: 1px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+}
