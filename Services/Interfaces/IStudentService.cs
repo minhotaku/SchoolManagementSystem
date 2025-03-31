@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SchoolManagementSystem.Models;
+using SchoolManagementSystem.Models.Student;
 
 namespace SchoolManagementSystem.Services.Interfaces
 {

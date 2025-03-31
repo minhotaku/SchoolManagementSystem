@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
-using SchoolManagementSystem.Models;
+using SchoolManagementSystem.Models.Student;
 using SchoolManagementSystem.Services.Interfaces;
 
 namespace SchoolManagementSystem.Services.Implementation

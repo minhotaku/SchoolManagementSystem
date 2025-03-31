@@ -1,6 +1,6 @@
 using System;
 
-namespace SchoolManagementSystem.Models
+namespace SchoolManagementSystem.Models.Student
 {
     public class NotificationViewModel
     {

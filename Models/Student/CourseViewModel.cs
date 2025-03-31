@@ -1,4 +1,4 @@
-namespace SchoolManagementSystem.Models
+namespace SchoolManagementSystem.Models.Student
 {
     public class CourseViewModel
     {
