@@ -38,7 +38,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             var courses = _facultyService.GetCoursesByFaculty(facultyId);
-            return View("~/Views/Facultys/Faculty/Index.cshtml", courses);
+            return View("~/Views/Faculty/FacultyHome/Index.cshtml", courses);
         }
     }
 }

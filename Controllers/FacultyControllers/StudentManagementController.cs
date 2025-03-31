@@ -106,7 +106,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/StudentManagement/Index.cshtml", studentDetails);
+            return View("~/Views/Faculty/StudentManagement/Index.cshtml", studentDetails);
         }
 
         [HttpGet]
@@ -145,7 +145,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.StudentId = studentId;
             ViewBag.UserId = student.UserId;
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/StudentManagement/SendNotification.cshtml");
+            return View("~/Views/Faculty/StudentManagement/SendNotification.cshtml");
         }
 
         [HttpPost]

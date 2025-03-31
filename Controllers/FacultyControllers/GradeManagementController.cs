@@ -53,7 +53,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
 
             var enrollments = _facultyService.GetEnrollmentsByCourse(courseId) ?? new List<Enrollment>();
             ViewBag.CourseId = courseId;
-            return View("~/Views/Facultys/GradeManagement/Index.cshtml", enrollments);
+            return View("~/Views/Faculty/GradeManagement/Index.cshtml", enrollments);
         }
 
         [HttpGet]
@@ -99,7 +99,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.CourseId = enrollment.CourseId;
             ViewBag.AverageScore = roundedAverageScore;
             ViewBag.Classification = classification;
-            return View("~/Views/Facultys/GradeManagement/ManageGrades.cshtml", grades);
+            return View("~/Views/Faculty/GradeManagement/ManageGrades.cshtml", grades);
         }
 
         [HttpGet]
@@ -136,7 +136,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             var grade = new Grade { EnrollmentId = enrollmentId };
-            return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);
+            return View("~/Views/Faculty/GradeManagement/AddGrade.cshtml", grade);
         }
 
         [HttpPost]
@@ -170,7 +170,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 {
                     System.Diagnostics.Debug.WriteLine($"ModelState Error: {error}");
                 }
-                return View("~/Views/Facultys/GradeManagement/AddGrade.cshtml", grade);
+                return View("~/Views/Faculty/GradeManagement/AddGrade.cshtml", grade);
             }
 
             var enrollment = _unitOfWork.Enrollments.GetById(grade.EnrollmentId);
@@ -227,7 +227,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return Forbid();
             }
 
-            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);
+            return View("~/Views/Faculty/GradeManagement/EditGrade.cshtml", grade);
         }
 
         [HttpPost]
@@ -264,7 +264,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return RedirectToAction("ManageGrades", new { enrollmentId = grade.EnrollmentId });
             }
 
-            return View("~/Views/Facultys/GradeManagement/EditGrade.cshtml", grade);
+            return View("~/Views/Faculty/GradeManagement/EditGrade.cshtml", grade);
         }
 
         [HttpPost]

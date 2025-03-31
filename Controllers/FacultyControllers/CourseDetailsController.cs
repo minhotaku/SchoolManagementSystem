@@ -51,7 +51,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 return Forbid();
             }
 
-            return View("~/Views/Facultys/CourseDetails/Details.cshtml", course);
+            return View("~/Views/Faculty/CourseDetails/Details.cshtml", course);
         }
     }
 }
