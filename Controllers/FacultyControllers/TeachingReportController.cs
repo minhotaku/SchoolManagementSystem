@@ -46,7 +46,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 reportData.Add((course, enrollments.Count(), roundedClassAverage, classificationStats));
             }
 
-            return View("~/Views/Faculty/TeachingReport/Index.cshtml", reportData);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/TeachingReport/Index.cshtml", reportData);  // Chỉ định đường dẫn view
         }
     }
 }

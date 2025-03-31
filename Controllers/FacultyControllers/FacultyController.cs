@@ -5,11 +5,11 @@ using SchoolManagementSystem.Services.Interfaces;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    public class FacultyManagementController : Controller
+    public class FacultyController : Controller
     {
         private readonly IFacultyService _facultyService;
 
-        public FacultyManagementController()
+        public FacultyController()
         {
             _facultyService = FacultyService.GetInstance();
         }
@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             var courses = _facultyService.GetCoursesByFaculty(facultyId);
-            return View("~/Views/Faculty/FacultyManagement/Index.cshtml", courses);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/Faculty/Index.cshtml", courses);  // Chỉ định đường dẫn view
         }
     }
 }

@@ -103,7 +103,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             ViewBag.CourseId = courseId;
-            return View("~/Views/Faculty/StudentManagement/Index.cshtml", studentDetails);  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/StudentManagement/Index.cshtml", studentDetails);  // Chỉ định đường dẫn view
         }
 
         [HttpGet]
@@ -141,7 +141,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.StudentId = studentId;
             ViewBag.UserId = student.UserId;
             ViewBag.CourseId = courseId;
-            return View("~/Views/Faculty/StudentManagement/SendNotification.cshtml");  // Chỉ định đường dẫn view
+            return View("~/Views/Facultys/StudentManagement/SendNotification.cshtml");  // Chỉ định đường dẫn view
         }
 
         [HttpPost]
