@@ -2,7 +2,7 @@
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 
-namespace SchoolManagementSystem.Controllers
+namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
     public class CourseDetailsController : Controller
     {
@@ -51,9 +51,7 @@ namespace SchoolManagementSystem.Controllers
                 return Forbid();
             }
 
-            // Bỏ phần lấy danh sách tài liệu
-            // ViewBag.Documents = _facultyService.GetCourseDocuments(id);
-            return View(course);
+            return View("~/Views/Faculty/CourseDetails/Details.cshtml", course);  // Chỉ định đường dẫn view
         }
     }
 }

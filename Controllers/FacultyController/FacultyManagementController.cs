@@ -3,13 +3,13 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 
-namespace SchoolManagementSystem.Controllers
+namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    public class FacultyController : Controller
+    public class FacultyManagementController : Controller
     {
         private readonly IFacultyService _facultyService;
 
-        public FacultyController()
+        public FacultyManagementController()
         {
             _facultyService = FacultyService.GetInstance();
         }
@@ -20,14 +20,14 @@ namespace SchoolManagementSystem.Controllers
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "Faculty") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "FacultyManagement") });
             }
 
             // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "Faculty") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "FacultyManagement") });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             var courses = _facultyService.GetCoursesByFaculty(facultyId);
-            return View(courses);
+            return View("~/Views/Faculty/FacultyManagement/Index.cshtml", courses);  // Chỉ định đường dẫn view
         }
     }
 }

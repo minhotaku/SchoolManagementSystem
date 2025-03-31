@@ -19,54 +19,50 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             _unitOfWork = UnitOfWork.GetInstance();
         }
 
-        // Hàm đọc Username từ users.csv dựa trên UserId
         private string GetUsernameFromUserId(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
-                return "N/A"; // Trả về "N/A" nếu userId rỗng
+                return "N/A";
             }
 
-            // Sửa đường dẫn file users.csv để khớp với vị trí thực tế
             string csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "CSV", "users.csv");
-            System.Diagnostics.Debug.WriteLine($"Looking for users.csv at: {csvFilePath}"); // Ghi log đường dẫn file
+            System.Diagnostics.Debug.WriteLine($"Looking for users.csv at: {csvFilePath}");
 
             if (!System.IO.File.Exists(csvFilePath))
             {
-                System.Diagnostics.Debug.WriteLine("users.csv not found!"); // Ghi log nếu file không tồn tại
+                System.Diagnostics.Debug.WriteLine("users.csv not found!");
                 return "N/A";
             }
 
             var lines = System.IO.File.ReadAllLines(csvFilePath);
-            foreach (var line in lines.Skip(1)) // Bỏ qua dòng tiêu đề
+            foreach (var line in lines.Skip(1))
             {
-                if (string.IsNullOrWhiteSpace(line)) // Kiểm tra dòng rỗng
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
 
                 var columns = line.Split(',');
-                if (columns.Length >= 2 && columns[0].Trim() == userId.Trim()) // So sánh UserId
+                if (columns.Length >= 2 && columns[0].Trim() == userId.Trim())
                 {
-                    System.Diagnostics.Debug.WriteLine($"Found Username: {columns[1].Trim()} for UserId: {userId}"); // Ghi log khi tìm thấy
-                    return columns[1].Trim(); // Trả về Username
+                    System.Diagnostics.Debug.WriteLine($"Found Username: {columns[1].Trim()} for UserId: {userId}");
+                    return columns[1].Trim();
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine($"UserId {userId} not found in users.csv!"); // Ghi log nếu không tìm thấy
-            return "N/A"; // Trả về "N/A" nếu không tìm thấy UserId
+            System.Diagnostics.Debug.WriteLine($"UserId {userId} not found in users.csv!");
+            return "N/A";
         }
 
         public IActionResult Index(string courseId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "StudentManagement", new { courseId }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -98,29 +94,27 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
                 if (student != null)
                 {
                     var averageScore = _facultyService.CalculateAverageScore(enrollment.EnrollmentId);
-                    var roundedAverageScore = Math.Round(averageScore, 2); // Làm tròn điểm trung bình tới 2 chữ số thập phân
+                    var roundedAverageScore = Math.Round(averageScore, 2);
                     var classification = _facultyService.ClassifyResult(roundedAverageScore);
                     var schoolProgramName = _facultyService.GetSchoolProgramName(student.SchoolProgramId);
-                    var username = GetUsernameFromUserId(student.UserId); // Lấy Username từ UserId
+                    var username = GetUsernameFromUserId(student.UserId);
                     studentDetails.Add((enrollment, student, roundedAverageScore, classification, schoolProgramName, username));
                 }
             }
 
             ViewBag.CourseId = courseId;
-            return View(studentDetails);
+            return View("~/Views/Faculty/StudentManagement/Index.cshtml", studentDetails);  // Chỉ định đường dẫn view
         }
 
         [HttpGet]
         public IActionResult SendNotification(string studentId, string courseId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -147,20 +141,18 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.StudentId = studentId;
             ViewBag.UserId = student.UserId;
             ViewBag.CourseId = courseId;
-            return View();
+            return View("~/Views/Faculty/StudentManagement/SendNotification.cshtml");  // Chỉ định đường dẫn view
         }
 
         [HttpPost]
         public IActionResult SendNotification(string userId, string message, string courseId)
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement") });
             }
 
-            // Lấy FacultyId từ Session
             var userIdFromSession = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userIdFromSession))
             {

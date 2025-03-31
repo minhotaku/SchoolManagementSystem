@@ -17,14 +17,12 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
 
         public IActionResult Index()
         {
-            // Kiểm tra đăng nhập và vai trò
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "TeachingReport") });
             }
 
-            // Lấy FacultyId từ Session
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
@@ -44,11 +42,11 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             {
                 var enrollments = _facultyService.GetEnrollmentsByCourse(course.CourseId) ?? new List<Enrollment>();
                 var (classAverage, classificationStats) = _facultyService.GetCourseStatistics(course.CourseId);
-                var roundedClassAverage = Math.Round(classAverage, 2); // Làm tròn điểm trung bình tới 2 chữ số thập phân
+                var roundedClassAverage = Math.Round(classAverage, 2);
                 reportData.Add((course, enrollments.Count(), roundedClassAverage, classificationStats));
             }
 
-            return View(reportData);
+            return View("~/Views/Faculty/TeachingReport/Index.cshtml", reportData);  // Chỉ định đường dẫn view
         }
     }
 }
