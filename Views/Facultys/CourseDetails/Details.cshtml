@@ -1,0 +1,28 @@
+﻿@model SchoolManagementSystem.Entities.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h2>Course Details</h2>
+
+<div>
+    <h4>@Model.CourseName</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Course ID</dt>
+        <dd class="col-sm-10">@Model.CourseId</dd>
+        <dt class="col-sm-2">Course Name</dt>
+        <dd class="col-sm-10">@Model.CourseName</dd>
+        <dt class="col-sm-2">Credits</dt>
+        <dd class="col-sm-10">@Model.Credits</dd>
+        <dt class="col-sm-2">Faculty ID</dt>
+        <dd class="col-sm-10">@Model.FacultyId</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-controller="GradeManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Grades</a>
+    <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Students</a>
+    <a asp-controller="Faculty" asp-action="Index" asp-all-route-Id="@Model.CourseId" class="btn btn-primary">Back to List</a>
+</div>

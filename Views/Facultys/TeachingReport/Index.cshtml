@@ -1,0 +1,46 @@
+﻿@model IEnumerable<(SchoolManagementSystem.Entities.Course Course, int StudentCount, decimal ClassAverage, Dictionary<string, int> ClassificationStats)>
+
+@{
+    ViewData["Title"] = "Teaching Report";
+}
+
+<h2>Teaching Report</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No courses found for this faculty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Student Count</th>
+                <th>Class Average</th>
+                <th>Fail</th>
+                <th>Pass</th>
+                <th>Merit</th>
+                <th>Distinction</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Course.CourseId</td>
+                    <td>@item.Course.CourseName</td>
+                    <td>@item.StudentCount</td>
+                    <td>@item.ClassAverage.ToString("F2")</td>
+                    <td>@item.ClassificationStats["Fail"]</td>
+                    <td>@item.ClassificationStats["Pass"]</td>
+                    <td>@item.ClassificationStats["Merit"]</td>
+                    <td>@item.ClassificationStats["Distinction"]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="Index" asp-controller="Faculty">Back to Course List</a>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SchoolManagementSystem.Entities.Course>
+
+@{
+    ViewData["Title"] = "Faculty Dashboard - My Courses";
+}
+
+<h2>My Courses</h2>
+
+<p>
+    <a asp-controller="TeachingReport" asp-action="Index">View Teaching Report</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Course ID</th>
+            <th>Course Name</th>
+            <th>Credits</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.CourseId</td>
+                <td>@course.CourseName</td>
+                <td>@course.Credits</td>
+                <td>
+                    <a href="@Url.Action("Details", "CourseDetails", new { id = course.CourseId })">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
