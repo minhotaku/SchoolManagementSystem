@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -153,25 +151,28 @@
 
         /* Responsive sidebar */
         @@media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
+            .sidebar
 
-                .sidebar.show {
-                    transform: translateX(0);
-                }
+        {
+            transform: translateX(-100%);
+        }
 
-            .main-content {
-                margin-left: 0;
-            }
+        .sidebar.show {
+            transform: translateX(0);
+        }
 
-            .topbar {
-                left: 0;
-            }
+        .main-content {
+            margin-left: 0;
+        }
 
-            .mobile-menu-toggle {
-                display: block !important;
-            }
+        .topbar {
+            left: 0;
+        }
+
+        .mobile-menu-toggle {
+            display: block !important;
+        }
+
         }
 
         .mobile-menu-toggle {
@@ -193,9 +194,12 @@
         }
 
         @@media (max-width: 992px) {
-            .footer {
-                margin-left: 0;
-            }
+            .footer
+
+        {
+            margin-left: 0;
+        }
+
         }
 
         /* User profile in sidebar */
@@ -233,6 +237,81 @@
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.6);
             margin: 0;
+        }
+
+        /* Mobile responsive CSS (thêm mới) */
+        @@media (max-width: 768px) {
+            /* Điều chỉnh kích thước tiêu đề trên cùng cho mobile */
+            .topbar .page-title
+
+        {
+            font-size: 1.25rem; /* Giảm kích thước font cho tiêu đề trên mobile */
+        }
+
+        .sidebar-header h5 {
+            font-size: 1rem; /* Giảm kích thước font cho tiêu đề sidebar */
+        }
+
+        /* Điều chỉnh topbar để phù hợp với màn hình nhỏ */
+        .topbar {
+            height: auto;
+            min-height: var(--topbar-height);
+            padding: 10px 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Ẩn thông tin thời gian trên điện thoại cực nhỏ */
+        @@media (max-width: 480px) {
+            #currentDateTime
+
+        {
+            display: none;
+        }
+
+        .topbar {
+            padding: 8px 12px;
+        }
+
+        }
+
+        /* Tăng kích thước của nút toggle sidebar để dễ bấm hơn */
+        .mobile-menu-toggle {
+            font-size: 1.75rem;
+            padding: 5px;
+        }
+
+        /* Điều chỉnh padding cho các phần nội dung */
+        .content-container {
+            padding: calc(var(--topbar-height) + 10px) 10px 10px;
+        }
+
+        /* Cải thiện khả năng đọc và tương tác trên màn hình cảm ứng */
+        .nav-link {
+            padding: 12px 15px;
+        }
+
+            .nav-link i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+            }
+
+        /* Tăng kích thước các điểm chạm cho thiết bị cảm ứng */
+        form button.nav-link,
+        .nav-link {
+            min-height: 44px; /* Đảm bảo kích thước tối thiểu cho các điểm chạm */
+        }
+
+        }
+
+        /* Sửa lỗi đè lên trên nội dung khi sidebar mở trên mobile */
+        @@media (max-width: 992px) {
+            .sidebar.show
+
+        {
+            z-index: 1001; /* Đảm bảo sidebar hiển thị trên cùng khi được mở */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
         }
     </style>
 </head>
