@@ -32,7 +32,7 @@
                 @* h-100 to make cards the same height *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalStudents</h4>
+                        <h4 class="card-title mb-0" style="color: white; font-weight: bold;">@Model.TotalStudents</h4>
                         <p class="card-text mb-0">Students</p>
                     </div>
                     <i class="bi bi-people-fill display-4 opacity-50"></i>
@@ -48,7 +48,7 @@
             <div class="card text-white bg-success shadow-sm h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalFaculty</h4>
+                        <h4 class="card-title mb-0" style="color: white; font-weight: bold;">@Model.TotalFaculty</h4>
                         <p class="card-text mb-0">Faculty</p>
                     </div>
                     <i class="bi bi-person-video3 display-4 opacity-50"></i>
@@ -65,7 +65,7 @@
                 @* Yellow color *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalCourses</h4>
+                        <h4 class="card-title mb-0" style="color: white; font-weight: bold;">@Model.TotalCourses</h4>
                         <p class="card-text mb-0">Courses</p>
                     </div>
                     <i class="bi bi-book-half display-4 opacity-50"></i>
@@ -82,7 +82,7 @@
                 @* Light blue color *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalPrograms</h4>
+                        <h4 class="card-title mb-0" style="color: white; font-weight: bold;">@Model.TotalPrograms</h4>
                         <p class="card-text mb-0">School Programs</p>
                     </div>
                     <i class="bi bi-mortarboard-fill display-4 opacity-50"></i>
@@ -118,7 +118,7 @@
                 <div class="list-group list-group-flush">
                     <a asp-controller="Reports" asp-action="CourseEnrollmentReport" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Course Enrollment Report</div>
-                        <span class="badge bg-info rounded-pill" style="color: white; font-size: 1.2em; font-weight: bold;">@Model.TotalEnrollments enrollments</span> @* Display total enrollments *@
+                        <span class="badge bg-info rounded-pill" style="color: white; font-weight: bold;">@Model.TotalEnrollments enrollments</span> @* Display total enrollments *@
                     </a>
                     <a asp-controller="Reports" asp-action="GradeReport" class="list-group-item list-group-item-action"><i class="bi bi-clipboard-data-fill me-2 text-success"></i>Grade Summary Report</a>
                     <a asp-controller="Reports" asp-action="StudentProgressReport" class="list-group-item list-group-item-action"><i class="bi bi-person-check-fill me-2 text-primary"></i>Student Progress Tracking</a>

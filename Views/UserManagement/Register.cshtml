@@ -1,8 +1,8 @@
 ﻿@model SchoolManagementSystem.Entities.User
 @{
-    ViewData["Title"] = "Đăng Ký Người Dùng Mới";
-    // Ngày giờ hiện tại: 2025-03-27 15:22:04
-    // Người dùng hiện tại: minhotaku
+    ViewData["Title"] = "New User Registration";
+    // Current date and time: 2025-03-27 15:22:04
+    // Current user: minhotaku
 }
 
 <div class="container mt-4">
@@ -10,15 +10,15 @@
         <div class="col-md-8 col-lg-6">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Đăng ký người dùng mới</li>
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">User Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">New User Registration</li>
                 </ol>
             </nav>
 
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Đăng Ký Người Dùng Mới</h4>
+                    <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>New User Registration</h4>
                 </div>
                 <div class="card-body">
                     @if (TempData["ErrorMessage"] != null)
@@ -31,60 +31,60 @@
 
                     <form asp-action="Register" method="post" class="needs-validation" novalidate>
                         <div class="mb-3">
-                            <label for="username" class="form-label fw-bold required">Tên đăng nhập</label>
+                            <label for="username" class="form-label fw-bold required">Username</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <input type="text" class="form-control" id="username" name="username" required
-                                       placeholder="Nhập tên đăng nhập">
+                                       placeholder="Enter username">
                             </div>
-                            <div class="form-text">Tên đăng nhập phải là duy nhất trong hệ thống.</div>
-                            <div class="invalid-feedback">Vui lòng nhập tên đăng nhập.</div>
+                            <div class="form-text">Username must be unique in the system.</div>
+                            <div class="invalid-feedback">Please enter a username.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label fw-bold required">Mật khẩu</label>
+                            <label for="password" class="form-label fw-bold required">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                 <input type="password" class="form-control" id="password" name="password" required
-                                       placeholder="Nhập mật khẩu">
+                                       placeholder="Enter password">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div class="form-text">Mật khẩu nên có ít nhất 8 ký tự và bao gồm chữ hoa, chữ thường và số.</div>
-                            <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
+                            <div class="form-text">Password should be at least 8 characters long and include uppercase, lowercase, and numbers.</div>
+                            <div class="invalid-feedback">Please enter a password.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label fw-bold required">Xác nhận mật khẩu</label>
+                            <label for="confirmPassword" class="form-label fw-bold required">Confirm Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                                 <input type="password" class="form-control" id="confirmPassword" required
-                                       placeholder="Nhập lại mật khẩu">
+                                       placeholder="Re-enter password">
                             </div>
-                            <div class="invalid-feedback">Mật khẩu xác nhận không khớp.</div>
+                            <div class="invalid-feedback">Password confirmation does not match.</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="role" class="form-label fw-bold required">Vai trò</label>
+                            <label for="role" class="form-label fw-bold required">Role</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                                 <select class="form-select" id="role" name="role" required onchange="toggleProgramField()">
-                                    <option value="" selected disabled>Chọn vai trò</option>
-                                    <option value="Student">Sinh viên</option>
-                                    <option value="Faculty">Giảng viên</option>
-                                    <option value="Admin">Quản trị viên</option>
+                                    <option value="" selected disabled>Select role</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Faculty">Faculty</option>
+                                    <option value="Admin">Administrator</option>
                                 </select>
                             </div>
-                            <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
+                            <div class="invalid-feedback">Please select a role.</div>
                         </div>
 
                         <div class="mb-4" id="programField" style="display: none;">
-                            <label for="schoolProgramId" class="form-label fw-bold required">Chương trình học</label>
+                            <label for="schoolProgramId" class="form-label fw-bold required">Study Program</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
                                 <select class="form-select" id="schoolProgramId" name="schoolProgramId">
-                                    <option value="" selected disabled>Chọn chương trình học</option>
+                                    <option value="" selected disabled>Select study program</option>
                                     @if (ViewBag.SchoolPrograms != null)
                                     {
                                         @foreach (var program in ViewBag.SchoolPrograms)
@@ -94,15 +94,15 @@
                                     }
                                 </select>
                             </div>
-                            <div class="invalid-feedback">Vui lòng chọn chương trình học.</div>
+                            <div class="invalid-feedback">Please select a study program.</div>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-person-plus me-2"></i>Đăng Ký
+                                <i class="bi bi-person-plus me-2"></i>Register
                             </button>
                             <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                                <i class="bi bi-arrow-left me-2"></i>Back
                             </a>
                         </div>
                     </form>
@@ -132,7 +132,6 @@
 
 @section Scripts {
     <script>
-        // Hiển thị/ẩn trường chương trình học dựa trên vai trò
         function toggleProgramField() {
             var role = document.getElementById('role').value;
             var programField = document.getElementById('programField');
@@ -147,7 +146,6 @@
             }
         }
 
-        // Hiển thị/ẩn mật khẩu
         document.getElementById('togglePassword').addEventListener('click', function () {
             var passwordField = document.getElementById('password');
             var icon = this.querySelector('i');
@@ -163,33 +161,15 @@
             }
         });
 
-        // Kiểm tra xác nhận mật khẩu
         document.getElementById('confirmPassword').addEventListener('input', function() {
             var password = document.getElementById('password').value;
             var confirmPassword = this.value;
 
             if (password !== confirmPassword) {
-                this.setCustomValidity('Mật khẩu xác nhận không khớp.');
+                this.setCustomValidity('Password confirmation does not match.');
             } else {
                 this.setCustomValidity('');
             }
         });
-
-        // Kiểm tra form
-        (function () {
-            'use strict'
-            var forms = document.querySelectorAll('.needs-validation');
-
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        })();
     </script>
 }

@@ -1,6 +1,6 @@
 GradeId,EnrollmentId,Component,Score
 G001,E001,Midterm,85
-G002,E001,Final,90
+G002,E001,Final,95
 G003,E001,Assignment,78.25
 G004,E002,Midterm,75
 G005,E002,Final,82
