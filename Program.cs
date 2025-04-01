@@ -68,7 +68,7 @@ app.UseAuthorization(); // Enable authorization capabilities
 // Map controller routes
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 // Run the application
 app.Run();
