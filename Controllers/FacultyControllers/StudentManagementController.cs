@@ -5,12 +5,9 @@ using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Linq;
 using System.IO;
-using SchoolManagementSystem.Utils;
-using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/student-management")]  // Định nghĩa route cho StudentManagementController
     public class StudentManagementController : Controller
     {
@@ -152,19 +149,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
         }
 
         [HttpPost]
-        [Route("send-notification")]  // Route: faculty/student-management/send-notification (POST)
-        public IActionResult SendNotification(string userId, string message, string courseId)
+        [Route("send-notification/{studentId}/{courseId}")]  // Sửa route để đồng bộ với GET
+        public IActionResult SendNotification(string studentId, string courseId, string userId, string message)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
             }
 
             var userIdFromSession = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userIdFromSession))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userIdFromSession);

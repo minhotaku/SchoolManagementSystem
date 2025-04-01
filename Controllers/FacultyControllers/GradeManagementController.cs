@@ -4,12 +4,9 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Linq;
-using SchoolManagementSystem.Utils;
-using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/grade-management")]  // Định nghĩa route cho GradeManagementController
     public class GradeManagementController : Controller
     {
@@ -118,7 +115,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Add 🙂Grade", "GradeManagement", new { enrollmentId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement", new { enrollmentId }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -143,19 +140,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
         }
 
         [HttpPost]
-        [Route("add-grade")]  // Route: faculty/grade-management/add-grade (POST)
-        public IActionResult AddGrade(Grade grade)
+        [Route("add-grade/{enrollmentId}")]  // Sửa route để đồng bộ với GET
+        public IActionResult AddGrade(string enrollmentId, Grade grade)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement", new { enrollmentId }) });
             }
 
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("AddGrade", "GradeManagement", new { enrollmentId }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -234,19 +231,19 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
         }
 
         [HttpPost]
-        [Route("edit-grade")]  // Route: faculty/grade-management/edit-grade (POST)
-        public IActionResult EditGrade(Grade grade)
+        [Route("edit-grade/{id}")]  // Sửa route để đồng bộ với GET
+        public IActionResult EditGrade(string id, Grade grade)
         {
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement", new { id }) });
             }
 
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement") });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("EditGrade", "GradeManagement", new { id }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);

@@ -4,35 +4,98 @@
     ViewData["Title"] = "Manage Grades";
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 <style>
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        width: 95%;
+        margin: 2.5rem auto;
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .dashboard-title i {
+            color: #ff8c00;
+        }
+
+    .grade-table {
+        width: 100%;
+        border-radius: 10px;
+        overflow-x: auto;
+        display: block;
+    }
+
+        .grade-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grade-table thead {
+            background-color: #1a3c87;
+        }
+
+        .grade-table th {
+            padding: 0.9375rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            letter-spacing: 0.5px;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .grade-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .grade-table tbody tr:hover {
+                background-color: #f1f5ff;
+            }
+
+        .grade-table td {
+            padding: 0.9375rem;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        }
+
     .action-icon {
         border: none;
         background: none;
         cursor: pointer;
-        padding: 5px;
-        margin: 0 5px;
-        transition: transform 0.2s;
+        padding: 0.3125rem;
+        margin: 0 0.3125rem;
+        transition: transform 0.2s ease;
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
     }
 
         .action-icon:hover {
             transform: scale(1.2);
         }
 
-    .edit-icon::before {
-        content: "✏️";
-        font-size: 18px;
+    .edit-icon {
+        color: #1a3c87;
     }
 
     .delete-icon {
         color: #dc3545;
-        font-size: 18px;
     }
-
-        .delete-icon:hover {
-            color: #c82333;
-        }
 
     .modal {
         display: none;
@@ -49,99 +112,201 @@
 
     .modal-content {
         background-color: #fff;
-        padding: 20px;
+        padding: 1.25rem;
         border: 2px solid #dc3545;
         border-radius: 8px;
-        width: 400px;
+        width: 90%;
+        max-width: 400px;
         text-align: center;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
         .modal-content .warning-icon {
             color: #dc3545;
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            margin-bottom: 0.625rem;
         }
 
         .modal-content h4 {
             color: #dc3545;
-            margin-bottom: 15px;
+            margin-bottom: 0.9375rem;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
         }
 
         .modal-content p {
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
+            color: #555;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
         .modal-content .btn {
-            padding: 8px 20px;
-            margin: 0 10px;
-            border-radius: 5px;
-            cursor: pointer;
+            padding: 0.5rem 1.25rem;
+            margin: 0 0.625rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            min-width: 80px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
         .modal-content .btn-danger {
             background-color: #dc3545;
-            color: white;
+            color: #fff;
             border: none;
         }
+
+            .modal-content .btn-danger:hover {
+                background-color: #c82333;
+                transform: translateY(-2px);
+            }
 
         .modal-content .btn-secondary {
             background-color: #6c757d;
-            color: white;
+            color: #fff;
             border: none;
         }
+
+            .modal-content .btn-secondary:hover {
+                background-color: #5a6268;
+                transform: translateY(-2px);
+            }
+
+    .summary-section {
+        margin-top: 1.25rem;
+        padding: 0.9375rem;
+        background-color: #f9fbfd;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+        .summary-section h4 {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 600;
+            color: #1a3c87;
+            margin-bottom: 0.625rem;
+        }
+
+        .summary-section p {
+            margin: 0.3125rem 0;
+            color: #555;
+            font-size: clamp(0.85rem, 2vw, 1rem);
+        }
+
+    .action-buttons {
+        margin-top: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.625rem;
+    }
+
+    .action-btn {
+        padding: 0.625rem 1.25rem;
+        border-radius: 25px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 120px;
+        text-align: center;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .btn-add-grade {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+        .btn-add-grade:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    @@media (max-width: 768px) {
+        .grade-table th, .grade-table td {
+            padding: 0.625rem;
+        }
+
+        .action-btn {
+            flex: 1 0 100%; /* Nút xếp dọc trên mobile */
+        }
+    }
 </style>
 
-<h2>Grades for Student @ViewBag.StudentId (Enrollment @ViewBag.EnrollmentId)</h2>
+<div class="dashboard-container">
+    <h2 class="dashboard-title">
+        <i class="bi bi-gear-fill"></i> Grades for Student @ViewBag.StudentId (Enrollment @ViewBag.EnrollmentId)
+    </h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Grade ID</th>
-            <th>Component</th>
-            <th>Score</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var grade in Model)
-        {
-            <tr>
-                <td>@grade.GradeId</td>
-                <td>@grade.Component</td>
-                <td>@grade.Score</td>
-                <td>
-                    <form asp-action="EditGrade" asp-controller="GradeManagement" asp-route-id="@grade.GradeId" method="get" style="display:inline;">
-                        <button type="submit" class="action-icon edit-icon" title="Edit"></button>
-                    </form>
-                    <button type="button" class="action-icon delete-icon" onclick="showDeleteModal('@grade.GradeId')" title="Delete">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="grade-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Grade ID</th>
+                    <th>Component</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var grade in Model)
+                {
+                    <tr>
+                        <td>@grade.GradeId</td>
+                        <td>@grade.Component</td>
+                        <td>@grade.Score</td>
+                        <td>
+                            <form asp-action="EditGrade" asp-controller="GradeManagement" asp-route-id="@grade.GradeId" method="get" style="display:inline;">
+                                <button type="submit" class="action-icon edit-icon" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                            </form>
+                            <button type="button" class="action-icon delete-icon" onclick="showDeleteModal('@grade.GradeId')" title="Delete">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-<div>
-    <h4>Summary</h4>
-    <p>Average Score: @ViewBag.AverageScore.ToString("F2")</p>
-    <p>Classification: @ViewBag.Classification</p>
-</div>
+    <div class="summary-section">
+        <h4>Summary</h4>
+        <p>Average Score: @ViewBag.AverageScore.ToString("F2")</p>
+        <p>Classification: @ViewBag.Classification</p>
+    </div>
 
-<a asp-action="AddGrade" asp-controller="GradeManagement" asp-route-enrollmentId="@ViewBag.EnrollmentId" class="btn btn-primary">Add Grade</a>
-<a asp-action="Index" asp-controller="GradeManagement" asp-route-courseId="@ViewBag.CourseId" class="btn btn-primary">Back to List</a>
+    <div class="action-buttons">
+        <a asp-action="AddGrade" asp-controller="GradeManagement" asp-route-enrollmentId="@ViewBag.EnrollmentId" class="action-btn btn-add-grade">
+            <i class="bi bi-plus-circle-fill"></i> Add Grade
+        </a>
+        <a asp-action="Index" asp-controller="GradeManagement" asp-route-courseId="@ViewBag.CourseId" class="action-btn btn-back">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <span class="warning-icon"><i class="fas fa-exclamation-triangle"></i></span>
-        <h4>Confirm Deletion</h4>
-        <p>Are you sure you want to delete this grade?</p>
-        <form id="deleteForm" asp-action="DeleteGrade" asp-controller="GradeManagement" method="post" style="display:inline;">
-            <input type="hidden" name="id" id="gradeIdToDelete" />
-            <button type="submit" class="btn btn-danger">Delete</button>
-            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-        </form>
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="warning-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+            <h4>Confirm Deletion</h4>
+            <p>Bạn có chắc muốn xóa điểm này không?</p>
+            <form id="deleteForm" asp-action="DeleteGrade" asp-controller="GradeManagement" method="post" style="display:inline;">
+                <input type="hidden" name="id" id="gradeIdToDelete" />
+                <button type="submit" class="btn btn-danger">Yes</button>
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">No</button>
+            </form>
+        </div>
     </div>
 </div>
 

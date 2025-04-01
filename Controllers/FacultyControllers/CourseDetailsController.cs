@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
-using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/course-details")]  // Định nghĩa route cho CourseDetailsController
     public class CourseDetailsController : Controller
     {

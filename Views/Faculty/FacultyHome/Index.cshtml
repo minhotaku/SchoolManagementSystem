@@ -4,32 +4,168 @@
     ViewData["Title"] = "Faculty Dashboard - My Courses";
 }
 
-<h2>My Courses</h2>
+<style>
+    /* Reset và thiết lập nền */
+    body {
+        background-color: #f8f9fa; /* Nền xám nhạt của Bootstrap */
+        margin: 0;
+        font-size: 16px; /* Font gốc để rem/em dựa vào */
+    }
 
-<p>
-    <a asp-controller="TeachingReport" asp-action="Index">View Teaching Report</a>
-</p>
+    /* Container chính */
+    .dashboard-container {
+        max-width: 1200px;
+        width: 95%; /* Linh hoạt theo màn hình */
+        margin: 2rem auto; /* Khoảng cách tương đối */
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Course ID</th>
-            <th>Course Name</th>
-            <th>Credits</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var course in Model)
-        {
-            <tr>
-                <td>@course.CourseId</td>
-                <td>@course.CourseName</td>
-                <td>@course.Credits</td>
-                <td>
-                    <a href="@Url.Action("Details", "CourseDetails", new { id = course.CourseId })">Details</a>
-                </td>
-            </tr>
+    /* Tiêu đề */
+    .dashboard-title {
+        font-size: clamp(1.5rem, 4vw, 2.2rem); /* Tự điều chỉnh từ 1.5rem đến 2.2rem */
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 0.625rem;
+        display: flex;
+        flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .dashboard-title i {
+            color: #ff8c00;
         }
-    </tbody>
-</table>
+
+    /* Nút View Teaching Report */
+    .report-link {
+        padding: 0.625rem 1.25rem;
+        background-color: #ff8c00;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 500;
+        display: inline-block;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 120px; /* Đảm bảo dễ bấm trên mobile */
+        text-align: center;
+    }
+
+        .report-link:hover {
+            background-color: #e07b00;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    /* Bảng dữ liệu */
+    .course-table {
+        width: 100%;
+        border-radius: 10px;
+        overflow-x: auto; /* Cuộn ngang nếu cần trên mobile */
+        display: block;
+    }
+
+        .course-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .course-table thead {
+            background-color: #1a3c87;
+        }
+
+        .course-table th {
+            padding: 0.9375rem; /* 15px */
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: clamp(0.75rem, 2vw, 0.9rem); /* Linh hoạt font */
+            letter-spacing: 0.5px;
+            color: #fff;
+            white-space: nowrap; /* Ngăn xuống dòng */
+        }
+
+        .course-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .course-table tbody tr:hover {
+                background-color: #f1f5ff;
+            }
+
+        .course-table td {
+            padding: 0.9375rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+        }
+
+    /* Cột Actions */
+    .action-link {
+        padding: 0.5rem 1rem;
+        background-color: #28a745;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: 500;
+        display: inline-block;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 80px; /* Đảm bảo dễ bấm trên mobile */
+        text-align: center;
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+    }
+
+        .action-link:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    /* Flexbox cho layout tổng thể */
+    .dashboard-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="dashboard-content">
+        <h2 class="dashboard-title">
+            <i class="bi bi-mortarboard-fill"></i> My Courses
+        </h2>
+
+        <p>
+            <a asp-controller="TeachingReport" asp-action="Index" class="report-link">
+                <i class="bi bi-bar-chart-line"></i> View Teaching Report
+            </a>
+        </p>
+
+        <div class="course-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Credits</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model)
+                    {
+                        <tr>
+                            <td>@course.CourseId</td>
+                            <td>@course.CourseName</td>
+                            <td>@course.Credits</td>
+                            <td>
+                                <a href="@Url.Action("Details", "CourseDetails", new { id = course.CourseId })" class="action-link">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

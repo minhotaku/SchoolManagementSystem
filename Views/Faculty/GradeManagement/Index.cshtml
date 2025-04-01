@@ -4,42 +4,167 @@
     ViewData["Title"] = "Grade Management";
 }
 
-<h2>Grade Management for Course @ViewBag.CourseId</h2>
+<style>
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        font-size: 16px;
+    }
 
-@if (Model == null || !Model.Any())
-{
-    <p>No enrollments found for this course.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Enrollment ID</th>
-                <th>Student ID</th>
-                <th>Semester</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var enrollment in Model)
-            {
-                <tr>
-                    <td>@(enrollment?.EnrollmentId ?? "N/A")</td>
-                    <td>@(enrollment?.StudentId ?? "N/A")</td>
-                    <td>@(enrollment?.Semester ?? "N/A")</td>
-                    <td>
-                        @if (enrollment != null)
-                        {
-                            <a asp-action="ManageGrades" asp-controller="GradeManagement" asp-route-enrollmentId="@enrollment.EnrollmentId">Manage Grades</a>
-                        }
-                    </td>
-                </tr>
+    .dashboard-container {
+        max-width: 1200px;
+        width: 95%;
+        margin: 2.5rem auto;
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .dashboard-title i {
+            color: #ff8c00;
+        }
+
+    .enrollment-table {
+        width: 100%;
+        border-radius: 10px;
+        overflow-x: auto;
+        display: block;
+    }
+
+        .enrollment-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .enrollment-table thead {
+            background-color: #1a3c87;
+        }
+
+        .enrollment-table th {
+            padding: 0.9375rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            letter-spacing: 0.5px;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .enrollment-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .enrollment-table tbody tr:hover {
+                background-color: #f1f5ff;
             }
-        </tbody>
-    </table>
-}
 
-<form asp-action="Details" asp-controller="CourseDetails" asp-route-id="@ViewBag.CourseId" method="get" style="display:inline;">
-    <button type="submit" class="btn btn-secondary">Back to Course</button>
-</form>
+        .enrollment-table td {
+            padding: 0.9375rem;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        }
+
+    .action-link {
+        padding: 0.5rem 1rem;
+        background-color: #28a745;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 100px;
+        text-align: center;
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+    }
+
+        .action-link:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    .btn-back {
+        padding: 0.625rem 1.25rem;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        border: none;
+        min-width: 120px;
+        text-align: center;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+    @@media (max-width: 768px) {
+        .enrollment-table th, .enrollment-table td {
+            padding: 0.625rem;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <h2 class="dashboard-title">
+        <i class="bi bi-clipboard-check"></i> Grade Management for Course @ViewBag.CourseId
+    </h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p>No enrollments found for this course.</p>
+    }
+    else
+    {
+        <div class="enrollment-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Enrollment ID</th>
+                        <th>Student ID</th>
+                        <th>Semester</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var enrollment in Model)
+                    {
+                        <tr>
+                            <td>@(enrollment?.EnrollmentId ?? "N/A")</td>
+                            <td>@(enrollment?.StudentId ?? "N/A")</td>
+                            <td>@(enrollment?.Semester ?? "N/A")</td>
+                            <td>
+                                @if (enrollment != null)
+                                {
+                                    <a asp-action="ManageGrades" asp-controller="GradeManagement" asp-route-enrollmentId="@enrollment.EnrollmentId" class="action-link">
+                                        <i class="bi bi-gear-fill"></i> Manage Grades
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <form asp-action="Details" asp-controller="CourseDetails" asp-route-id="@ViewBag.CourseId" method="get" style="display:inline;">
+        <button type="submit" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Course
+        </button>
+    </form>
+</div>
