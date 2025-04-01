@@ -4,13 +4,14 @@ using SchoolManagementSystem.Services.Interfaces;
 using SchoolManagementSystem.Services.Implementation; // Để lấy GetInstance nếu không dùng DI
 using SchoolManagementSystem.ViewModels; // Thêm namespace cho LoginViewModel
 using SchoolManagementSystem.Data; // Thêm namespace cho UnitOfWork nếu cần
-
+using SchoolManagementSystem.Utils;
+using SchoolManagementSystem.Entities;
+using SchoolManagementSystem.Models;
 namespace SchoolManagementSystem.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IAuthenticationService _authenticationService;
-        // Không cần _unitOfWork ở đây nếu service đã xử lý hết logic DB
 
         // Session Key Constants
         private const string SessionKeyUserId = "_UserId";
@@ -19,7 +20,7 @@ namespace SchoolManagementSystem.Controllers
 
         public AccountController()
         {
-            // Lấy instance Service theo mẫu Singleton
+  
             _authenticationService = AuthenticationService.GetInstance();
         }
 
@@ -47,24 +48,23 @@ namespace SchoolManagementSystem.Controllers
                     HttpContext.Session.SetString(SessionKeyUserId, user.UserId);
                     HttpContext.Session.SetString(SessionKeyUsername, user.Username);
                     HttpContext.Session.SetString(SessionKeyUserRole, user.Role);
-                    // ---
 
-                    // Logged in successfully
-                    // Chuyển hướng đến trang được yêu cầu hoặc trang chủ
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    _sessionService.SetUserSession(user.UserId, user.Username, user.Role); // Logic hiện tại cần để phân quyền HTTP Sesion phía trên đã lỗi thời
+
+                    switch (user.Role)
                     {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        // Chuyển hướng đến trang mặc định sau khi login, ví dụ: Home/Index
-                        return RedirectToAction("Index", "Home");
+                        case RoleConstants.Admin:
+                            return RedirectToAction("Index", "AdminDashboard");
+                        case RoleConstants.Faculty:
+                            return RedirectToAction("Index", "Faculty");
+                        case RoleConstants.Student:
+                            return RedirectToAction("Dashboard", "Student");
                     }
                 }
                 else
                 {
                     // Authentication failed
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Incorrect login information.");
                     return View(model);
                 }
             }
@@ -80,11 +80,13 @@ namespace SchoolManagementSystem.Controllers
         {
             // Xóa Session
             HttpContext.Session.Clear();
-            // Chuyển hướng về trang chủ hoặc trang Login
-            return RedirectToAction("Index", "Home");
+            _sessionService.ClearSession();
+
+            // Chuyển hướng về trang Login
+            return RedirectToAction("Login");
         }
 
-        // Optional: Action để hiển thị trang Access Denied (nếu cần sau này)
+     
         [HttpGet]
         public IActionResult AccessDenied()
         {

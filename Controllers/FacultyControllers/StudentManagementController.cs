@@ -5,9 +5,12 @@ using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Linq;
 using System.IO;
+using SchoolManagementSystem.Utils;
+using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/student-management")]  // Định nghĩa route cho StudentManagementController
     public class StudentManagementController : Controller
     {

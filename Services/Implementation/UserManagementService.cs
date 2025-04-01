@@ -5,6 +5,7 @@ using BCrypt.Net;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Interfaces;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Services.Implementation
 {
@@ -79,7 +80,7 @@ namespace SchoolManagementSystem.Services.Implementation
                 {
                     UserId = userId,
                     Username = username,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                    PasswordHash = HashPassword.ComputeSha256Hash(password),
                     Role = role
                 };
 
@@ -184,7 +185,7 @@ namespace SchoolManagementSystem.Services.Implementation
                 }
 
                 // Kiểm tra mật khẩu đăng nhập có khớp với mật khẩu đã lưu không
-                if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                if (!password.Equals(HashPassword.ComputeSha256Hash(user.PasswordHash)))
                 {
                     // Ghi log thất bại
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Failed login attempt: Incorrect password for user '{username}'");

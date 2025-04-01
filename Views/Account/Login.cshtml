@@ -1,122 +1,516 @@
 ﻿@model SchoolManagementSystem.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Login";
+    Layout = null;
 }
 
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <h2>@ViewData["Title"]</h2>
-            <p class="text-muted">Enter your credentials to access the system</p>
-        </div>
-
-        <div class="login-body">
-            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Username" class="form-control" placeholder="Username" autocomplete="username" />
-                    <label asp-for="Username">Username</label>
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
-
-                <div class="form-floating mb-4">
-                    <input asp-for="Password" class="form-control" placeholder="Password" autocomplete="current-password" />
-                    <label asp-for="Password">Password</label>
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-
-                <div class="d-grid gap-2">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-primary login-btn">
-                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                    </button>
-                </div>
-
-                <!-- Uncomment if you need these features
-                <div class="login-footer mt-4">
-                    <div class="d-flex justify-content-between">
-                        <a href="#" class="text-decoration-none">Forgot password?</a>
-                        <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" class="text-decoration-none">Create account</a>
-                    </div>
-                </div>
-                -->
-            </form>
-        </div>
-    </div>
-</div>
-
-@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - School Management System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html, body {
+            /* Add this to prevent any scrolling */
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* Add padding to create space around the container */
+            padding: 15px;
+        }
+
+            body::before {
+                content: "";
+                position: absolute;
+                width: 300px;
+                height: 300px;
+                background: var(--accent-color);
+                border-radius: 50%;
+                top: -150px;
+                right: -150px;
+                opacity: 0.3;
+                z-index: -1;
+            }
+
+            body::after {
+                content: "";
+                position: absolute;
+                width: 250px;
+                height: 250px;
+                background: var(--primary-color);
+                border-radius: 50%;
+                bottom: -125px;
+                left: -125px;
+                opacity: 0.3;
+                z-index: -1;
+            }
+
         .login-container {
             display: flex;
+            width: 900px;
+            height: 600px;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Keep this to contain inner elements */
+            background: white;
+            max-width: 100%; /* Changed from 95vw to ensure spacing is handled by body padding */
+            max-height: 100%; /* Changed from 95vh for the same reason */
+        }
+
+        .login-image {
+            flex: 1;
+            background: linear-gradient(to right, rgba(67, 97, 238, 0.9), rgba(63, 55, 201, 0.8)), url('https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 80vh;
-            padding: 2rem 1rem;
+            color: white;
+            padding: 2rem;
+            position: relative;
         }
 
-        .login-card {
-            width: 100%;
-            max-width: 450px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            padding: 2.5rem;
+        .school-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        .login-header {
+        .school-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .school-tagline {
+            font-size: 1rem;
+            opacity: 0.9;
             text-align: center;
             margin-bottom: 2rem;
         }
 
-            .login-header h2 {
-                font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 0.75rem;
+        .login-form {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto; /* Add scroll only to the form if needed */
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .login-subtitle {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%; /* Ensure inputs don't overflow */
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background-color: var(--light-gray);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+                background-color: white;
+                border: 1px solid var(--primary-color);
             }
 
-        .form-floating > .form-control {
-            padding: 1rem 0.75rem;
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
         }
 
-        .login-btn {
-            padding: 0.75rem;
-            font-weight: 500;
-            font-size: 1rem;
-            text-transform: uppercase;
+        .validation-message {
+            font-size: 0.8rem;
+            color: #dc3545;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .validation-message:before {
+                content: "\f071";
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                font-size: 0.75rem;
+            }
+
+        .btn-login {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            text-transform: none;
             letter-spacing: 0.5px;
-            transition: all 0.3s;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
         }
 
-            .login-btn:hover {
+            .btn-login:hover {
+                background-color: var(--secondary-color);
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 6px 8px rgba(67, 97, 238, 0.25);
+            }
+
+            .btn-login i {
+                margin-right: 0.5rem;
             }
 
         .login-footer {
-            padding-top: 1rem;
-            border-top: 1px solid #f1f1f1;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+            .login-footer a {
+                color: var(--primary-color);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .login-footer a:hover {
+                    color: var(--secondary-color);
+                    text-decoration: underline;
+                }
+
+        .validation-summary {
+            display: none; /* Hide the original validation summary */
+        }
+
+        /* Enhanced Toast notification style */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(220, 53, 69, 0.95);
+            border-left: 4px solid #c82333;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1050;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 350px;
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            transform: translateX(400px);
+            opacity: 0;
             font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        .text-muted {
-            color: #6c757d;
+            .toast-notification.show {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+        .toast-notification-content {
+            flex: 1;
+            padding-right: 10px;
         }
 
-        /* Optional: add a subtle background pattern */
-        body {
-            background-color: #f8f9fa;
-            background-image: radial-gradient(#dee2e6 1px, transparent 1px);
-            background-size: 20px 20px;
+            .toast-notification-content ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+                .toast-notification-content ul li {
+                    position: relative;
+                    padding-left: 1.2rem;
+                    margin-bottom: 6px;
+                }
+
+                    .toast-notification-content ul li:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .toast-notification-content ul li:before {
+                        content: "\f057";
+                        font-family: "Font Awesome 6 Free";
+                        font-weight: 900;
+                        position: absolute;
+                        left: 0;
+                        top: 2px;
+                        font-size: 0.85rem;
+                    }
+
+        .toast-notification-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+            .toast-notification-header i {
+                margin-right: 8px;
+            }
+
+        .toast-notification-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            margin-top: 2px;
+        }
+
+            .toast-notification-close:hover {
+                opacity: 1;
+            }
+
+        /* Responsive adjustments */
+        @@media (max-width: 992px) {
+            .login-container {
+                width: 90%;
+                height: auto;
+                flex-direction: column;
+            }
+
+            .login-image {
+                padding: 2rem;
+                min-height: 180px;
+            }
+
+            .login-form {
+                padding: 2rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            body {
+                padding: 20px; /* Increased padding for more space around container */
+            }
+
+            .login-container {
+                width: 100%;
+                height: auto;
+                max-height: calc(100% - 40px); /* Account for body padding */
+                border-radius: var(--border-radius); /* Keep border radius */
+            }
+
+            .login-image {
+                padding: 1.5rem;
+                min-height: 120px; /* Reduced height for small screens */
+            }
+
+            .login-form {
+                padding: 1.5rem;
+            }
+
+            .school-name {
+                font-size: 1.5rem;
+            }
+
+            .school-tagline {
+                font-size: 0.9rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem; /* Reduce spacing between form groups */
+            }
+
+            .toast-notification {
+                max-width: 90%;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Additional iPhone-specific adjustments */
+        @@media screen and (max-width: 428px) {
+            body {
+                padding: 15px; /* Maintain padding for iPhone */
+            }
+
+            .login-container {
+                width: 100%; /* Use full width of the padded area */
+                border-radius: var(--border-radius); /* Maintain border radius */
+                max-height: calc(100% - 30px); /* Account for body padding */
+            }
+
+            .login-image {
+                min-height: 80px; /* Even smaller height for iPhones */
+            }
+
+            .login-form {
+                overflow: hidden;
+            }
+            /* Reduce form spacing to fit better */
+            .login-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-control {
+                padding: 0.6rem 1rem 0.6rem 3rem;
+            }
         }
     </style>
-}
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <div class="school-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h1 class="school-name">School Management System</h1>
+            <p class="school-tagline">Empowering education through innovation</p>
+        </div>
+        <div class="login-form">
+            <div class="login-header">
+                <h2 class="login-title">Welcome Back</h2>
+                <p class="login-subtitle">Please sign in to access your account</p>
+            </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <!-- Hidden validation summary - will be used as a source for the toast notification -->
+                <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+
+                <!-- Enhanced Toast notification for validation errors -->
+                <div id="validationToast" class="toast-notification">
+                    <div class="toast-notification-content">
+                        <div class="toast-notification-header">
+                            <i class="fas fa-exclamation-circle"></i> Validation Error
+                        </div>
+                        <div id="toastMessages"></div>
+                    </div>
+                    <button type="button" class="toast-notification-close" onclick="closeToast()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input asp-for="Username" class="form-control" placeholder="Username" autocomplete="username" />
+                    <span asp-validation-for="Username" class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input asp-for="Password" class="form-control" type="password" placeholder="Password" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="validation-message"></span>
+                </div>
+
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+
+
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        // Function to show validation errors as toast notification
+        $(document).ready(function() {
+            // Change the default validation error message for required fields
+            $.validator.messages.required = "This field is required";
+
+            // Handle validation summary errors
+            if ($('.validation-summary ul li').length > 0) {
+                let messageHtml = '<ul>';
+                $('.validation-summary ul li').each(function() {
+                    messageHtml += '<li>' + $(this).text() + '</li>';
+                });
+                messageHtml += '</ul>';
+
+                $('#toastMessages').html(messageHtml);
+                $('#validationToast').addClass('show');
+
+                // Auto-hide after 6 seconds
+                setTimeout(function() {
+                    closeToast();
+                }, 6000);
+            }
+
+            // Enhance field validation
+            $('.field-validation-error').addClass('validation-message');
+        });
+
+        // Function to close the toast notification with animation
+        function closeToast() {
+            $('#validationToast').css('opacity', '0');
+            setTimeout(function() {
+                $('#validationToast').removeClass('show').css('opacity', '');
+            }, 300);
+        }
+    </script>
+</body>
+</html>

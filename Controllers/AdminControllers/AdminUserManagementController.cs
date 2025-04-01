@@ -9,9 +9,11 @@ using SchoolManagementSystem.Entities; // Để dùng User, Student,...
 using SchoolManagementSystem.Services.Implementation; // Để lấy UserManagementService instance
 using SchoolManagementSystem.Services.Interfaces; // Để dùng IUserManagementService
 using SchoolManagementSystem.Models; // Namespace cho ViewModels
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class AdminUserManagementController : Controller
     {
         private readonly IUserManagementService _userManagementService;

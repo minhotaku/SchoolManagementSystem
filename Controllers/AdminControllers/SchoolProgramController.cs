@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Data; // Để dùng IUnitOfWork
 using SchoolManagementSystem.Entities; // Để dùng SchoolProgram, Student
 using SchoolManagementSystem.Models; // Để dùng ViewModels
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class SchoolProgramController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -7,9 +7,11 @@ using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Services.Implementation;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class CourseManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

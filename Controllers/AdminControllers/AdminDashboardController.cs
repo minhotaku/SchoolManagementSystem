@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Models;
-using System.Linq; // Cần cho Count()
+using System.Linq; 
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class AdminDashboardController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

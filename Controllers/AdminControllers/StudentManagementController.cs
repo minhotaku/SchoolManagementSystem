@@ -9,9 +9,11 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation; // Dùng để lấy User
 using SchoolManagementSystem.Services.Interfaces;   // Dùng để lấy User
 using SchoolManagementSystem.Models;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class StudentManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

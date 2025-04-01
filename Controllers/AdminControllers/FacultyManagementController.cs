@@ -9,9 +9,11 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation; // Cần để dùng User Service
 using SchoolManagementSystem.Services.Interfaces;   // Cần để dùng User Service
 using SchoolManagementSystem.Models;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class FacultyManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

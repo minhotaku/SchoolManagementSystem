@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Models;
-using SchoolManagementSystem.Services.Implementation; 
+using SchoolManagementSystem.Services.Implementation;
+
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class EnrollmentManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

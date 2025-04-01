@@ -1,7 +1,9 @@
-﻿using BCrypt.Net;
+﻿
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Interfaces;
+using SchoolManagementSystem.Utils; 
+using System; 
 
 namespace SchoolManagementSystem.Services.Implementation
 {
@@ -10,7 +12,6 @@ namespace SchoolManagementSystem.Services.Implementation
         private static AuthenticationService _instance;
         private static readonly object _lock = new object();
         private readonly IUnitOfWork _unitOfWork;
-
         public static AuthenticationService GetInstance()
         {
             if (_instance == null)
@@ -31,6 +32,7 @@ namespace SchoolManagementSystem.Services.Implementation
             _unitOfWork = UnitOfWork.GetInstance();
         }
 
+
         public User Authenticate(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -40,12 +42,24 @@ namespace SchoolManagementSystem.Services.Implementation
 
             var user = _unitOfWork.Users.GetByUsername(username);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            // Nếu user không tồn tại, trả về null ngay lập tức
+            if (user == null)
             {
+                return null; // User not found
+            }
+
+            string providedPasswordHash = HashPassword.ComputeSha256Hash(password);
+
+            if (!string.Equals(providedPasswordHash, user.PasswordHash, StringComparison.OrdinalIgnoreCase))
+            {
+                // Mật khẩu không khớp
                 return null; // Authentication failed
             }
+            // --- KẾT THÚC THAY ĐỔI ---
 
             return user; // Authentication successful
         }
+
+
     }
 }

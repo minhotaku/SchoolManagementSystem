@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
+using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class UserManagementController : Controller
     {
         private readonly IUserManagementService _userManagementService;
@@ -151,7 +153,7 @@ namespace SchoolManagementSystem.Controllers
             // Cập nhật mật khẩu nếu có
             if (!string.IsNullOrWhiteSpace(newPassword))
             {
-                existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                existingUser.PasswordHash = HashPassword.ComputeSha256Hash(newPassword);
             }
 
             // Lưu thông tin cập nhật

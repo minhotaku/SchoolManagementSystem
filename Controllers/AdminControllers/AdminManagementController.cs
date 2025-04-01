@@ -9,9 +9,11 @@ using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces; 
 using SchoolManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
+    [Authorize(RoleConstants.Admin)]
     public class AdminManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

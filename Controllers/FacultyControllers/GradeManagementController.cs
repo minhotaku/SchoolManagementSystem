@@ -4,9 +4,12 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Linq;
+using SchoolManagementSystem.Utils;
+using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
+    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/grade-management")]  // Định nghĩa route cho GradeManagementController
     public class GradeManagementController : Controller
     {

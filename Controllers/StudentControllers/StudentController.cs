@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Http;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using SchoolManagementSystem.Models;
+using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.StudentControllers
 {
+    [Authorize(RoleConstants.Student)]
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
