@@ -1,32 +1,32 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.AdminViewModel>
 @{
-    ViewData["Title"] = "Quản Lý Quản Trị Viên";
+    ViewData["Title"] = "Admin Management";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề và Nút Thêm --- *@
+    @* --- Title and Add Button --- *@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-person-gear me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Danh sách tài khoản quản trị viên.</p>
+            <p class="text-muted mb-0">List of administrator accounts.</p>
         </div>
         <div class="col-auto">
             <a asp-controller="AdminUserManagement" asp-action="Create" class="btn btn-danger">
-                @* Nút màu đỏ *@
-                <i class="bi bi-plus-lg me-1"></i> Thêm Admin Mới
+                @* Red button *@
+                <i class="bi bi-plus-lg me-1"></i> Add New Admin
             </a>
         </div>
     </div>
 
-    @* --- Hiển thị TempData messages --- *@
+    @* --- Display TempData messages --- *@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -40,31 +40,30 @@
         <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["WarningMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    @* --- Card chứa Bảng và Filter (Giao diện giống AdminUserManagement) --- *@
+    @* --- Card containing Table and Filter (Interface similar to AdminUserManagement) --- *@
     <div class="card shadow-sm">
         <div class="card-header bg-light py-3">
-            @* --- Input Tìm kiếm --- *@
+            @* --- Search Input --- *@
             <div class="row g-2 align-items-center">
                 <div class="col-md-8 col-lg-9">
-                    @* Cho ô tìm kiếm rộng *@
+                    @* For wide search box *@
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo Tên đăng nhập hoặc Mã Admin...">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Username or Admin ID...">
                         <button class="btn btn-outline-secondary" type="button" id="searchButton">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
                 </div>
-                <div class="col-md-4 col-lg-3"></div> @* Để trống hoặc thêm filter khác *@
-            </div>
+                <div class="col-md-4 col-lg-3"></div> @* Leave empty or add other filters *@            </div>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 20%;">Mã Quản Trị Viên</th>
-                            <th style="width: 40%;">Tên đăng nhập</th>
-                            <th style="width: 40%;" class="text-center">Thao tác</th> @* Tăng độ rộng *@
+                            <th style="width: 20%;">Admin ID</th>
+                            <th style="width: 40%;">Username</th>
+                            <th style="width: 40%;" class="text-center">Actions</th> @* Increased width *@
                         </tr>
                     </thead>
                     <tbody id="adminTableBody">
@@ -73,19 +72,19 @@
                             @foreach (var admin in Model)
                             {
                                 <tr class="admin-row" data-username="@admin.Username.ToLower()" data-adminid="@admin.AdminId.ToLower()">
-                                    <td><span class="badge bg-secondary font-monospace">@admin.AdminId</span></td> @* Badge cho ID *@
+                                    <td><span class="badge bg-secondary font-monospace">@admin.AdminId</span></td> @* Badge for ID *@
                                     <td>@admin.Username</td>
                                     <td class="text-center">
-                                        @* Các nút thao tác có chữ *@
+                                        @* Action buttons with text *@
                                         <div class="btn-group btn-group-sm" role="group">
                                             <a asp-controller="AdminManagement" asp-action="Edit" asp-route-id="@admin.AdminId" class="btn btn-outline-primary">
-                                                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                                                <i class="bi bi-pencil-square me-1"></i> Edit
                                             </a>
                                             <a asp-controller="AdminManagement" asp-action="Delete" asp-route-id="@admin.UserId" class="btn btn-outline-danger">
-                                                <i class="bi bi-trash me-1"></i> Xóa
+                                                <i class="bi bi-trash me-1"></i> Delete
                                             </a>
                                             <a asp-controller="AdminManagement" asp-action="Details" asp-route-id="@admin.AdminId" class="btn btn-outline-info">
-                                                <i class="bi bi-info-circle me-1"></i> Chi tiết
+                                                <i class="bi bi-info-circle me-1"></i> Details
                                             </a>
                                         </div>
                                     </td>
@@ -94,14 +93,14 @@
                         }
                         else
                         {
-                            <tr><td colspan="3" class="text-center py-4 text-muted">Không có quản trị viên nào.</td></tr>
+                            <tr><td colspan="3" class="text-center py-4 text-muted">No administrators available.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer bg-light text-muted">
-            Tổng số: <span id="adminCount">@(Model?.Count() ?? 0)</span> quản trị viên.
+            Total: <span id="adminCount">@(Model?.Count() ?? 0)</span> administrators.
         </div>
     </div>
 </div>
@@ -109,32 +108,32 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // --- Hàm Filter cho Bảng Admin ---
+            // --- Filter Function for Admin Table ---
             function filterAdminTable() {
                 var searchTerm = $("#searchInput").val().toLowerCase();
                 var count = 0;
                 $("#adminTableBody tr.admin-row").each(function() {
                     var rowUsername = $(this).data('username');
-                    var rowAdminId = $(this).data('adminid'); // Lấy adminid
+                    var rowAdminId = $(this).data('adminid'); // Get adminid
                     var show = true;
-                    if (searchTerm && rowUsername.indexOf(searchTerm) === -1 && rowAdminId.indexOf(searchTerm) === -1) { // So sánh với adminid
+                    if (searchTerm && rowUsername.indexOf(searchTerm) === -1 && rowAdminId.indexOf(searchTerm) === -1) { // Compare with adminid
                         show = false;
                     }
                     $(this).toggle(show);
                     if(show) count++;
                 });
-                $("#adminCount").text(count); // Cập nhật bộ đếm
+                $("#adminCount").text(count); // Update counter
 
-                 // --- Hiển thị/Ẩn thông báo "Không tìm thấy kết quả" ---
+                 // --- Show/Hide "No results found" message ---
                  $("#noResultsRowAdmin").remove();
                  if (count === 0 && $("#adminTableBody tr.admin-row").length > 0) {
-                     $("#adminTableBody").append('<tr id="noResultsRowAdmin"><td colspan="3" class="text-center text-muted py-3">Không tìm thấy kết quả phù hợp.</td></tr>');
+                     $("#adminTableBody").append('<tr id="noResultsRowAdmin"><td colspan="3" class="text-center text-muted py-3">No matching results found.</td></tr>');
                  }
             }
 
-            // Gắn sự kiện cho ô tìm kiếm
-             $("#searchInput").on("keyup", filterAdminTable); // Hoặc #searchButton click
-            // Đếm ban đầu
+            // Attach event to search input
+             $("#searchInput").on("keyup", filterAdminTable); // Or #searchButton click
+            // Initial count
             $("#adminCount").text($("#adminTableBody tr.admin-row").length);
         });
     </script>

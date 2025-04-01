@@ -16,12 +16,12 @@ namespace SchoolManagementSystem.Controllers
         private readonly IUserManagementService _userManagementService;
         private readonly IUnitOfWork _unitOfWork;
 
-        // Ngày giờ hiện tại UTC và thông tin người dùng hiện tại
+        // Current UTC date and time and current logged-in user information
         private readonly DateTime _currentDateTime = new DateTime(2025, 03, 31, 10, 28, 53);
         private readonly string _currentUserLogin = "minhotaku";
 
         /// <summary>
-        /// Khởi tạo controller quản lý người dùng
+        /// Initializes the user management controller
         /// </summary>
         public UserManagementController()
         {
@@ -33,52 +33,52 @@ namespace SchoolManagementSystem.Controllers
         }
 
         /// <summary>
-        /// Hiển thị danh sách người dùng
+        /// Displays the list of users
         /// </summary>
         [HttpGet]
         public IActionResult Index()
         {
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} accessed user management index");
 
-            // Lấy tất cả người dùng để hiển thị
+            // Get all users to display
             var users = _userManagementService.GetAllUsers();
             return View(users);
         }
 
         /// <summary>
-        /// Hiển thị form đăng ký người dùng mới
+        /// Displays the form to register a new user
         /// </summary>
         [HttpGet]
         public IActionResult Register()
         {
-            // Chuẩn bị danh sách chương trình học cho form đăng ký
+            // Prepare the list of school programs for the registration form
             ViewBag.SchoolPrograms = _unitOfWork.SchoolPrograms.GetAll();
 
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} accessed user registration form");
 
             return View();
         }
 
         /// <summary>
-        /// Xử lý đăng ký người dùng mới
+        /// Processes the registration of a new user
         /// </summary>
         [HttpPost]
         public IActionResult Register(string username, string password, string role, string schoolProgramId)
         {
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} attempted to register a new user with role {role}");
 
-            // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+            // Check input data validity
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(role))
             {
-                TempData["ErrorMessage"] = "Vui lòng điền đầy đủ thông tin bắt buộc.";
+                TempData["ErrorMessage"] = "Please fill in all required information.";
                 ViewBag.SchoolPrograms = _unitOfWork.SchoolPrograms.GetAll();
                 return View();
             }
 
-            // Chuẩn bị thông tin bổ sung cho sinh viên
+            // Prepare additional information for students
             Dictionary<string, string> additionalInfo = null;
             if (role == "Student" && !string.IsNullOrWhiteSpace(schoolProgramId))
             {
@@ -88,22 +88,22 @@ namespace SchoolManagementSystem.Controllers
                 };
             }
 
-            // Gọi service để đăng ký người dùng mới
+            // Call service to register the new user
             var userId = _userManagementService.RegisterUser(username, password, role, additionalInfo);
             if (userId == null)
             {
-                TempData["ErrorMessage"] = "Lỗi đăng ký người dùng. Vui lòng kiểm tra tên đăng nhập đã tồn tại hoặc thông tin không hợp lệ.";
+                TempData["ErrorMessage"] = "User registration error. Please check if the username already exists or if the information is invalid.";
                 ViewBag.SchoolPrograms = _unitOfWork.SchoolPrograms.GetAll();
                 return View();
             }
 
-            // Hiển thị thông báo thành công
-            TempData["SuccessMessage"] = $"Đã đăng ký thành công người dùng với vai trò {role}.";
+            // Display success message
+            TempData["SuccessMessage"] = $"Successfully registered user with role {role}.";
             return RedirectToAction("Index");
         }
 
         /// <summary>
-        /// Hiển thị form chỉnh sửa thông tin người dùng
+        /// Displays the form to edit user information
         /// </summary>
         [HttpGet]
         public IActionResult Edit(string id)
@@ -113,26 +113,26 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            // Lấy thông tin người dùng cần chỉnh sửa
+            // Get the user information to edit
             var user = _userManagementService.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} accessed edit form for user ID {id}");
 
             return View(user);
         }
 
         /// <summary>
-        /// Xử lý cập nhật thông tin người dùng
+        /// Processes the update of user information
         /// </summary>
         [HttpPost]
         public IActionResult Edit(User user, string newPassword)
         {
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} attempted to update user ID {user?.UserId}");
 
             if (user == null || string.IsNullOrWhiteSpace(user.UserId))
@@ -140,37 +140,37 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            // Lấy thông tin người dùng hiện tại
+            // Get current user information
             var existingUser = _userManagementService.GetUserById(user.UserId);
             if (existingUser == null)
             {
                 return NotFound();
             }
 
-            // Cập nhật thông tin người dùng
+            // Update user information
             existingUser.Username = user.Username;
 
-            // Cập nhật mật khẩu nếu có
+            // Update password if provided
             if (!string.IsNullOrWhiteSpace(newPassword))
             {
                 existingUser.PasswordHash = HashPassword.ComputeSha256Hash(newPassword);
             }
 
-            // Lưu thông tin cập nhật
+            // Save updated information
             bool result = _userManagementService.UpdateUser(existingUser);
             if (!result)
             {
-                TempData["ErrorMessage"] = "Lỗi cập nhật người dùng.";
+                TempData["ErrorMessage"] = "Error updating user.";
                 return View(user);
             }
 
-            // Hiển thị thông báo thành công
-            TempData["SuccessMessage"] = "Đã cập nhật thông tin người dùng thành công.";
+            // Display success message
+            TempData["SuccessMessage"] = "Successfully updated user information.";
             return RedirectToAction("Index");
         }
 
         /// <summary>
-        /// Hiển thị trang xác nhận xóa người dùng
+        /// Displays the page to confirm user deletion
         /// </summary>
         [HttpGet]
         public IActionResult Delete(string id)
@@ -180,26 +180,26 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            // Lấy thông tin người dùng cần xóa
+            // Get the user information to delete
             var user = _userManagementService.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} accessed delete confirmation for user ID {id}");
 
             return View(user);
         }
 
         /// <summary>
-        /// Xử lý xóa người dùng
+        /// Processes user deletion
         /// </summary>
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(string id)
         {
-            // Ghi log hoạt động
+            // Log activity
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User {_currentUserLogin} attempted to delete user ID {id}");
 
             if (string.IsNullOrWhiteSpace(id))
@@ -207,16 +207,16 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-            // Xóa người dùng và các thông tin liên quan
+            // Delete user and related information
             bool result = _userManagementService.DeleteUser(id);
             if (!result)
             {
-                TempData["ErrorMessage"] = "Lỗi xóa người dùng.";
+                TempData["ErrorMessage"] = "Error deleting user.";
                 return RedirectToAction("Index");
             }
 
-            // Hiển thị thông báo thành công
-            TempData["SuccessMessage"] = "Đã xóa người dùng thành công.";
+            // Display success message
+            TempData["SuccessMessage"] = "Successfully deleted user.";
             return RedirectToAction("Index");
         }
     }

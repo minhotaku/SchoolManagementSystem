@@ -4,13 +4,13 @@ namespace SchoolManagementSystem.Models
 {
     public class SchoolProgramViewModel
     {
-        [Display(Name = "Mã Chương trình")]
+        [Display(Name = "Program ID")]
         public string SchoolProgramId { get; set; }
 
-        [Display(Name = "Tên Chương trình học")]
+        [Display(Name = "School Program Name")]
         public string SchoolProgramName { get; set; }
 
-        [Display(Name = "Số lượng SV")]
+        [Display(Name = "Student Count")]
         public int StudentCount { get; set; } = 0;
     }
 }

@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using SchoolManagementSystem.Models; // Đảm bảo using
+using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Models
 {
     public class StudentProgressViewModel
     {
-        [Display(Name = "Mã SV")]
+        [Display(Name = "Student ID")]
         public string StudentId { get; set; } = "";
-        [Display(Name = "Tên Sinh viên")]
+        [Display(Name = "Student Name")]
         public string StudentUsername { get; set; } = "";
 
         public Dictionary<string, List<CourseGradeDetailsViewModel>> SemesterGrades { get; set; }
 
         public StudentProgressViewModel()
         {
-            // Khởi tạo Dictionary
+            // Initialize Dictionary
             SemesterGrades = new Dictionary<string, List<CourseGradeDetailsViewModel>>();
         }
     }

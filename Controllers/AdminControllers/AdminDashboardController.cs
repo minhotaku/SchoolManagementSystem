@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Models;
-using System.Linq; 
+using System.Linq;
 using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
@@ -10,7 +10,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
     public class AdminDashboardController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        // Lấy thông tin người dùng từ Session (Ví dụ)
+        // Retrieve user information from Session (Example)
         // private string? CurrentAdminUsername => HttpContext.Session.GetString("_Username");
 
         public AdminDashboardController()
@@ -24,7 +24,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         {
             try
             {
-                // Lấy các số liệu thống kê cơ bản
+                // Retrieve basic statistical data
                 int totalStudents = _unitOfWork.Students.GetAll()?.Count() ?? 0;
                 int totalFaculty = _unitOfWork.Faculty.GetAll()?.Count() ?? 0;
                 int totalAdmins = _unitOfWork.Admins.GetAll()?.Count() ?? 0;
@@ -32,7 +32,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 int totalPrograms = _unitOfWork.SchoolPrograms.GetAll()?.Count() ?? 0;
                 int totalEnrollments = _unitOfWork.Enrollments.GetAll()?.Count() ?? 0;
 
-                // Tạo một ViewModel cho Dashboard (Nên làm)
+                // Create a ViewModel for the Dashboard (Recommended)
                 var viewModel = new AdminDashboardViewModel
                 {
                     TotalStudents = totalStudents,
@@ -51,10 +51,10 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
             catch (System.Exception ex)
             {
-                // Ghi log lỗi
+                // Log the error
                 System.Diagnostics.Debug.WriteLine($"Error loading Admin Dashboard: {ex.Message}");
-                TempData["ErrorMessage"] = "Không thể tải dữ liệu Dashboard.";
-                // Trả về View với ViewModel rỗng hoặc xử lý lỗi khác
+                TempData["ErrorMessage"] = "Unable to load Dashboard data.";
+                // Return the View with an empty ViewModel or handle the error differently
                 return View("~/Views/Admin/Dashboard/Index.cshtml", new AdminDashboardViewModel());
             }
         }

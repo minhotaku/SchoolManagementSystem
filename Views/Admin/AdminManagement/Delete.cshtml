@@ -1,13 +1,13 @@
 ﻿@model SchoolManagementSystem.Entities.User
 @{
-    ViewData["Title"] = "Xác Nhận Xóa Quản Trị Viên";
+    ViewData["Title"] = "Confirm Delete Administrator";
     var adminId = ViewBag.AdminIdToDelete as string;
 }
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="AdminManagement" asp-action="Index">Quản lý Admin</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="AdminManagement" asp-action="Index">Admin Management</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -19,25 +19,25 @@
                 </div>
                 <div class="card-body">
                     <div class="alert alert-warning mb-4">
-                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
-                        <p>Bạn có chắc muốn xóa admin <strong>@Model.Username</strong>?</p>
-                        <p>Hành động này sẽ xóa vĩnh viễn tài khoản user và bản ghi admin liên quan. Hành động này không thể hoàn tác.</p>
-                        @* Thêm cảnh báo nếu đây là admin cuối cùng hoặc tự xóa *@
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Warning!</h5>
+                        <p>Are you sure you want to delete admin <strong>@Model.Username</strong>?</p>
+                        <p>This action will permanently delete the user account and related admin record. This action cannot be undone.</p>
+                        @* Add warning if this is the last admin or self-deletion *@
                         @if (TempData["WarningMessage"] != null)
                         {
                             <p class="mt-2 mb-0 text-danger fw-bold">@TempData["WarningMessage"]</p>
                         }
                     </div>
                     <div class="mb-4 p-3 bg-light border rounded">
-                        <h6>Thông tin sẽ bị xóa:</h6>
+                        <h6>Information to be deleted:</h6>
                         <dl class="row mb-0">
-                            <dt class="col-sm-4">Tên đăng nhập:</dt>
+                            <dt class="col-sm-4">Username:</dt>
                             <dd class="col-sm-8">@Model.Username</dd>
                             <dt class="col-sm-4">User ID:</dt>
                             <dd class="col-sm-8">@Model.UserId</dd>
                             @if (!string.IsNullOrEmpty(adminId))
                             {
-                                <dt class="col-sm-4">Mã Admin:</dt>
+                                <dt class="col-sm-4">Admin ID:</dt>
                                 <dd class="col-sm-8">@adminId</dd>
                             }
                         </dl>
@@ -46,17 +46,17 @@
                         @Html.AntiForgeryToken() <input type="hidden" name="id" value="@Model.UserId" />
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="confirmDeleteCheck" required>
-                            <label class="form-check-label" for="confirmDeleteCheck">Tôi đã đọc kỹ cảnh báo và xác nhận muốn xóa admin này.</label>
+                            <label class="form-check-label" for="confirmDeleteCheck">I have carefully read the warning and confirm that I want to delete this admin.</label>
                         </div>
                         <hr />
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
-                                @* Nút Hủy *@
-                                <i class="bi bi-x-circle me-1"></i> Không, quay lại
+                                @* Cancel Button *@
+                                <i class="bi bi-x-circle me-1"></i> No, go back
                             </a>
                             <button type="submit" class="btn btn-danger" id="deleteButton" disabled>
-                                @* Nút Xóa màu đỏ *@
-                                <i class="bi bi-trash-fill me-1"></i> Xóa
+                                @* Red Delete Button *@
+                                <i class="bi bi-trash-fill me-1"></i> Delete
                             </button>
                         </div>
                     </form>
@@ -66,5 +66,21 @@
     </div>
 </div>
 @section Scripts {
-    <script> const confirmCheck = document.getElementById('confirmDeleteCheck'); const deleteButton = document.getElementById('deleteButton'); deleteButton.disabled = true; confirmCheck.addEventListener('change', function() { deleteButton.disabled = !this.checked; }); document.querySelector('form').addEventListener('submit', function(event) { if (!confirmCheck.checked) { alert('Vui lòng xác nhận bạn muốn xóa.'); event.preventDefault(); event.stopPropagation(); } }); </script>
+    <script>
+        const confirmCheck = document.getElementById('confirmDeleteCheck');
+        const deleteButton = document.getElementById('deleteButton');
+        deleteButton.disabled = true;
+
+        confirmCheck.addEventListener('change', function() {
+            deleteButton.disabled = !this.checked;
+        });
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            if (!confirmCheck.checked) {
+                alert('Please confirm that you want to delete.');
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    </script>
 }

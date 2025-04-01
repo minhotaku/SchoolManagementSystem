@@ -1,14 +1,14 @@
 ﻿@model SchoolManagementSystem.Entities.SchoolProgram
 @{
-    ViewData["Title"] = "Xác Nhận Xóa Chương Trình Học"; int studentCount = ViewBag.StudentCount ?? 0;
+    ViewData["Title"] = "Confirm Delete School Program"; int studentCount = ViewBag.StudentCount ?? 0;
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Quản lý Chương trình</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Manage Programs</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -20,17 +20,17 @@
                 <div class="card shadow border-danger">
                     <div class="card-header bg-danger text-white"><h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewData["Title"]</h4></div>
                     <div class="card-body">
-                        @* --- Cảnh báo --- *@
+                        @* --- Warning --- *@
                         <div class="alert alert-warning mb-4">
-                            <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
-                            <p>Bạn có chắc muốn xóa chương trình <strong>@Model.SchoolProgramName</strong> (@Model.SchoolProgramId)?</p>
+                            <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Warning!</h5>
+                            <p>Are you sure you want to delete the program <strong>@Model.SchoolProgramName</strong> (@Model.SchoolProgramId)?</p>
                             @if (studentCount > 0)
                             {
-                                <p class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> Không thể xóa vì đang có @studentCount sinh viên thuộc chương trình này.</p>
+                                <p class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> Cannot delete because there are @studentCount students in this program.</p>
                             }
                             else
                             {
-                                <p>Hành động này không thể hoàn tác.</p>
+                                <p>This action cannot be undone.</p>
                             }
                             @if (TempData["ErrorMessage"] != null)
                             {
@@ -38,35 +38,35 @@
                             }
                         </div>
 
-                        @* --- Thông tin --- *@
+                        @* --- Information --- *@
                         <div class="mb-4 p-3 bg-light border rounded">
-                            <h6>Thông tin chương trình:</h6>
+                            <h6>Program information:</h6>
                             <dl class="row mb-0">
-                                <dt class="col-sm-4">Mã CT:</dt>
+                                <dt class="col-sm-4">Program ID:</dt>
                                 <dd class="col-sm-8"><span class="font-monospace">@Model.SchoolProgramId</span></dd>
-                                <dt class="col-sm-4">Tên CT:</dt>
+                                <dt class="col-sm-4">Program Name:</dt>
                                 <dd class="col-sm-8">@Model.SchoolProgramName</dd>
-                                <dt class="col-sm-4">Số SV:</dt>
+                                <dt class="col-sm-4">Number of Students:</dt>
                                 <dd class="col-sm-8">@studentCount</dd>
                             </dl>
                         </div>
 
-                        @* --- Form Xóa --- *@
+                        @* --- Delete Form --- *@
                         @if (studentCount == 0)
                         {
                             <form asp-action="Delete" asp-route-id="@Model.SchoolProgramId" method="post">
                                 @Html.AntiForgeryToken() <input type="hidden" name="id" value="@Model.SchoolProgramId" />
-                                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="confirmDeleteCheck" required><label class="form-check-label" for="confirmDeleteCheck">Xác nhận muốn xóa.</label></div> <hr />
+                                <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="confirmDeleteCheck" required><label class="form-check-label" for="confirmDeleteCheck">Confirm delete.</label></div> <hr />
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Không, quay lại</a>
-                                    <button type="submit" class="btn btn-danger" id="deleteButton" disabled><i class="bi bi-trash-fill me-1"></i> Có, xóa</button>
+                                    <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> No, back</a>
+                                    <button type="submit" class="btn btn-danger" id="deleteButton" disabled><i class="bi bi-trash-fill me-1"></i> Yes, delete</button>
                                 </div>
                             </form>
                         }
                         else
                         {
-                            @* --- Nút Quay lại  --- *@
-                            <div class="text-end"> <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Quay lại</a> </div>
+                            @* --- Back Button  --- *@
+                            <div class="text-end"> <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i> Back</a> </div>
                         }
                     </div>
                 </div>
@@ -75,9 +75,23 @@
     }
     else
     {
-        <div class="alert alert-danger">Lỗi tải thông tin.</div> <a asp-action="Index">Quay lại</a>
+        <div class="alert alert-danger">Error loading information.</div> <a asp-action="Index">Back</a>
     }
 </div>
 @section Scripts {
-     <script> const confirmCheck = document.getElementById('confirmDeleteCheck'); const deleteButton = document.getElementById('deleteButton'); if(deleteButton){ deleteButton.disabled = true; confirmCheck.addEventListener('change', function() { deleteButton.disabled = !this.checked; }); document.querySelector('form')?.addEventListener('submit', function(event) { if (!confirmCheck.checked) { alert('Vui lòng xác nhận.'); event.preventDefault(); event.stopPropagation(); } }); } </script>
+    <script> 
+        const confirmCheck = document.getElementById('confirmDeleteCheck'); 
+        const deleteButton = document.getElementById('deleteButton'); 
+        if(deleteButton){ 
+            deleteButton.disabled = true; 
+            confirmCheck.addEventListener('change', function() { deleteButton.disabled = !this.checked; }); 
+            document.querySelector('form')?.addEventListener('submit', function(event) { 
+                if (!confirmCheck.checked) { 
+                    alert('Please confirm.'); 
+                    event.preventDefault(); 
+                    event.stopPropagation(); 
+                } 
+            }); 
+        } 
+    </script>
 }

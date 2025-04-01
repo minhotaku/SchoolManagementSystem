@@ -1,13 +1,13 @@
 ﻿@model SchoolManagementSystem.Models.AdminEditViewModel
 @{
-    ViewData["Title"] = "Chỉnh Sửa Quản Trị Viên";
+    ViewData["Title"] = "Edit Administrator";
 }
 
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="AdminManagement" asp-action="Index">Quản lý Admin</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="AdminManagement" asp-action="Index">Admin Management</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @(Model?.Username ?? "...")</li>
         </ol>
     </nav>
@@ -18,7 +18,7 @@
             <div class="col-md-8 col-lg-7">
                 <div class="card shadow-sm">
                     <div class="card-header bg-danger text-white">
-                        @* Màu đỏ cho header Admin *@
+                        @* Red color for Admin header *@
                         <h4 class="mb-0"><i class="bi bi-pencil-fill me-2"></i>@ViewData["Title"]</h4>
                     </div>
                     <div class="card-body">
@@ -37,14 +37,14 @@
                             <input type="hidden" asp-for="AdminId" />
 
                             <div class="mb-3">
-                                <label asp-for="AdminId" class="form-label fw-bold"></label>
+                                <label asp-for="AdminId" class="form-label fw-bold">Admin ID</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                                     <input asp-for="AdminId" class="form-control bg-light" readonly />
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label asp-for="Username" class="form-label fw-bold required"></label>
+                                <label asp-for="Username" class="form-label fw-bold required">Username</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
                                     <input asp-for="Username" class="form-control" />
@@ -52,26 +52,26 @@
                                 <span asp-validation-for="Username" class="text-danger"></span>
                             </div>
                             <div class="mb-3">
-                                <label asp-for="Password" class="form-label fw-bold"></label>
+                                <label asp-for="Password" class="form-label fw-bold">Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input asp-for="Password" class="form-control" placeholder="Để trống nếu không đổi" />
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                                    <input asp-for="Password" class="form-control" placeholder="Leave blank to not change" />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Show/Hide password">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
-                                <div class="form-text">Mật khẩu mới phải có ít nhất 6 ký tự (nếu thay đổi).</div>
+                                <div class="form-text">New password must be at least 6 characters long (if changing).</div>
                             </div>
                             <hr />
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
-                                    @* Nút Hủy *@
-                                    <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                                    @* Cancel Button *@
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
                                 </a>
                                 <button type="submit" class="btn btn-danger">
-                                    @* Nút Lưu *@
-                                    <i class="bi bi-save me-1"></i> Lưu
+                                    @* Save Button *@
+                                    <i class="bi bi-save me-1"></i> Save
                                 </button>
                             </div>
                         </form>
@@ -82,8 +82,8 @@
     }
     else
     {
-        <div class="alert alert-danger">Không thể tải thông tin admin.</div>
-        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        <div class="alert alert-danger">Could not load admin information.</div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
     }
 </div>
 
@@ -101,7 +101,7 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        // Hiện/Ẩn mật khẩu
+        // Show/Hide password
         document.getElementById('togglePassword')?.addEventListener('click', function () {
             var passwordField = document.getElementById('Password');
             var icon = this.querySelector('i');
@@ -117,7 +117,7 @@
             }
         });
 
-         // Xử lý submit form validation
+         // Handle form submit validation
          document.querySelector('form').addEventListener('submit', function(event) {
               if (!this.checkValidity()) {
                     event.preventDefault();

@@ -4,18 +4,18 @@ namespace SchoolManagementSystem.Models
 {
     public class CourseViewModel
     {
-        [Display(Name = "Mã Khóa học")]
+        [Display(Name = "Course ID")]
         public string CourseId { get; set; }
 
-        [Display(Name = "Tên Khóa học")]
+        [Display(Name = "Course Name")]
         public string CourseName { get; set; }
 
-        [Display(Name = "Số tín chỉ")]
+        [Display(Name = "Credits")]
         public int Credits { get; set; }
 
         public string FacultyId { get; set; }
 
-        [Display(Name = "Giảng viên")]
+        [Display(Name = "Faculty")]
         public string FacultyUsername { get; set; }
     }
 }

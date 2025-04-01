@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
-using SchoolManagementSystem.Services.Implementation; // Cần để dùng User Service
-using SchoolManagementSystem.Services.Interfaces;   // Cần để dùng User Service
+using SchoolManagementSystem.Services.Implementation;
+using SchoolManagementSystem.Services.Interfaces;
 using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Utils;
 
@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        // Thông tin người dùng hiện tại (Tạm thời)
+        // Current user information (Temporary)
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
         private readonly string _currentUserLogin = "admin_son";
 
@@ -34,17 +34,17 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' accessed Faculty Management Index.");
             try
             {
-                // Lấy dữ liệu User và Faculty trực tiếp từ UnitOfWork
+                // Get User and Faculty data directly from UnitOfWork
                 var allUsers = _unitOfWork.Users.GetAll()?.ToList() ?? new List<User>();
                 var allFaculties = _unitOfWork.Faculty.GetAll()?.ToList() ?? new List<Faculty>();
                 System.Diagnostics.Debug.WriteLine($"Found {allUsers.Count} users, {allFaculties.Count} faculty records.");
 
-                // Join dữ liệu
+                // Join data
                 var facultyViewModels = (
                     from user in allUsers
-                    where user.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase) // Chỉ lấy user là Faculty
+                    where user.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase) // Only get users who are Faculty
                     join facultyMember in allFaculties
-                        on user.UserId equals facultyMember.UserId // Join bằng UserId
+                        on user.UserId equals facultyMember.UserId // Join using UserId
                     orderby user.Username
                     select new FacultyViewModel
                     {
@@ -63,7 +63,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 if (missingJoinUserIds.Any())
                 {
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] WARNING: Could not create ViewModel for faculty UserIDs: {string.Join(", ", missingJoinUserIds)}");
-                    // Log chi tiết hơn nếu cần
+                    // Log more details if needed
                 }
 
                 return View("~/Views/Admin/FacultyManagement/Index.cshtml", facultyViewModels);
@@ -71,96 +71,96 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in Faculty Index: {ex.Message}\n{ex.StackTrace}");
-                TempData["ErrorMessage"] = "Lỗi tải danh sách giảng viên.";
+                TempData["ErrorMessage"] = "Error loading faculty list.";
                 return View("~/Views/Admin/FacultyManagement/Index.cshtml", new List<FacultyViewModel>());
             }
         }
 
         // GET: /FacultyManagement/Details/{facultyId}
         [HttpGet]
-        public IActionResult Details(string id) // Nhận FacultyId
+        public IActionResult Details(string id) // Receives FacultyId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã giảng viên không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid faculty ID.");
             System.Diagnostics.Debug.WriteLine($"Viewing details for Faculty ID '{id}'.");
             try
             {
-                var facultyMember = _unitOfWork.Faculty.GetById(id); // Tìm Faculty bằng FacultyId
-                if (facultyMember == null) { TempData["ErrorMessage"] = $"Không tìm thấy giảng viên {id}."; return RedirectToAction("Index"); }
+                var facultyMember = _unitOfWork.Faculty.GetById(id); // Find Faculty by FacultyId
+                if (facultyMember == null) { TempData["ErrorMessage"] = $"Faculty {id} not found."; return RedirectToAction("Index"); }
 
-                var user = UserManagementService.GetInstance().GetUserById(facultyMember.UserId); // Tìm User bằng UserId
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho giảng viên {id}."; return RedirectToAction("Index"); }
+                var user = UserManagementService.GetInstance().GetUserById(facultyMember.UserId); // Find User by UserId
+                if (user == null) { TempData["ErrorMessage"] = $"Error getting user for faculty {id}."; return RedirectToAction("Index"); }
 
                 var viewModel = new FacultyViewModel
                 {
                     UserId = user.UserId,
                     Username = user.Username,
                     FacultyId = facultyMember.FacultyId
-                    // Thêm các trường khác nếu có
+                    // Add other fields if any
                 };
                 return View("~/Views/Admin/FacultyManagement/Details.cshtml", viewModel);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details faculty {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi xem chi tiết."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details faculty {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error viewing details."; return RedirectToAction("Index"); }
         }
 
         // GET: /FacultyManagement/Edit/{facultyId}
         [HttpGet]
-        public IActionResult Edit(string id) // Nhận FacultyId
+        public IActionResult Edit(string id) // Receives FacultyId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã giảng viên không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid faculty ID.");
             System.Diagnostics.Debug.WriteLine($"Loading edit page for Faculty ID '{id}'.");
             try
             {
-                var facultyMember = _unitOfWork.Faculty.GetById(id); // Tìm Faculty bằng FacultyId
-                if (facultyMember == null) { TempData["ErrorMessage"] = $"Không tìm thấy giảng viên {id}."; return RedirectToAction("Index"); }
+                var facultyMember = _unitOfWork.Faculty.GetById(id); // Find Faculty by FacultyId
+                if (facultyMember == null) { TempData["ErrorMessage"] = $"Faculty {id} not found."; return RedirectToAction("Index"); }
 
-                var user = UserManagementService.GetInstance().GetUserById(facultyMember.UserId); // Tìm User bằng UserId
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho giảng viên {id}."; return RedirectToAction("Index"); }
+                var user = UserManagementService.GetInstance().GetUserById(facultyMember.UserId); // Find User by UserId
+                if (user == null) { TempData["ErrorMessage"] = $"Error getting user for faculty {id}."; return RedirectToAction("Index"); }
 
                 var model = new FacultyEditViewModel
                 {
                     UserId = user.UserId,
                     FacultyId = facultyMember.FacultyId,
                     Username = user.Username
-                    // Password để trống
+                    // Password is empty
                 };
                 return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit faculty {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi tải trang sửa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit faculty {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error loading edit page."; return RedirectToAction("Index"); }
         }
 
         // POST: /FacultyManagement/Edit/{facultyId}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, FacultyEditViewModel model) // id là FacultyId
+        public IActionResult Edit(string id, FacultyEditViewModel model) // id is FacultyId
         {
-            if (id != model.FacultyId) return BadRequest("Mã giảng viên không khớp.");
+            if (id != model.FacultyId) return BadRequest("Faculty ID mismatch.");
             System.Diagnostics.Debug.WriteLine($"Saving changes for Faculty ID '{id}'. ...");
 
-            // Kiểm tra độ dài mật khẩu nếu có nhập
+            // Check password length if entered
             const int minPasswordLength = 6;
-            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"Mật khẩu mới ít nhất {minPasswordLength} ký tự."); }
+            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"New password must be at least {minPasswordLength} characters."); }
 
-            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Dữ liệu không hợp lệ."; return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
+            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Invalid data."; return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
 
             try
             {
-                // Lấy thông tin User hiện tại (không cần lấy Faculty vì không sửa gì ở bảng Faculty)
-                var existingUser = UserManagementService.GetInstance().GetUserById(model.UserId); // Dùng UserId từ model (hidden field)
-                if (existingUser == null) { TempData["ErrorMessage"] = $"Lỗi: Không tìm thấy tài khoản user ID {model.UserId}."; return RedirectToAction("Index"); }
-                if (!existingUser.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = "Người dùng này không phải là giảng viên."; return RedirectToAction("Index"); } // Kiểm tra lại vai trò
+                // Get current User information (no need to get Faculty because no changes are made to the Faculty table)
+                var existingUser = UserManagementService.GetInstance().GetUserById(model.UserId); // Use UserId from model (hidden field)
+                if (existingUser == null) { TempData["ErrorMessage"] = $"Error: User account with ID {model.UserId} not found."; return RedirectToAction("Index"); }
+                if (!existingUser.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = "This user is not a faculty member."; return RedirectToAction("Index"); } // Re-check role
 
 
                 bool userChanged = false;
 
-                // Cập nhật User Entity
+                // Update User Entity
                 if (existingUser.Username != model.Username) { existingUser.Username = model.Username; userChanged = true; }
                 if (!string.IsNullOrEmpty(model.Password) && (!ModelState.ContainsKey(nameof(model.Password)) || !ModelState[nameof(model.Password)].Errors.Any())) { existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password); userChanged = true; }
 
-                // Lưu thay đổi User nếu có
+                // Save User changes if any
                 if (userChanged)
                 {
-                    bool userUpdateSuccess = UserManagementService.GetInstance().UpdateUser(existingUser); // Service sẽ lo việc Save User Repo
-                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Lỗi cập nhật tài khoản giảng viên."; return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
+                    bool userUpdateSuccess = UserManagementService.GetInstance().UpdateUser(existingUser); // Service will handle saving User Repo
+                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Error updating faculty account."; return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
                     System.Diagnostics.Debug.WriteLine($"User info updated for faculty User ID {model.UserId}");
                 }
                 else
@@ -168,57 +168,57 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     System.Diagnostics.Debug.WriteLine($"No changes detected for faculty User ID {model.UserId}");
                 }
 
-                TempData["SuccessMessage"] = $"Đã cập nhật thành công giảng viên '{model.Username}'.";
+                TempData["SuccessMessage"] = $"Successfully updated faculty '{model.Username}'.";
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi cập nhật."; System.Diagnostics.Debug.WriteLine($"Error saving faculty {id}: {ex.Message}"); return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during update."; System.Diagnostics.Debug.WriteLine($"Error saving faculty {id}: {ex.Message}"); return View("~/Views/Admin/FacultyManagement/Edit.cshtml", model); }
         }
 
         // GET: /FacultyManagement/Delete/{userId}
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận UserId từ link trong Index
+        public IActionResult Delete(string id) // Receives UserId from link in Index
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Viewing delete confirmation for Faculty with User ID '{id}'.");
             try
             {
                 var user = UserManagementService.GetInstance().GetUserById(id);
-                if (user == null || !user.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy giảng viên với user ID {id}."; return RedirectToAction("Index"); }
+                if (user == null || !user.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Faculty with user ID {id} not found."; return RedirectToAction("Index"); }
 
-                var facultyMember = _unitOfWork.Faculty.GetByUserId(id); // Lấy FacultyId để hiển thị nếu muốn
+                var facultyMember = _unitOfWork.Faculty.GetByUserId(id); // Get FacultyId to display if needed
                 ViewBag.FacultyIdToDelete = facultyMember?.FacultyId;
 
-                return View("~/Views/Admin/FacultyManagement/Delete.cshtml", user); // Dùng View Delete hiển thị User
+                return View("~/Views/Admin/FacultyManagement/Delete.cshtml", user); // Use Delete View to display User
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi tải trang xóa."; System.Diagnostics.Debug.WriteLine($"Error loading delete faculty user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "Error loading delete page."; System.Diagnostics.Debug.WriteLine($"Error loading delete faculty user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // POST: /FacultyManagement/Delete/{userId}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là UserId
+        public IActionResult DeleteConfirmed(string id) // id is UserId
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Confirming deletion for User ID '{id}'.");
             try
             {
                 var userToDelete = UserManagementService.GetInstance().GetUserById(id);
                 string usernameToDelete = userToDelete?.Username ?? $"User ID {id}";
-                if (userToDelete == null || !userToDelete.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy giảng viên '{usernameToDelete}'."; return RedirectToAction("Index"); }
+                if (userToDelete == null || !userToDelete.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Faculty '{usernameToDelete}' not found."; return RedirectToAction("Index"); }
 
-                bool result = UserManagementService.GetInstance().DeleteUser(id); // Service sẽ xóa cả User và Faculty record
-                if (result) { TempData["SuccessMessage"] = $"Đã xóa giảng viên '{usernameToDelete}'."; }
-                else { TempData["ErrorMessage"] = $"Lỗi xóa giảng viên '{usernameToDelete}'."; }
+                bool result = UserManagementService.GetInstance().DeleteUser(id); // Service will delete both User and Faculty record
+                if (result) { TempData["SuccessMessage"] = $"Successfully deleted faculty '{usernameToDelete}'."; }
+                else { TempData["ErrorMessage"] = $"Error deleting faculty '{usernameToDelete}'."; }
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi xóa."; System.Diagnostics.Debug.WriteLine($"Error deleting faculty user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during deletion."; System.Diagnostics.Debug.WriteLine($"Error deleting faculty user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // --- Helper Methods ---
         private void LoadSchoolProgramsList(string? selectedProgramId = null)
         {
             try { var programs = _unitOfWork.SchoolPrograms.GetAll()?.OrderBy(p => p.SchoolProgramName).ToList() ?? new List<SchoolProgram>(); ViewBag.SchoolProgramsList = new SelectList(programs, "SchoolProgramId", "SchoolProgramName", selectedProgramId); }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Lỗi tải chương trình học."; }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Error loading school programs."; }
         }
         private void LogModelStateErrors(string contextId)
         {

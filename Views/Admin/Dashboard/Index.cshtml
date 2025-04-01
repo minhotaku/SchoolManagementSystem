@@ -5,13 +5,13 @@
 }
 
 <div class="container-fluid mt-4">
-    @* Dùng container-fluid để rộng hơn *@
+    @* Use container-fluid for wider layout *@
 
-    @* --- Chào mừng Admin --- *@
+    @* --- Welcome Admin --- *@
     <div class="row mb-3">
         <div class="col">
-            <h2 class="display-6">Chào mừng trở lại, @adminUsername!</h2>
-            <p class="text-muted">Tổng quan hệ thống quản lý trường học.</p>
+            <h2 class="display-6">Welcome back, @adminUsername!</h2>
+            <p class="text-muted">Overview of the school management system.</p>
         </div>
     </div>
 
@@ -22,110 +22,110 @@
     }
 
 
-    @* --- Các thẻ thống kê nhanh (Stat Cards) --- *@
+    @* --- Quick statistics cards (Stat Cards) --- *@
     <div class="row g-4 mb-4">
-        @* g-4 để tăng khoảng cách giữa các card *@
-        @* Card Sinh viên *@
+        @* g-4 for increased spacing between cards *@
+        @* Student Card *@
         <div class="col-md-6 col-xl-3">
-            @* Chia cột linh hoạt *@
+            @* Flexible column division *@
             <div class="card text-white bg-primary shadow-sm h-100">
-                @* h-100 để các card cao bằng nhau *@
+                @* h-100 to make cards the same height *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0">@Model.TotalStudents</h4>
-                        <p class="card-text mb-0">Sinh viên</p>
+                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalStudents</h4>
+                        <p class="card-text mb-0">Students</p>
                     </div>
                     <i class="bi bi-people-fill display-4 opacity-50"></i>
                 </div>
                 <a asp-controller="StudentManagement" asp-action="Index" class="card-footer text-white text-decoration-none stretched-link">
-                    Xem chi tiết <i class="bi bi-arrow-right-circle"></i>
+                    View details <i class="bi bi-arrow-right-circle"></i>
                 </a>
             </div>
         </div>
 
-        @* Card Giảng viên *@
+        @* Faculty Card *@
         <div class="col-md-6 col-xl-3">
             <div class="card text-white bg-success shadow-sm h-100">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0">@Model.TotalFaculty</h4>
-                        <p class="card-text mb-0">Giảng viên</p>
+                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalFaculty</h4>
+                        <p class="card-text mb-0">Faculty</p>
                     </div>
                     <i class="bi bi-person-video3 display-4 opacity-50"></i>
                 </div>
                 <a asp-controller="FacultyManagement" asp-action="Index" class="card-footer text-white text-decoration-none stretched-link">
-                    Xem chi tiết <i class="bi bi-arrow-right-circle"></i>
+                    View details <i class="bi bi-arrow-right-circle"></i>
                 </a>
             </div>
         </div>
 
-        @* Card Khóa học *@
+        @* Course Card *@
         <div class="col-md-6 col-xl-3">
             <div class="card text-dark bg-warning shadow-sm h-100">
-                @* Màu vàng *@
+                @* Yellow color *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0">@Model.TotalCourses</h4>
-                        <p class="card-text mb-0">Khóa học</p>
+                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalCourses</h4>
+                        <p class="card-text mb-0">Courses</p>
                     </div>
                     <i class="bi bi-book-half display-4 opacity-50"></i>
                 </div>
                 <a asp-controller="CourseManagement" asp-action="Index" class="card-footer text-dark text-decoration-none stretched-link">
-                    Xem chi tiết <i class="bi bi-arrow-right-circle"></i>
+                    View details <i class="bi bi-arrow-right-circle"></i>
                 </a>
             </div>
         </div>
 
-        @* Card Chương trình học *@
+        @* School Program Card *@
         <div class="col-md-6 col-xl-3">
             <div class="card text-white bg-info shadow-sm h-100">
-                @* Màu xanh dương nhạt *@
+                @* Light blue color *@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="card-title mb-0">@Model.TotalPrograms</h4>
-                        <p class="card-text mb-0">Chương trình học</p>
+                        <h4 class="card-title mb-0" style="color: white; font-size: 1.8em; font-weight: bold;">@Model.TotalPrograms</h4>
+                        <p class="card-text mb-0">School Programs</p>
                     </div>
                     <i class="bi bi-mortarboard-fill display-4 opacity-50"></i>
                 </div>
                 <a asp-controller="SchoolProgram" asp-action="Index" class="card-footer text-white text-decoration-none stretched-link">
-                    Xem chi tiết <i class="bi bi-arrow-right-circle"></i>
+                    View details <i class="bi bi-arrow-right-circle"></i>
                 </a>
             </div>
         </div>
     </div> @* end row g-4 *@
 
-    @* --- Các khu vực khác (Ví dụ: Lối tắt nhanh, Biểu đồ,...) --- *@
+    @* --- Other sections (e.g., Quick shortcuts, Charts, ...) --- *@
     <div class="row g-4">
-        @* --- Cột Lối tắt nhanh --- *@
+        @* --- Quick Shortcuts Column --- *@
         <div class="col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header"><i class="bi bi-lightning-charge-fill me-2"></i>Lối Tắt Nhanh</div>
+                <div class="card-header"><i class="bi bi-lightning-charge-fill me-2"></i>Quick Shortcuts</div>
                 <div class="list-group list-group-flush">
-                    <a asp-controller="AdminUserManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Thêm Người Dùng Mới</a>
-                    <a asp-controller="CourseManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-journal-plus me-2 text-warning"></i>Thêm Khóa Học Mới</a>
-                    <a asp-controller="EnrollmentManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-card-checklist me-2 text-info"></i>Đăng Ký Khóa Học Cho SV</a>
-                    <a asp-controller="SchoolProgram" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-mortarboard me-2 text-secondary"></i>Thêm Chương Trình Học</a>
-                    <a asp-controller="AdminUserManagement" asp-action="Index" class="list-group-item list-group-item-action"><i class="bi bi-people me-2 text-muted"></i>Quản Lý User Tổng Thể</a>
-                    @* Thêm các link khác nếu cần *@
+                    <a asp-controller="AdminUserManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Add New User</a>
+                    <a asp-controller="CourseManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-journal-plus me-2 text-warning"></i>Add New Course</a>
+                    <a asp-controller="EnrollmentManagement" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-card-checklist me-2 text-info"></i>Enroll Student in Course</a>
+                    <a asp-controller="SchoolProgram" asp-action="Create" class="list-group-item list-group-item-action"><i class="bi bi-mortarboard me-2 text-secondary"></i>Add School Program</a>
+                    <a asp-controller="AdminUserManagement" asp-action="Index" class="list-group-item list-group-item-action"><i class="bi bi-people me-2 text-muted"></i>Overall User Management</a>
+                    @* Add other links if needed *@
                 </div>
             </div>
         </div>
 
-        @* --- Cột Báo cáo nhanh hoặc Biểu đồ (Nâng cao) --- *@
+        @* --- Quick Reports or Charts Column (Advanced) --- *@
         <div class="col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header"><i class="bi bi-graph-up me-2"></i>Báo Cáo Nhanh</div>
+                <div class="card-header"><i class="bi bi-graph-up me-2"></i>Quick Reports</div>
                 <div class="list-group list-group-flush">
                     <a asp-controller="Reports" asp-action="CourseEnrollmentReport" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <div><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Báo cáo Đăng ký Khóa học</div>
-                        <span class="badge bg-info rounded-pill">@Model.TotalEnrollments lượt</span> @* Hiển thị tổng số lượt đk *@
+                        <div><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Course Enrollment Report</div>
+                        <span class="badge bg-info rounded-pill" style="color: white; font-size: 1.2em; font-weight: bold;">@Model.TotalEnrollments enrollments</span> @* Display total enrollments *@
                     </a>
-                    <a asp-controller="Reports" asp-action="GradeReport" class="list-group-item list-group-item-action"><i class="bi bi-clipboard-data-fill me-2 text-success"></i>Báo cáo Tổng hợp Điểm số</a>
-                    <a asp-controller="Reports" asp-action="StudentProgressReport" class="list-group-item list-group-item-action"><i class="bi bi-person-check-fill me-2 text-primary"></i>Theo dõi Tiến độ Sinh viên</a>
-                    @* Có thể thêm biểu đồ ở đây dùng thư viện JS như Chart.js *@
+                    <a asp-controller="Reports" asp-action="GradeReport" class="list-group-item list-group-item-action"><i class="bi bi-clipboard-data-fill me-2 text-success"></i>Grade Summary Report</a>
+                    <a asp-controller="Reports" asp-action="StudentProgressReport" class="list-group-item list-group-item-action"><i class="bi bi-person-check-fill me-2 text-primary"></i>Student Progress Tracking</a>
+                    @* Charts can be added here using JS libraries like Chart.js *@
                 </div>
             </div>
         </div>
     </div>
 
-</div> @* end container-fluid *@
+</div>

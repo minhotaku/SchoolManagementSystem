@@ -6,21 +6,21 @@ namespace SchoolManagementSystem.Models
     {
         public string UserId { get; set; }
 
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
-        [Display(Name = "Tên đăng nhập")]
+        [Required(ErrorMessage = "Username cannot be empty")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Display(Name = "Mật khẩu mới (để trống nếu không đổi)")]
+        [Display(Name = "New password (leave blank to not change)")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
         [Required]
         public string CurrentRole { get; set; }
 
-        [Display(Name = "Vai trò")]
+        [Display(Name = "Role")]
         public string Role => CurrentRole;
 
-        [Display(Name = "Chương trình học")]
+        [Display(Name = "School Program")]
         public string? SchoolProgramId { get; set; }
     }
 }

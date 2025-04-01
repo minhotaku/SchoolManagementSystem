@@ -1,32 +1,32 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.FacultyViewModel>
 @{
-    ViewData["Title"] = "Quản Lý Giảng Viên";
+    ViewData["Title"] = "Faculty Management";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề và Nút Thêm --- *@
+    @* --- Title and Add Button --- *@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-person-video3 me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Danh sách giảng viên trong hệ thống.</p>
+            <p class="text-muted mb-0">List of faculties in the system.</p>
         </div>
         <div class="col-auto">
             <a asp-controller="AdminUserManagement" asp-action="Create" class="btn btn-success">
-                @* Nút màu xanh lá *@
-                <i class="bi bi-plus-lg me-1"></i> Thêm Giảng Viên Mới
+                @* Green button *@
+                <i class="bi bi-plus-lg me-1"></i> Add New Faculty
             </a>
         </div>
     </div>
 
-    @* --- Hiển thị TempData messages --- *@
+    @* --- Display TempData messages --- *@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -40,24 +40,24 @@
         <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["WarningMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    @* --- Card chứa Bảng và Filter (Giao diện giống AdminUserManagement) --- *@
+    @* --- Card containing Table and Filter (AdminUserManagement-like interface) --- *@
     <div class="card shadow-sm">
         <div class="card-header bg-light py-3">
-            @* --- Input Tìm kiếm --- *@
+            @* --- Search Input --- *@
             <div class="row g-2 align-items-center">
-                @* Đặt tìm kiếm và filter (nếu có) trên cùng hàng *@
+                @* Place search and filter (if any) on the same line *@
                 <div class="col-md-8 col-lg-9">
-                    @* Cho ô tìm kiếm rộng hơn *@
+                    @* Make search box wider *@
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo Tên đăng nhập hoặc Mã GV...">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Username or Faculty ID...">
                         <button class="btn btn-outline-secondary" type="button" id="searchButton">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-4 col-lg-3">
-                    @* Để trống hoặc thêm filter khác *@
-                    @* Ví dụ: <select class="form-select"><option>Lọc theo Khoa...</option></select> *@
+                    @* Leave empty or add other filters *@
+                    @* Example: <select class="form-select"><option>Filter by Department...</option></select> *@
                 </div>
             </div>
         </div>
@@ -66,9 +66,9 @@
                 <table class="table table-hover table-striped mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 20%;">Mã Giảng Viên</th>
-                            <th style="width: 40%;">Tên đăng nhập</th> @* Giảm độ rộng 1 chút *@
-                            <th style="width: 40%;" class="text-center">Thao tác</th> @* Tăng độ rộng *@
+                            <th style="width: 20%;">Faculty ID</th>
+                            <th style="width: 40%;">Username</th> @* Reduce width slightly *@
+                            <th style="width: 40%;" class="text-center">Actions</th> @* Increase width *@
                         </tr>
                     </thead>
                     <tbody id="facultyTableBody">
@@ -77,20 +77,20 @@
                             @foreach (var faculty in Model)
                             {
                                 <tr class="faculty-row" data-username="@faculty.Username.ToLower()" data-facultyid="@faculty.FacultyId.ToLower()">
-                                    <td><span class="badge bg-secondary font-monospace">@faculty.FacultyId</span></td> @* Dùng badge cho ID *@
+                                    <td><span class="badge bg-secondary font-monospace">@faculty.FacultyId</span></td> @* Use badge for ID *@
                                     <td>@faculty.Username</td>
                                     <td class="text-center">
-                                        @* Các nút thao tác có chữ *@
+                                        @* Action buttons with text *@
                                         <div class="btn-group btn-group-sm" role="group">
                                             <a asp-controller="FacultyManagement" asp-action="Edit" asp-route-id="@faculty.FacultyId" class="btn btn-outline-primary">
-                                                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                                                <i class="bi bi-pencil-square me-1"></i> Edit
                                             </a>
                                             <a asp-controller="FacultyManagement" asp-action="Delete" asp-route-id="@faculty.UserId" class="btn btn-outline-danger">
-                                                <i class="bi bi-trash me-1"></i> Xóa
+                                                <i class="bi bi-trash me-1"></i> Delete
                                             </a>
-                                            @* Nút chi tiết nếu cần, nếu không có modal thì link đến trang Details *@
+                                            @* Detail button if needed, if no modal, link to Details page *@
                                             <a asp-controller="FacultyManagement" asp-action="Details" asp-route-id="@faculty.FacultyId" class="btn btn-outline-info">
-                                                <i class="bi bi-info-circle me-1"></i> Chi tiết
+                                                <i class="bi bi-info-circle me-1"></i> Details
                                             </a>
                                         </div>
                                     </td>
@@ -99,14 +99,14 @@
                         }
                         else
                         {
-                            <tr><td colspan="3" class="text-center py-4 text-muted">Không có giảng viên nào.</td></tr>
+                            <tr><td colspan="3" class="text-center py-4 text-muted">No faculties available.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer bg-light text-muted">
-            Tổng số: <span id="facultyCount">@(Model?.Count() ?? 0)</span> giảng viên.
+            Total: <span id="facultyCount">@(Model?.Count() ?? 0)</span> faculties.
         </div>
     </div>
 </div>
@@ -128,10 +128,10 @@
                 $("#facultyCount").text(count);
                  $("#noResultsRowFaculty").remove();
                  if (count === 0 && $("#facultyTableBody tr.faculty-row").length > 0) {
-                     $("#facultyTableBody").append('<tr id="noResultsRowFaculty"><td colspan="3" class="text-center text-muted py-3">Không tìm thấy kết quả.</td></tr>');
+                     $("#facultyTableBody").append('<tr id="noResultsRowFaculty"><td colspan="3" class="text-center text-muted py-3">No results found.</td></tr>');
                  }
             }
-            $("#searchInput").on("keyup", filterFacultyTable); // Trigger bằng nút thì đổi thành #searchButton click
+            $("#searchInput").on("keyup", filterFacultyTable); // Trigger by button click if changed to #searchButton click
             $("#facultyCount").text($("#facultyTableBody tr.faculty-row").length);
         });
     </script>

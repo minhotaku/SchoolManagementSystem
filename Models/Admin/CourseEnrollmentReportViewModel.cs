@@ -4,19 +4,19 @@ namespace SchoolManagementSystem.Models
 {
     public class CourseEnrollmentReportViewModel
     {
-        [Display(Name = "Mã Khóa học")]
+        [Display(Name = "Course ID")]
         public string CourseId { get; set; } = "";
 
-        [Display(Name = "Tên Khóa học")]
+        [Display(Name = "Course Name")]
         public string CourseName { get; set; } = "";
 
-        [Display(Name = "Giảng viên")]
+        [Display(Name = "Faculty")]
         public string FacultyUsername { get; set; } = "";
 
-        [Display(Name = "Số Tín chỉ")]
+        [Display(Name = "Credits")]
         public int Credits { get; set; }
 
-        [Display(Name = "Số SV Đăng ký")]
+        [Display(Name = "Enrollment Count")]
         public int EnrollmentCount { get; set; }
     }
 }

@@ -5,11 +5,11 @@ namespace SchoolManagementSystem.Models
     public class SchoolProgramEditViewModel
     {
         [Required]
-        [Display(Name = "Mã Chương trình")]
-        public string SchoolProgramId { get; set; } // Readonly
+        [Display(Name = "Program ID")]
+        public string SchoolProgramId { get; set; }
 
-        [Required(ErrorMessage = "Tên chương trình học không được để trống.")]
-        [Display(Name = "Tên Chương trình học")]
+        [Required(ErrorMessage = "School program name cannot be empty.")]
+        [Display(Name = "School Program Name")]
         public string SchoolProgramName { get; set; }
     }
 }

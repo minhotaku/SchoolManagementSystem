@@ -32,41 +32,41 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             {
                 var allCourses = _unitOfWork.Courses.GetAll()?.ToList() ?? new List<Course>();
                 var allFaculties = _unitOfWork.Faculty.GetAll()?.ToList() ?? new List<Faculty>();
-                var allUsers = _unitOfWork.Users.GetAll()?.ToList() ?? new List<User>(); // Cần để lấy username giảng viên
+                var allUsers = _unitOfWork.Users.GetAll()?.ToList() ?? new List<User>(); // Needed to get faculty username
 
                 System.Diagnostics.Debug.WriteLine($"Found {allCourses.Count} courses, {allFaculties.Count} faculty records, {allUsers.Count} users.");
 
-                // Join để lấy thông tin ViewModel
+                // Join to get ViewModel information
                 var courseViewModels = (
                     from course in allCourses
                     join facultyMember in allFaculties
-                        on course.FacultyId equals facultyMember.FacultyId // Join course với faculty
+                        on course.FacultyId equals facultyMember.FacultyId // Join course with faculty
                         into facultyGroup
-                    from fm in facultyGroup.DefaultIfEmpty() // Left Join phòng trường hợp FacultyId sai
+                    from fm in facultyGroup.DefaultIfEmpty() // Left Join in case FacultyId is incorrect
                     join user in allUsers
-                        on fm?.UserId equals user.UserId // Join faculty với user để lấy username
+                        on fm?.UserId equals user.UserId // Join faculty with user to get username
                         into userGroup
-                    from u in userGroup.DefaultIfEmpty() // Left Join phòng trường hợp user bị thiếu
-                    orderby course.CourseName // Sắp xếp theo tên khóa học
+                    from u in userGroup.DefaultIfEmpty() // Left Join in case user is missing
+                    orderby course.CourseName // Sort by course name
                     select new CourseViewModel
                     {
                         CourseId = course.CourseId,
                         CourseName = course.CourseName,
                         Credits = course.Credits,
-                        FacultyId = course.FacultyId, // Có thể ẩn đi nếu không cần
-                        FacultyUsername = u?.Username ?? (fm != null ? "(Tài khoản GV bị thiếu)" : "(Chưa gán GV)") // Hiển thị username hoặc thông báo
+                        FacultyId = course.FacultyId, // Can be hidden if not needed
+                        FacultyUsername = u?.Username ?? (fm != null ? "(Faculty account missing)" : "(Unassigned Faculty)") // Display username or message
                     }
                 ).ToList();
 
                 System.Diagnostics.Debug.WriteLine($"Generated {courseViewModels.Count} CourseViewModels.");
-                // Thêm Debugging join nếu cần
+                // Add Debugging join if needed
 
                 return View("~/Views/Admin/CourseManagement/Index.cshtml", courseViewModels);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in Course Index: {ex.Message}\n{ex.StackTrace}");
-                TempData["ErrorMessage"] = "Lỗi tải danh sách khóa học.";
+                TempData["ErrorMessage"] = "Error loading course list.";
                 return View("~/Views/Admin/CourseManagement/Index.cshtml", new List<CourseViewModel>());
             }
         }
@@ -75,7 +75,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         [HttpGet]
         public IActionResult Create()
         {
-            LoadFacultyList(); // Chuẩn bị danh sách giảng viên cho dropdown
+            LoadFacultyList(); // Prepare faculty list for dropdown
             return View("~/Views/Admin/CourseManagement/Create.cshtml");
         }
 
@@ -85,65 +85,65 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         public IActionResult Create(CourseCreateViewModel model)
         {
             System.Diagnostics.Debug.WriteLine($"Attempting to create course '{model.CourseName}'.");
-            LoadFacultyList(model.FacultyId); // Load lại danh sách giảng viên
+            LoadFacultyList(model.FacultyId); // Reload faculty list
 
-            // Kiểm tra xem FacultyId có hợp lệ không
+            // Check if FacultyId is valid
             if (_unitOfWork.Faculty.GetById(model.FacultyId) == null)
             {
-                ModelState.AddModelError(nameof(model.FacultyId), "Giảng viên được chọn không hợp lệ.");
+                ModelState.AddModelError(nameof(model.FacultyId), "Selected faculty is invalid.");
             }
 
             if (!ModelState.IsValid)
             {
                 LogModelStateErrors("Create");
-                TempData["ErrorMessage"] = "Dữ liệu không hợp lệ.";
+                TempData["ErrorMessage"] = "Invalid data.";
                 return View("~/Views/Admin/CourseManagement/Create.cshtml", model);
             }
 
             try
             {
-                // Tạo CourseId mới (ví dụ: CXXX)
+                // Create new CourseId (e.g., CXXX)
                 string newCourseId = GenerateNewCourseId();
-                if (string.IsNullOrEmpty(newCourseId)) // Kiểm tra nếu không tạo được ID
+                if (string.IsNullOrEmpty(newCourseId)) // Check if ID creation failed
                 {
-                    TempData["ErrorMessage"] = "Lỗi hệ thống: Không thể tạo mã khóa học mới.";
+                    TempData["ErrorMessage"] = "System error: Could not generate new course code.";
                     return View("~/Views/Admin/CourseManagement/Create.cshtml", model);
                 }
 
 
                 var newCourse = new Course
                 {
-                    CourseId = newCourseId, // Gán ID mới
+                    CourseId = newCourseId, // Assign new ID
                     CourseName = model.CourseName,
                     Credits = model.Credits,
                     FacultyId = model.FacultyId
                 };
 
                 _unitOfWork.Courses.Add(newCourse);
-                _unitOfWork.SaveChanges(); // Lưu khóa học mới
+                _unitOfWork.SaveChanges(); // Save new course
 
-                TempData["SuccessMessage"] = $"Đã tạo thành công khóa học '{model.CourseName}'.";
+                TempData["SuccessMessage"] = $"Successfully created course '{model.CourseName}'.";
                 System.Diagnostics.Debug.WriteLine($"Successfully created course '{model.CourseName}' with ID '{newCourse.CourseId}'.");
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error creating course: {ex.Message}\n{ex.StackTrace}");
-                TempData["ErrorMessage"] = "Lỗi hệ thống khi tạo khóa học.";
+                TempData["ErrorMessage"] = "System error when creating course.";
                 return View("~/Views/Admin/CourseManagement/Create.cshtml", model);
             }
         }
 
         // GET: /CourseManagement/Edit/{courseId}
         [HttpGet]
-        public IActionResult Edit(string id) // Nhận CourseId
+        public IActionResult Edit(string id) // Receive CourseId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã khóa học không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid course code.");
             System.Diagnostics.Debug.WriteLine($"Loading edit page for Course ID '{id}'.");
             try
             {
                 var course = _unitOfWork.Courses.GetById(id);
-                if (course == null) { TempData["ErrorMessage"] = $"Không tìm thấy khóa học {id}."; return RedirectToAction("Index"); }
+                if (course == null) { TempData["ErrorMessage"] = $"Course {id} not found."; return RedirectToAction("Index"); }
 
                 var model = new CourseEditViewModel
                 {
@@ -153,34 +153,34 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     FacultyId = course.FacultyId
                 };
 
-                LoadFacultyList(model.FacultyId); // Load dropdown giảng viên, chọn sẵn giảng viên hiện tại
+                LoadFacultyList(model.FacultyId); // Load faculty dropdown, pre-select current faculty
 
                 return View("~/Views/Admin/CourseManagement/Edit.cshtml", model);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit course {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi tải trang sửa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit course {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error loading edit page."; return RedirectToAction("Index"); }
         }
 
         // POST: /CourseManagement/Edit/{courseId}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, CourseEditViewModel model) // id là CourseId
+        public IActionResult Edit(string id, CourseEditViewModel model) // id is CourseId
         {
-            if (id != model.CourseId) return BadRequest("Mã khóa học không khớp.");
+            if (id != model.CourseId) return BadRequest("Course code mismatch.");
             System.Diagnostics.Debug.WriteLine($"Saving changes for Course ID '{id}'.");
-            LoadFacultyList(model.FacultyId); // Load lại danh sách giảng viên
+            LoadFacultyList(model.FacultyId); // Reload faculty list
 
-            // Kiểm tra FacultyId hợp lệ
-            if (_unitOfWork.Faculty.GetById(model.FacultyId) == null) { ModelState.AddModelError(nameof(model.FacultyId), "Giảng viên được chọn không hợp lệ."); }
+            // Check valid FacultyId
+            if (_unitOfWork.Faculty.GetById(model.FacultyId) == null) { ModelState.AddModelError(nameof(model.FacultyId), "Selected faculty is invalid."); }
 
 
-            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Dữ liệu không hợp lệ."; return View("~/Views/Admin/CourseManagement/Edit.cshtml", model); }
+            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Invalid data."; return View("~/Views/Admin/CourseManagement/Edit.cshtml", model); }
 
             try
             {
                 var existingCourse = _unitOfWork.Courses.GetById(id);
-                if (existingCourse == null) { TempData["ErrorMessage"] = $"Không tìm thấy khóa học {id}."; return RedirectToAction("Index"); }
+                if (existingCourse == null) { TempData["ErrorMessage"] = $"Course {id} not found."; return RedirectToAction("Index"); }
 
-                // Cập nhật thông tin
+                // Update information
                 bool changed = false;
                 if (existingCourse.CourseName != model.CourseName) { existingCourse.CourseName = model.CourseName; changed = true; }
                 if (existingCourse.Credits != model.Credits) { existingCourse.Credits = model.Credits; changed = true; }
@@ -189,71 +189,71 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 if (changed)
                 {
                     _unitOfWork.Courses.Update(existingCourse);
-                    _unitOfWork.SaveChanges(); // Lưu thay đổi
+                    _unitOfWork.SaveChanges(); // Save changes
                     System.Diagnostics.Debug.WriteLine($"Course {id} updated.");
-                    TempData["SuccessMessage"] = $"Đã cập nhật khóa học '{model.CourseName}'.";
+                    TempData["SuccessMessage"] = $"Course '{model.CourseName}' updated successfully.";
                 }
                 else
                 {
-                    TempData["SuccessMessage"] = $"Không có thay đổi nào cho khóa học '{model.CourseName}'.";
+                    TempData["SuccessMessage"] = $"No changes made to course '{model.CourseName}'.";
                 }
 
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi cập nhật."; System.Diagnostics.Debug.WriteLine($"Error saving course {id}: {ex.Message}"); return View("~/Views/Admin/CourseManagement/Edit.cshtml", model); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error when updating."; System.Diagnostics.Debug.WriteLine($"Error saving course {id}: {ex.Message}"); return View("~/Views/Admin/CourseManagement/Edit.cshtml", model); }
         }
 
         // GET: /CourseManagement/Delete/{courseId}
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận CourseId
+        public IActionResult Delete(string id) // Receive CourseId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã khóa học không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid course code.");
             System.Diagnostics.Debug.WriteLine($"Viewing delete confirmation for Course ID '{id}'.");
             try
             {
                 var course = _unitOfWork.Courses.GetById(id);
-                if (course == null) { TempData["ErrorMessage"] = $"Không tìm thấy khóa học {id}."; return RedirectToAction("Index"); }
+                if (course == null) { TempData["ErrorMessage"] = $"Course {id} not found."; return RedirectToAction("Index"); }
 
-                // Có thể lấy thêm thông tin giảng viên để hiển thị nếu muốn
+                // Can retrieve faculty info to display if needed
                 var faculty = _unitOfWork.Faculty.GetById(course.FacultyId);
                 var user = (faculty != null) ? UserManagementService.GetInstance().GetUserById(faculty.UserId) : null;
-                ViewBag.FacultyNameToDelete = user?.Username ?? "(Chưa gán)";
+                ViewBag.FacultyNameToDelete = user?.Username ?? "(Unassigned)";
 
-                return View("~/Views/Admin/CourseManagement/Delete.cshtml", course); // Gửi Course entity đến View
+                return View("~/Views/Admin/CourseManagement/Delete.cshtml", course); // Send Course entity to View
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi tải trang xóa."; System.Diagnostics.Debug.WriteLine($"Error loading delete course {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "Error loading delete page."; System.Diagnostics.Debug.WriteLine($"Error loading delete course {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // POST: /CourseManagement/Delete/{courseId}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là CourseId
+        public IActionResult DeleteConfirmed(string id) // id is CourseId
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Mã khóa học không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Invalid course code.");
             System.Diagnostics.Debug.WriteLine($"Confirming deletion for Course ID '{id}'.");
             try
             {
                 var courseToDelete = _unitOfWork.Courses.GetById(id);
-                if (courseToDelete == null) { TempData["ErrorMessage"] = $"Không tìm thấy khóa học {id}."; return RedirectToAction("Index"); }
+                if (courseToDelete == null) { TempData["ErrorMessage"] = $"Course {id} not found."; return RedirectToAction("Index"); }
 
-                // *** Kiểm tra ràng buộc trước khi xóa (QUAN TRỌNG) ***
-                // Ví dụ: Kiểm tra xem có Enrollment nào đang tham chiếu đến khóa học này không
+                // *** Check constraints before deleting (IMPORTANT) ***
+                // Example: Check if any Enrollments are referencing this course
                 var enrollmentsExist = _unitOfWork.Enrollments.GetByCourse(id).Any();
                 if (enrollmentsExist)
                 {
-                    TempData["ErrorMessage"] = $"Không thể xóa khóa học '{courseToDelete.CourseName}' vì đang có sinh viên đăng ký.";
+                    TempData["ErrorMessage"] = $"Cannot delete course '{courseToDelete.CourseName}' because students are enrolled.";
                     System.Diagnostics.Debug.WriteLine($"Deletion failed for course {id}: Existing enrollments found.");
-                    return RedirectToAction("Index"); // Hoặc trang chi tiết khóa học
+                    return RedirectToAction("Index"); // Or course details page
                 }
 
                 _unitOfWork.Courses.Delete(id);
                 _unitOfWork.SaveChanges();
 
-                TempData["SuccessMessage"] = $"Đã xóa khóa học '{courseToDelete.CourseName}'.";
+                TempData["SuccessMessage"] = $"Course '{courseToDelete.CourseName}' deleted successfully.";
                 System.Diagnostics.Debug.WriteLine($"Successfully deleted course {id}.");
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi xóa."; System.Diagnostics.Debug.WriteLine($"Error deleting course {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error when deleting."; System.Diagnostics.Debug.WriteLine($"Error deleting course {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
 
@@ -262,15 +262,15 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         {
             try
             {
-                // Lấy danh sách User là Faculty và thông tin Faculty tương ứng
+                // Get list of Users who are Faculty and corresponding Faculty information
                 var facultyUsers = (from user in _unitOfWork.Users.GetAll()
                                     where user.Role.Equals("Faculty", StringComparison.OrdinalIgnoreCase)
                                     join faculty in _unitOfWork.Faculty.GetAll() on user.UserId equals faculty.UserId
-                                    orderby user.Username // Sắp xếp theo tên cho dễ chọn
+                                    orderby user.Username // Sort by name for easy selection
                                     select new
                                     {
-                                        FacultyId = faculty.FacultyId, // Giá trị value của option
-                                        DisplayText = $"{user.Username} ({faculty.FacultyId})" // Text hiển thị trong dropdown
+                                        FacultyId = faculty.FacultyId, // Value of option
+                                        DisplayText = $"{user.Username} ({faculty.FacultyId})" // Text displayed in dropdown
                                     }).ToList();
 
                 ViewBag.FacultyList = new SelectList(facultyUsers, "FacultyId", "DisplayText", selectedFacultyId);
@@ -279,12 +279,12 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error loading faculty list: {ex.Message}");
-                ViewBag.FacultyList = new SelectList(new List<object>()); // Tránh lỗi null
-                TempData["ErrorMessageLoading"] = "Lỗi tải danh sách giảng viên.";
+                ViewBag.FacultyList = new SelectList(new List<object>()); // Avoid null error
+                TempData["ErrorMessageLoading"] = "Error loading faculty list.";
             }
         }
 
-        // Helper tạo CourseId mới (ví dụ)
+        // Helper to create new CourseId (example)
         private string GenerateNewCourseId()
         {
             try
@@ -296,13 +296,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                                     .ToList();
 
                 int nextIdNumber = existingIds.Any() ? existingIds.Max() + 1 : 1;
-                // Đảm bảo ID có đủ 3 chữ số sau chữ 'C' (ví dụ C001, C010, C100)
+                // Ensure ID has 3 digits after 'C' (e.g., C001, C010, C100)
                 return $"C{nextIdNumber:D3}";
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error generating new Course ID: {ex.Message}");
-                return null; // Trả về null nếu có lỗi
+                return null; // Return null if error occurs
             }
         }
 

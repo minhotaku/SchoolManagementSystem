@@ -1,8 +1,8 @@
 ﻿@model SchoolManagementSystem.Entities.User
 @{
-    ViewData["Title"] = "Xóa Người Dùng";
-    // Ngày giờ hiện tại: 2025-03-27 15:22:04
-    // Người dùng hiện tại: minhotaku
+    ViewData["Title"] = "Delete User";
+    // Current date and time: 2025-03-27 15:22:04
+    // Current user: minhotaku
 }
 
 <div class="container mt-4">
@@ -10,22 +10,22 @@
         <div class="col-md-8 col-lg-6">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Xóa người dùng</li>
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">User Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Delete User</li>
                 </ol>
             </nav>
 
             <div class="card shadow border-danger">
                 <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác Nhận Xóa Người Dùng</h4>
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Delete User</h4>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-warning">
-                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Cảnh báo!</h5>
-                        <p>Bạn đang chuẩn bị xóa người dùng này và toàn bộ dữ liệu liên quan. Hành động này không thể hoàn tác.</p>
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Warning!</h5>
+                        <p>You are about to delete this user and all related data. This action cannot be undone.</p>
                         <hr>
-                        <p class="mb-0">Vui lòng đọc kỹ thông tin và xác nhận lại trước khi xóa.</p>
+                        <p class="mb-0">Please carefully review the information and re-confirm before deleting.</p>
                     </div>
 
                     <div class="user-info-card p-3 mb-4 bg-light rounded">
@@ -36,28 +36,28 @@
                                 </div>
                             </div>
                             <div class="col-md-9">
-                                <h5 class="mb-3 text-primary">Thông tin người dùng:</h5>
+                                <h5 class="mb-3 text-primary">User Information:</h5>
                                 <div class="mb-2">
-                                    <span class="fw-bold">ID người dùng:</span>
+                                    <span class="fw-bold">User ID:</span>
                                     <span class="ms-2">@Model.UserId</span>
                                 </div>
                                 <div class="mb-2">
-                                    <span class="fw-bold">Tên đăng nhập:</span>
+                                    <span class="fw-bold">Username:</span>
                                     <span class="ms-2">@Model.Username</span>
                                 </div>
                                 <div class="mb-2">
-                                    <span class="fw-bold">Vai trò:</span>
+                                    <span class="fw-bold">Role:</span>
                                     <span class="ms-2">
                                         @switch (Model.Role.ToLower())
                                         {
                                             case "student":
-                                                <span class="badge bg-primary">Sinh viên</span>
+                                                <span class="badge bg-primary">Student</span>
                                                 break;
                                             case "faculty":
-                                                <span class="badge bg-success">Giảng viên</span>
+                                                <span class="badge bg-success">Faculty</span>
                                                 break;
                                             case "admin":
-                                                <span class="badge bg-danger">Quản trị viên</span>
+                                                <span class="badge bg-danger">Administrator</span>
                                                 break;
                                             default:
                                                 <span class="badge bg-secondary">@Model.Role</span>
@@ -75,16 +75,16 @@
                         <div class="mb-3 form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="confirmDelete">
                             <label class="form-check-label" for="confirmDelete">
-                                Tôi hiểu rằng hành động này không thể hoàn tác và đồng ý xóa người dùng này
+                                I understand that this action cannot be undone and agree to delete this user
                             </label>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-danger" id="deleteButton" disabled>
-                                <i class="bi bi-trash me-2"></i>Xóa Người Dùng
+                                <i class="bi bi-trash me-2"></i>Delete User
                             </button>
                             <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                                <i class="bi bi-arrow-left me-2"></i>Back
                             </a>
                         </div>
                     </form>
@@ -125,7 +125,7 @@
 
 @section Scripts {
     <script>
-        // Xử lý checkbox xác nhận
+        // Handle confirmation checkbox
         document.getElementById('confirmDelete').addEventListener('change', function () {
             document.getElementById('deleteButton').disabled = !this.checked;
         });

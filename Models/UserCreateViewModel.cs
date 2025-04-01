@@ -4,21 +4,21 @@ namespace SchoolManagementSystem.Models
 {
     public class UserCreateViewModel
     {
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
-        [Display(Name = "Tên đăng nhập")]
+        [Required(ErrorMessage = "Username cannot be empty")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Mật khẩu không được để trống")]
+        [Required(ErrorMessage = "Password cannot be empty")]
         [DataType(DataType.Password)]
-        [Display(Name = "Mật khẩu")]
-        [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự.", MinimumLength = 6)]
+        [Display(Name = "Password")]
+        [StringLength(100, ErrorMessage = "The password must be at least {2} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Vai trò không được để trống")]
-        [Display(Name = "Vai trò")]
+        [Required(ErrorMessage = "Role cannot be empty")]
+        [Display(Name = "Role")]
         public string Role { get; set; }
 
-        [Display(Name = "Chương trình học")]
+        [Display(Name = "School Program")]
         public string SchoolProgramId { get; set; }
     }
 }

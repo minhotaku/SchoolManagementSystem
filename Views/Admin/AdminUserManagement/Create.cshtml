@@ -1,34 +1,34 @@
 ﻿@model SchoolManagementSystem.Models.UserCreateViewModel
 @{
-    ViewData["Title"] = "Thêm Người Dùng Mới";
+    ViewData["Title"] = "Add New User";
 }
 
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="AdminUserManagement" asp-action="Index">Quản lý người dùng</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="AdminUserManagement" asp-action="Index">User Management</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-7">
-             <div class="card shadow-sm">
+            <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>@ViewData["Title"]</h4>
                 </div>
                 <div class="card-body">
-                    @* Hiển thị lỗi validation tổng hợp *@
+                    @* Display aggregate validation errors *@
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                    @* Hiển thị thông báo lỗi từ TempData *@
+                    @* Display error messages from TempData *@
                     @if (TempData["ErrorMessage"] != null)
                     {
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     }
 
                     <form asp-controller="AdminUserManagement" asp-action="Create" method="post" class="needs-validation" novalidate>
@@ -38,34 +38,34 @@
                             <label asp-for="Username" class="form-label fw-bold required"></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập duy nhất" />
+                                <input asp-for="Username" class="form-control" placeholder="Enter a unique username" />
                             </div>
                             <span asp-validation-for="Username" class="text-danger"></span>
-                            <div class="form-text">Tên đăng nhập không được trùng.</div>
+                            <div class="form-text">Username must be unique.</div>
                         </div>
 
                         <div class="row g-3 mb-3">
-                             <div class="col-md-6">
+                            <div class="col-md-6">
                                 <label asp-for="Password" class="form-label fw-bold required"></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" />
-                                     <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                                    <input asp-for="Password" class="form-control" placeholder="Enter password" />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Show/Hide password">
                                         <i class="bi bi-eye"></i>
-                                     </button>
+                                    </button>
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
-                             </div>
-                             <div class="col-md-6">
-                                 <label for="confirmPassword" class="form-label fw-bold required">Xác nhận mật khẩu</label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label fw-bold required">Confirm Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                    <input type="password" id="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" required/>
+                                    <input type="password" id="confirmPassword" class="form-control" placeholder="Re-enter password" required />
                                 </div>
                                 <div id="confirmPasswordError" class="text-danger" style="font-size: 0.875em;"></div>
-                             </div>
+                            </div>
                         </div>
-                         <div class="form-text mb-3">Mật khẩu nên có độ dài từ 6 ký tự trở lên.</div>
+                        <div class="form-text mb-3">Password should be at least 6 characters long.</div>
 
 
                         <div class="mb-3">
@@ -73,35 +73,35 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                                 <select asp-for="Role" class="form-select" onchange="toggleProgramField()">
-                                    <option value="" selected disabled>-- Chọn vai trò --</option>
-                                    <option value="Student">Sinh viên</option>
-                                    <option value="Faculty">Giảng viên</option>
-                                    <option value="Admin">Quản trị viên</option>
+                                    <option value="" selected disabled>-- Select Role --</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Faculty">Faculty</option>
+                                    <option value="Admin">Admin</option>
                                 </select>
                             </div>
-                             <span asp-validation-for="Role" class="text-danger"></span>
+                            <span asp-validation-for="Role" class="text-danger"></span>
                         </div>
 
-                        @* Trường Chương trình học, chỉ hiện khi chọn vai trò Sinh viên *@
+                        @* School Program Field, only shown when Student role is selected *@
                         <div class="mb-4" id="programField" style="display: none;">
                             <label asp-for="SchoolProgramId" class="form-label fw-bold required"></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-mortarboard"></i></span>
                                 <select asp-for="SchoolProgramId" class="form-select" asp-items="@ViewBag.SchoolPrograms">
-                                     <option value="" selected disabled>-- Chọn chương trình học --</option>
+                                    <option value="" selected disabled>-- Select School Program --</option>
                                 </select>
                             </div>
-                             <span asp-validation-for="SchoolProgramId" class="text-danger"></span>
+                            <span asp-validation-for="SchoolProgramId" class="text-danger"></span>
                         </div>
 
                         <hr />
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                             <a asp-controller="AdminUserManagement" asp-action="Index" class="btn btn-outline-secondary me-md-2">
-                                <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                            <a asp-controller="AdminUserManagement" asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle-fill me-1"></i> Lưu Người Dùng
+                                <i class="bi bi-check-circle-fill me-1"></i> Save User
                             </button>
                         </div>
                     </form>
@@ -112,94 +112,94 @@
 </div>
 
 @section Styles {
-        <style>
-            .required::after {
-                content: " *";
-                color: red;
-            }
-            /* Thêm CSS khác nếu cần */
-        </style>
+    <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        /* Add other CSS if needed */
+    </style>
 }
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-        <script>
-            // Hiển thị/ẩn trường chương trình học dựa trên vai trò
-            function toggleProgramField() {
-                var role = document.getElementById('Role').value;
-                var programField = document.getElementById('programField');
-                var schoolProgramSelect = document.getElementById('SchoolProgramId');
+    <script>
+        // Show/hide program field based on role
+        function toggleProgramField() {
+            var role = document.getElementById('Role').value;
+            var programField = document.getElementById('programField');
+            var schoolProgramSelect = document.getElementById('SchoolProgramId');
 
-                if (role === 'Student') {
-                    programField.style.display = 'block';
-                    // Đánh dấu là bắt buộc khi hiển thị
-                     // schoolProgramSelect.setAttribute('required', 'required'); // Model binding và validation attribute sẽ xử lý
-                } else {
-                    programField.style.display = 'none';
-                     // Bỏ yêu cầu bắt buộc khi ẩn
-                    // schoolProgramSelect.removeAttribute('required');
-                    schoolProgramSelect.value = ''; // Reset giá trị khi ẩn
-                }
+            if (role === 'Student') {
+                programField.style.display = 'block';
+                // Mark as required when visible
+                 // schoolProgramSelect.setAttribute('required', 'required'); // Model binding and validation attribute will handle
+            } else {
+                programField.style.display = 'none';
+                 // Remove required attribute when hidden
+                // schoolProgramSelect.removeAttribute('required');
+                schoolProgramSelect.value = ''; // Reset value when hidden
             }
+        }
 
-            // Hiện/Ẩn mật khẩu
-            document.getElementById('togglePassword').addEventListener('click', function () {
-                var passwordField = document.getElementById('Password');
-                var icon = this.querySelector('i');
-                 var fieldType = passwordField.getAttribute('type');
-                if (fieldType === 'password') {
-                    passwordField.setAttribute('type', 'text');
-                    icon.classList.remove('bi-eye');
-                    icon.classList.add('bi-eye-slash');
-                } else {
-                     passwordField.setAttribute('type', 'password');
-                    icon.classList.remove('bi-eye-slash');
-                    icon.classList.add('bi-eye');
-                }
-            });
+        // Show/Hide password
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            var passwordField = document.getElementById('Password');
+            var icon = this.querySelector('i');
+             var fieldType = passwordField.getAttribute('type');
+            if (fieldType === 'password') {
+                passwordField.setAttribute('type', 'text');
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                 passwordField.setAttribute('type', 'password');
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
 
-            // Kiểm tra xác nhận mật khẩu real-time
-            document.getElementById('confirmPassword').addEventListener('input', function() {
-                var password = document.getElementById('Password').value;
-                var confirmPassword = this.value;
-                var errorDiv = document.getElementById('confirmPasswordError');
+        // Real-time confirm password check
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            var password = document.getElementById('Password').value;
+            var confirmPassword = this.value;
+            var errorDiv = document.getElementById('confirmPasswordError');
 
-                if (password !== confirmPassword && confirmPassword.length > 0) { // Chỉ báo lỗi nếu đã nhập gì đó
-                    errorDiv.textContent = 'Mật khẩu xác nhận không khớp.';
-                    this.setCustomValidity('Mật khẩu xác nhận không khớp.'); // Cho validation HTML5
-                } else {
-                     errorDiv.textContent = '';
-                     this.setCustomValidity('');
-                }
-            });
+            if (password !== confirmPassword && confirmPassword.length > 0) { // Show error only if something is entered
+                errorDiv.textContent = 'Passwords do not match.';
+                this.setCustomValidity('Passwords do not match.'); // For HTML5 validation
+            } else {
+                 errorDiv.textContent = '';
+                 this.setCustomValidity('');
+            }
+        });
 
-             // Xử lý khi form submit để đảm bảo confirm password khớp
-             document.querySelector('form').addEventListener('submit', function(event) {
-                 var password = document.getElementById('Password').value;
-                 var confirmPassword = document.getElementById('confirmPassword').value;
-                 if (password !== confirmPassword) {
-                     document.getElementById('confirmPasswordError').textContent = 'Mật khẩu xác nhận không khớp.';
-                     document.getElementById('confirmPassword').setCustomValidity('Mật khẩu xác nhận không khớp.');
-                     event.preventDefault(); // Ngăn chặn submit form
-                     event.stopPropagation();
-                 } else {
-                     document.getElementById('confirmPasswordError').textContent = '';
-                     document.getElementById('confirmPassword').setCustomValidity('');
-                 }
+         // Handle form submit to ensure confirm password matches
+         document.querySelector('form').addEventListener('submit', function(event) {
+             var password = document.getElementById('Password').value;
+             var confirmPassword = document.getElementById('confirmPassword').value;
+             if (password !== confirmPassword) {
+                 document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+                 document.getElementById('confirmPassword').setCustomValidity('Passwords do not match.');
+                 event.preventDefault(); // Prevent form submission
+                 event.stopPropagation();
+             } else {
+                 document.getElementById('confirmPasswordError').textContent = '';
+                 document.getElementById('confirmPassword').setCustomValidity('');
+             }
 
-                 // Force Bootstrap validation styles
-                  if (!this.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                  }
-                  this.classList.add('was-validated');
+             // Force Bootstrap validation styles
+              if (!this.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+              }
+              this.classList.add('was-validated');
 
-             });
+         });
 
 
-            // Gọi lần đầu khi tải trang để đảm bảo trạng thái đúng (nếu có giá trị cũ)
-            toggleProgramField();
-        </script>
+        // Call on page load to ensure correct state (if there are old values)
+        toggleProgramField();
+    </script>
 }

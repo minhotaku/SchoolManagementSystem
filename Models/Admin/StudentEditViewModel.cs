@@ -3,24 +3,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SchoolManagementSystem.Models
 {
-    public class StudentEditViewModel 
+    public class StudentEditViewModel
     {
         [Required]
         public string UserId { get; set; }
 
         [Required]
-        [Display(Name = "Mã Sinh viên")]
+        [Display(Name = "Student Id")]
         public string StudentId { get; set; }
 
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống.")]
-        [Display(Name = "Tên đăng nhập")]
+        [Required(ErrorMessage = "Username cannot be empty.")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn chương trình học.")]
-        [Display(Name = "Chương trình học")]
+        [Required(ErrorMessage = "Please select a school program.")]
+        [Display(Name = "School Program")]
         public string SchoolProgramId { get; set; }
 
-        [Display(Name = "Mật khẩu mới (để trống nếu không đổi)")]
+        [Display(Name = "New password (leave blank to not change)")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 

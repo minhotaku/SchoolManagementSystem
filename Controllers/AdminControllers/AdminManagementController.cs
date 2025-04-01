@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
-using SchoolManagementSystem.Services.Interfaces; 
+using SchoolManagementSystem.Services.Interfaces;
 using SchoolManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolManagementSystem.Utils;
@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        // Thông tin người dùng hiện tại (Tạm thời)
+        // Current user information (Temporary)
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
         private readonly string _currentUserLogin = "admin_son";
 
@@ -40,9 +40,9 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 var adminViewModels = (
                     from user in allUsers
-                    where user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) // Chỉ lấy user là Admin
+                    where user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) // Only get users who are Admins
                     join adminRecord in allAdmins
-                        on user.UserId equals adminRecord.UserId // Join bằng UserId
+                        on user.UserId equals adminRecord.UserId // Join by UserId
                     orderby user.Username
                     select new AdminViewModel
                     {
@@ -65,24 +65,24 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in Admin Index: {ex.Message}\n{ex.StackTrace}");
-                TempData["ErrorMessage"] = "Lỗi tải danh sách quản trị viên.";
+                TempData["ErrorMessage"] = "Error loading admin list.";
                 return View("~/Views/Admin/AdminManagement/Index.cshtml", new List<AdminViewModel>());
             }
         }
 
         // GET: /AdminManagement/Details/{adminId}
         [HttpGet]
-        public IActionResult Details(string id) // Nhận AdminId
+        public IActionResult Details(string id) // Receive AdminId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã admin không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid admin code.");
             System.Diagnostics.Debug.WriteLine($"Viewing details for Admin ID '{id}'.");
             try
             {
-                var adminRecord = _unitOfWork.Admins.GetById(id); // Tìm Admin bằng AdminId
-                if (adminRecord == null) { TempData["ErrorMessage"] = $"Không tìm thấy admin {id}."; return RedirectToAction("Index"); }
+                var adminRecord = _unitOfWork.Admins.GetById(id); // Find Admin by AdminId
+                if (adminRecord == null) { TempData["ErrorMessage"] = $"Admin {id} not found."; return RedirectToAction("Index"); }
 
-                var user = UserManagementService.GetInstance().GetUserById(adminRecord.UserId); // Tìm User bằng UserId
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho admin {id}."; return RedirectToAction("Index"); }
+                var user = UserManagementService.GetInstance().GetUserById(adminRecord.UserId); // Find User by UserId
+                if (user == null) { TempData["ErrorMessage"] = $"User error for admin {id}."; return RedirectToAction("Index"); }
 
                 var viewModel = new AdminViewModel
                 {
@@ -92,53 +92,53 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 };
                 return View("~/Views/Admin/AdminManagement/Details.cshtml", viewModel);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi xem chi tiết."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error viewing details."; return RedirectToAction("Index"); }
         }
 
         // GET: /AdminManagement/Edit/{adminId}
         [HttpGet]
-        public IActionResult Edit(string id) // Nhận AdminId
+        public IActionResult Edit(string id) // Receive AdminId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã admin không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid admin code.");
             System.Diagnostics.Debug.WriteLine($"Loading edit page for Admin ID '{id}'.");
             try
             {
-                var adminRecord = _unitOfWork.Admins.GetById(id); // Tìm Admin bằng AdminId
-                if (adminRecord == null) { TempData["ErrorMessage"] = $"Không tìm thấy admin {id}."; return RedirectToAction("Index"); }
+                var adminRecord = _unitOfWork.Admins.GetById(id); // Find Admin by AdminId
+                if (adminRecord == null) { TempData["ErrorMessage"] = $"Admin {id} not found."; return RedirectToAction("Index"); }
 
-                var user = UserManagementService.GetInstance().GetUserById(adminRecord.UserId); // Tìm User bằng UserId
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho admin {id}."; return RedirectToAction("Index"); }
+                var user = UserManagementService.GetInstance().GetUserById(adminRecord.UserId); // Find User by UserId
+                if (user == null) { TempData["ErrorMessage"] = $"User error for admin {id}."; return RedirectToAction("Index"); }
 
                 var model = new AdminEditViewModel
                 {
                     UserId = user.UserId,
                     AdminId = adminRecord.AdminId,
                     Username = user.Username
-                    // Password để trống
+                    // Password is empty
                 };
                 return View("~/Views/Admin/AdminManagement/Edit.cshtml", model);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi tải trang sửa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error loading edit page."; return RedirectToAction("Index"); }
         }
 
         // POST: /AdminManagement/Edit/{adminId}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, AdminEditViewModel model) // id là AdminId
+        public IActionResult Edit(string id, AdminEditViewModel model) // id is AdminId
         {
-            if (id != model.AdminId) return BadRequest("Mã admin không khớp.");
+            if (id != model.AdminId) return BadRequest("Admin code does not match.");
             System.Diagnostics.Debug.WriteLine($"Saving changes for Admin ID '{id}'. ...");
 
             const int minPasswordLength = 6;
-            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"Mật khẩu mới ít nhất {minPasswordLength} ký tự."); }
+            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"New password must be at least {minPasswordLength} characters."); }
 
-            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Dữ liệu không hợp lệ."; return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
+            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Invalid data."; return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
 
             try
             {
                 var existingUser = UserManagementService.GetInstance().GetUserById(model.UserId);
-                if (existingUser == null) { TempData["ErrorMessage"] = $"Lỗi: Không tìm thấy tài khoản user ID {model.UserId}."; return RedirectToAction("Index"); }
-                if (!existingUser.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = "Người dùng này không phải là admin."; return RedirectToAction("Index"); }
+                if (existingUser == null) { TempData["ErrorMessage"] = $"Error: User account with ID {model.UserId} not found."; return RedirectToAction("Index"); }
+                if (!existingUser.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = "This user is not an admin."; return RedirectToAction("Index"); }
 
                 bool userChanged = false;
 
@@ -148,74 +148,74 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 if (userChanged)
                 {
                     bool userUpdateSuccess = UserManagementService.GetInstance().UpdateUser(existingUser);
-                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Lỗi cập nhật tài khoản admin."; return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
+                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Error updating admin account."; return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
                     System.Diagnostics.Debug.WriteLine($"User info updated for admin User ID {model.UserId}");
                 }
                 else { System.Diagnostics.Debug.WriteLine($"No changes detected for admin User ID {model.UserId}"); }
 
-                TempData["SuccessMessage"] = $"Đã cập nhật thành công admin '{model.Username}'.";
+                TempData["SuccessMessage"] = $"Successfully updated admin '{model.Username}'.";
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi cập nhật."; System.Diagnostics.Debug.WriteLine($"Error saving admin {id}: {ex.Message}"); return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during update."; System.Diagnostics.Debug.WriteLine($"Error saving admin {id}: {ex.Message}"); return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
         }
 
         // GET: /AdminManagement/Delete/{userId}
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận UserId từ link trong Index
+        public IActionResult Delete(string id) // Receive UserId from link in Index
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Viewing delete confirmation for Admin with User ID '{id}'.");
             try
             {
                 var user = UserManagementService.GetInstance().GetUserById(id);
-                if (user == null || !user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy admin với user ID {id}."; return RedirectToAction("Index"); }
+                if (user == null || !user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Admin with user ID {id} not found."; return RedirectToAction("Index"); }
 
                 var adminRecord = _unitOfWork.Admins.GetByUserId(id);
                 ViewBag.AdminIdToDelete = adminRecord?.AdminId;
 
                 return View("~/Views/Admin/AdminManagement/Delete.cshtml", user);
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi tải trang xóa."; System.Diagnostics.Debug.WriteLine($"Error loading delete admin user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "Error loading delete page."; System.Diagnostics.Debug.WriteLine($"Error loading delete admin user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // POST: /AdminManagement/Delete/{userId}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là UserId
+        public IActionResult DeleteConfirmed(string id) // id is UserId
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Confirming deletion for User ID '{id}'.");
             try
             {
                 var userToDelete = UserManagementService.GetInstance().GetUserById(id);
                 string usernameToDelete = userToDelete?.Username ?? $"User ID {id}";
-                if (userToDelete == null || !userToDelete.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy admin '{usernameToDelete}'."; return RedirectToAction("Index"); }
+                if (userToDelete == null || !userToDelete.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Admin '{usernameToDelete}' not found."; return RedirectToAction("Index"); }
 
                 var allAdmins = _unitOfWork.Admins.GetAll();
                 if (allAdmins.Count() <= 1)
                 {
-                    TempData["ErrorMessage"] = "Không thể xóa tài khoản quản trị viên cuối cùng.";
+                    TempData["ErrorMessage"] = "Cannot delete the last administrator account.";
                     return RedirectToAction("Index");
                 }
                 if (userToDelete.UserId == HttpContext.Session.GetString("_UserId"))
-                { // Giả sử SessionKeyUserId là "_UserId"
-                    TempData["ErrorMessage"] = "Bạn không thể tự xóa tài khoản của mình.";
+                { // Assuming SessionKeyUserId is "_UserId"
+                    TempData["ErrorMessage"] = "You cannot delete your own account.";
                     return RedirectToAction("Index");
                 }
 
-                bool result = UserManagementService.GetInstance().DeleteUser(id); // Service sẽ xóa cả User và Admin record
-                if (result) { TempData["SuccessMessage"] = $"Đã xóa admin '{usernameToDelete}'."; }
-                else { TempData["ErrorMessage"] = $"Lỗi xóa admin '{usernameToDelete}'."; }
+                bool result = UserManagementService.GetInstance().DeleteUser(id); // Service will delete both User and Admin record
+                if (result) { TempData["SuccessMessage"] = $"Admin '{usernameToDelete}' deleted successfully."; }
+                else { TempData["ErrorMessage"] = $"Error deleting admin '{usernameToDelete}'."; }
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi xóa."; System.Diagnostics.Debug.WriteLine($"Error deleting admin user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during deletion."; System.Diagnostics.Debug.WriteLine($"Error deleting admin user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // --- Helper Methods ---
         private void LoadSchoolProgramsList(string? selectedProgramId = null)
         {
             try { var programs = _unitOfWork.SchoolPrograms.GetAll()?.OrderBy(p => p.SchoolProgramName).ToList() ?? new List<SchoolProgram>(); ViewBag.SchoolProgramsList = new SelectList(programs, "SchoolProgramId", "SchoolProgramName", selectedProgramId); }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Lỗi tải chương trình học."; }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Error loading school programs."; }
         }
         private void LogModelStateErrors(string contextId)
         {

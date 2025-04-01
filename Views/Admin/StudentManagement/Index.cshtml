@@ -1,32 +1,32 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.StudentViewModel>
 @{
-    ViewData["Title"] = "Quản Lý Sinh Viên";
+    ViewData["Title"] = "Student Management";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề và Nút Thêm --- *@
+    @* --- Title and Add Button --- *@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-person-lines-fill me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Danh sách sinh viên trong hệ thống.</p>
+            <p class="text-muted mb-0">List of students in the system.</p>
         </div>
         <div class="col-auto">
             <a asp-controller="AdminUserManagement" asp-action="Create" class="btn btn-primary">
-                @* Nút màu xanh dương *@
-                <i class="bi bi-plus-lg me-1"></i> Thêm Sinh Viên Mới
+                @* Blue Button *@
+                <i class="bi bi-plus-lg me-1"></i> Add New Student
             </a>
         </div>
     </div>
 
-    @* --- Hiển thị TempData messages --- *@
+    @* --- Display TempData messages --- *@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -41,24 +41,24 @@
     }
 
 
-    @* --- Card chứa Bảng và Filter (Giao diện giống AdminUserManagement) --- *@
+    @* --- Card containing Table and Filter (AdminUserManagement like UI) --- *@
     <div class="card shadow-sm">
         <div class="card-header bg-light py-3">
-            @* --- Input Tìm kiếm và Filter --- *@
+            @* --- Search Input and Filter --- *@
             <div class="row g-2 align-items-center">
                 <div class="col-md-7 col-lg-8">
-                    @* Ô tìm kiếm *@
+                    @* Search Box *@
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo Tên đăng nhập hoặc Mã SV...">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Username or Student ID...">
                         <button class="btn btn-outline-secondary" type="button" id="searchButton">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-5 col-lg-4">
-                    @* Dropdown Filter chương trình *@
+                    @* Program Filter Dropdown *@
                     <select id="programFilter" class="form-select" asp-items="@ViewBag.ProgramsList">
-                        <option value="">-- Lọc theo Chương trình học --</option>
+                        <option value="">-- Filter by School Program --</option>
                     </select>
                 </div>
             </div>
@@ -68,11 +68,11 @@
                 <table class="table table-hover table-striped mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            @* Điều chỉnh độ rộng cột *@
-                            <th style="width: 15%;">Mã Sinh Viên</th>
-                            <th style="width: 25%;">Tên đăng nhập</th>
-                            <th style="width: 25%;">Chương trình học</th>
-                            <th style="width: 35%;" class="text-center">Thao tác</th> @* Tăng độ rộng *@
+                            @* Adjust column width *@
+                            <th style="width: 15%;">Student ID</th>
+                            <th style="width: 25%;">Username</th>
+                            <th style="width: 25%;">School Program</th>
+                            <th style="width: 35%;" class="text-center">Actions</th> @* Increase width *@
                         </tr>
                     </thead>
                     <tbody id="studentTableBody">
@@ -85,16 +85,16 @@
                                     <td>@student.Username</td>
                                     <td>@student.SchoolProgramName</td>
                                     <td class="text-center">
-                                        @* Các nút thao tác có chữ *@
+                                        @* Action buttons with text *@
                                         <div class="btn-group btn-group-sm" role="group">
                                             <a asp-controller="StudentManagement" asp-action="Edit" asp-route-id="@student.StudentId" class="btn btn-outline-primary">
-                                                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                                                <i class="bi bi-pencil-square me-1"></i> Edit
                                             </a>
                                             <a asp-controller="StudentManagement" asp-action="Delete" asp-route-id="@student.UserId" class="btn btn-outline-danger">
-                                                <i class="bi bi-trash me-1"></i> Xóa
+                                                <i class="bi bi-trash me-1"></i> Delete
                                             </a>
                                             <a asp-controller="StudentManagement" asp-action="Details" asp-route-id="@student.StudentId" class="btn btn-outline-info">
-                                                <i class="bi bi-info-circle me-1"></i> Chi tiết
+                                                <i class="bi bi-info-circle me-1"></i> Details
                                             </a>
                                         </div>
                                     </td>
@@ -103,41 +103,41 @@
                         }
                         else
                         {
-                            <tr><td colspan="4" class="text-center py-4 text-muted">Không có sinh viên nào.</td></tr>
+                            <tr><td colspan="4" class="text-center py-4 text-muted">No students available.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer bg-light text-muted">
-            Tổng số: <span id="studentCount">@(Model?.Count() ?? 0)</span> sinh viên.
+            Total: <span id="studentCount">@(Model?.Count() ?? 0)</span> students.
         </div>
     </div>
 </div>
 
-@* Không cần Modal ở đây vì đã có trang Details riêng *@
+@* No Modal needed here as there is a separate Details page *@
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // --- Hàm Filter cho Bảng Student ---
+            // --- Filter Function for Student Table ---
             function filterStudentTable() {
                 var searchTerm = $("#searchInput").val().toLowerCase();
-                var selectedProgram = $("#programFilter").val(); // Lấy program ID từ dropdown
+                var selectedProgram = $("#programFilter").val(); // Get program ID from dropdown
                 var count = 0;
 
                 $("#studentTableBody tr.student-row").each(function() {
                     var rowUsername = $(this).data('username');
                     var rowStudentId = $(this).data('studentid');
-                    var rowProgramId = $(this).data('programid'); // Lấy program ID từ data attribute
+                    var rowProgramId = $(this).data('programid'); // Get program ID from data attribute
                     var show = true;
 
-                    // Lọc theo chương trình học
+                    // Filter by school program
                     if (selectedProgram && rowProgramId !== selectedProgram) {
                         show = false;
                     }
 
-                    // Lọc theo từ khóa (tìm trong username hoặc studentId)
+                    // Filter by keyword (search in username or studentId)
                     if (show && searchTerm &&
                         rowUsername.indexOf(searchTerm) === -1 &&
                         rowStudentId.indexOf(searchTerm) === -1)
@@ -149,19 +149,19 @@
                     if(show) count++;
                 });
 
-                $("#studentCount").text(count); // Cập nhật bộ đếm
+                $("#studentCount").text(count); // Update counter
 
-                // --- Hiển thị/Ẩn thông báo "Không tìm thấy kết quả" ---
+                // --- Show/Hide "No results found" message ---
                  $("#noResultsRowStudent").remove();
                  if (count === 0 && $("#studentTableBody tr.student-row").length > 0) {
-                     $("#studentTableBody").append('<tr id="noResultsRowStudent"><td colspan="4" class="text-center text-muted py-3">Không tìm thấy kết quả phù hợp.</td></tr>');
+                     $("#studentTableBody").append('<tr id="noResultsRowStudent"><td colspan="4" class="text-center text-muted py-3">No matching results found.</td></tr>');
                  }
             }
 
-            // Gắn sự kiện cho ô tìm kiếm và dropdown filter
-            $("#searchInput, #programFilter").on("keyup change", filterStudentTable); // Trigger bằng nút thì đổi #searchInput thành #searchButton click
+            // Attach events to search input and dropdown filter
+            $("#searchInput, #programFilter").on("keyup change", filterStudentTable); // Trigger by button click, change #searchInput to #searchButton click
 
-            // Đếm ban đầu
+            // Initial count
             $("#studentCount").text($("#studentTableBody tr.student-row").length);
         });
     </script>

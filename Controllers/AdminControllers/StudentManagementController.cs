@@ -6,19 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolManagementSystem.Data;
 using SchoolManagementSystem.Entities;
-using SchoolManagementSystem.Services.Implementation; // Dùng để lấy User
-using SchoolManagementSystem.Services.Interfaces;   // Dùng để lấy User
+using SchoolManagementSystem.Services.Implementation; // Used to get User
+using SchoolManagementSystem.Services.Interfaces;   // Used to get User
 using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Utils;
 
-namespace SchoolManagementSystem.Controllers.AdminControllers
+namespace SchoolManagementSystem.Controllers.Controllers
 {
     [Authorize(RoleConstants.Admin)]
+    [Route("admin/student-management")]  // Định nghĩa route cho StudentManagementController
+
     public class StudentManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        // Thông tin người dùng hiện tại (Tạm thời)
+        // Current user information (Temporary)
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
         private readonly string _currentUserLogin = "admin_son";
 
@@ -28,11 +30,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         }
 
         // GET: /StudentManagement/Index
-        // Logic Index đã hoạt động đúng, giữ nguyên
+        // Index logic is working correctly, keep it as is
         [HttpGet]
+        [Route("index")]  // Route: admin/student-management/index
+
         public IActionResult Index()
         {
-            // ... (Code Index đã sửa lỗi join và hoạt động đúng) ...
+            // ... (Index code already fixed join and working correctly) ...
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' accessed Student Management Index.");
             try
             {
@@ -53,10 +57,10 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                         Username = user.Username,
                         StudentId = student.StudentId,
                         SchoolProgramId = student.SchoolProgramId,
-                        SchoolProgramName = prog?.SchoolProgramName ?? "(Chương trình không xác định)"
+                        SchoolProgramName = prog?.SchoolProgramName ?? "(Undefined Program)"
                     }).ToList();
 
-                // ... (Logging và ViewBag.ProgramsList) ...
+                // ... (Logging and ViewBag.ProgramsList) ...
                 ViewBag.ProgramsList = new SelectList(allPrograms, "SchoolProgramId", "SchoolProgramName");
                 System.Diagnostics.Debug.WriteLine($"Generated {studentViewModels.Count} StudentViewModels.");
 
@@ -66,97 +70,100 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in Student Index: {ex.Message}\n{ex.StackTrace}");
-                TempData["ErrorMessage"] = "Lỗi tải danh sách sinh viên.";
+                TempData["ErrorMessage"] = "Error loading student list.";
                 ViewBag.ProgramsList = new SelectList(new List<SchoolProgram>());
                 return View("~/Views/Admin/StudentManagement/Index.cshtml", new List<StudentViewModel>());
             }
         }
 
-        // *** SỬA LẠI GET Details - Đảm bảo gán giá trị ViewModel ***
+        // *** REVISED GET Details - Ensure ViewModel values are assigned ***
         // GET: /StudentManagement/Details/{studentId}
         [HttpGet]
-        public IActionResult Details(string id) // Nhận StudentId
+        [Route("details/{id}")] // Route for Details action
+        public IActionResult Details(string id) // Receives StudentId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã sinh viên không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid student ID.");
             System.Diagnostics.Debug.WriteLine($"Viewing details for Student ID '{id}'.");
             try
             {
                 var student = _unitOfWork.Students.GetById(id);
-                if (student == null) { TempData["ErrorMessage"] = $"Không tìm thấy sinh viên {id}."; return RedirectToAction("Index"); }
+                if (student == null) { TempData["ErrorMessage"] = $"Student {id} not found."; return RedirectToAction("Index"); }
                 var user = UserManagementService.GetInstance().GetUserById(student.UserId);
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho sinh viên {id}."; return RedirectToAction("Index"); }
+                if (user == null) { TempData["ErrorMessage"] = $"Error getting user for student {id}."; return RedirectToAction("Index"); }
                 var program = _unitOfWork.SchoolPrograms.GetById(student.SchoolProgramId);
 
-                // *** Đảm bảo gán đầy đủ các thuộc tính cho ViewModel ***
+                // *** Ensure all attributes are assigned to ViewModel ***
                 var viewModel = new StudentViewModel
                 {
                     UserId = user.UserId,
                     Username = user.Username,
                     StudentId = student.StudentId,
                     SchoolProgramId = student.SchoolProgramId,
-                    SchoolProgramName = program?.SchoolProgramName ?? "(Chương trình không xác định)"
+                    SchoolProgramName = program?.SchoolProgramName ?? "(Undefined Program)"
                 };
 
                 return View("~/Views/Admin/StudentManagement/Details.cshtml", viewModel);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details student {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi xem chi tiết."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details student {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error viewing details."; return RedirectToAction("Index"); }
         }
 
 
-        // *** SỬA LẠI GET Edit - Đảm bảo gán giá trị ViewModel ***
+        // *** REVISED GET Edit - Ensure ViewModel values are assigned ***
         // GET: /StudentManagement/Edit/{studentId}
         [HttpGet]
-        public IActionResult Edit(string id) // Nhận StudentId
+        [Route("edit/{id}")] // Route for Edit action
+        public IActionResult Edit(string id) // Receives StudentId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Mã sinh viên không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid student ID.");
             System.Diagnostics.Debug.WriteLine($"Loading edit page for Student ID '{id}'.");
             try
             {
                 var student = _unitOfWork.Students.GetById(id);
-                if (student == null) { TempData["ErrorMessage"] = $"Không tìm thấy sinh viên {id}."; return RedirectToAction("Index"); }
+                if (student == null) { TempData["ErrorMessage"] = $"Student {id} not found."; return RedirectToAction("Index"); }
                 var user = UserManagementService.GetInstance().GetUserById(student.UserId);
-                if (user == null) { TempData["ErrorMessage"] = $"Lỗi user cho sinh viên {id}."; return RedirectToAction("Index"); }
+                if (user == null) { TempData["ErrorMessage"] = $"Error getting user for student {id}."; return RedirectToAction("Index"); }
 
-                // *** Đảm bảo gán đầy đủ các thuộc tính cho ViewModel ***
+                // *** Ensure all attributes are assigned to ViewModel ***
                 var model = new StudentEditViewModel
                 {
                     UserId = user.UserId,
                     StudentId = student.StudentId,
                     Username = user.Username,
                     SchoolProgramId = student.SchoolProgramId
-                    // Password để trống
+                    // Password is left empty
                 };
 
                 LoadSchoolProgramsList(model.SchoolProgramId); // Load dropdown programs
 
                 return View("~/Views/Admin/StudentManagement/Edit.cshtml", model);
             }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit student {id}: {ex.Message}"); TempData["ErrorMessage"] = "Lỗi tải trang sửa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit student {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error loading edit page."; return RedirectToAction("Index"); }
         }
 
         // POST: /StudentManagement/Edit/{studentId}
-        // Logic không đổi so với lần sửa trước
+        // Logic unchanged from previous revision
         [HttpPost]
+        [Route("edit/{id}")] // Route for Edit action (POST)
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, StudentEditViewModel model) // id là StudentId
+        public IActionResult Edit(string id, StudentEditViewModel model) // id is StudentId
         {
-            if (id != model.StudentId) return BadRequest("Mã sinh viên không khớp.");
+            if (id != model.StudentId) return BadRequest("Student ID mismatch.");
             System.Diagnostics.Debug.WriteLine($"Saving changes for Student ID '{id}'. ...");
             LoadSchoolProgramsList(model.SchoolProgramId);
 
             const int minPasswordLength = 6;
-            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"Mật khẩu mới ít nhất {minPasswordLength} ký tự."); }
+            if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength) { ModelState.AddModelError(nameof(model.Password), $"New password must be at least {minPasswordLength} characters."); }
 
-            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Dữ liệu không hợp lệ."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
-            var selectedProgram = _unitOfWork.SchoolPrograms.GetById(model.SchoolProgramId); // Kiểm tra program tồn tại
-            if (selectedProgram == null) { ModelState.AddModelError(nameof(model.SchoolProgramId), "Chương trình học không hợp lệ."); TempData["ErrorMessage"] = "Chương trình học không hợp lệ."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
+            if (!ModelState.IsValid) { LogModelStateErrors(id); TempData["ErrorMessage"] = "Invalid data."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
+            var selectedProgram = _unitOfWork.SchoolPrograms.GetById(model.SchoolProgramId); // Check if program exists
+            if (selectedProgram == null) { ModelState.AddModelError(nameof(model.SchoolProgramId), "Invalid school program."); TempData["ErrorMessage"] = "Invalid school program."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
 
             try
             {
                 var existingStudent = _unitOfWork.Students.GetById(id);
-                if (existingStudent == null) { TempData["ErrorMessage"] = $"Không tìm thấy sinh viên {id}."; return RedirectToAction("Index"); }
+                if (existingStudent == null) { TempData["ErrorMessage"] = $"Student {id} not found."; return RedirectToAction("Index"); }
                 var existingUser = UserManagementService.GetInstance().GetUserById(existingStudent.UserId);
-                if (existingUser == null) { TempData["ErrorMessage"] = $"Lỗi user cho sinh viên {id}."; return RedirectToAction("Index"); }
+                if (existingUser == null) { TempData["ErrorMessage"] = $"Error getting user for student {id}."; return RedirectToAction("Index"); }
 
                 bool userChanged = false; bool studentChanged = false;
 
@@ -167,57 +174,60 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 if (userChanged)
                 {
                     bool userUpdateSuccess = UserManagementService.GetInstance().UpdateUser(existingUser);
-                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Lỗi cập nhật tài khoản."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
+                    if (!userUpdateSuccess) { TempData["ErrorMessage"] = "Error updating account."; return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
                 }
                 if (studentChanged)
                 {
                     try { _unitOfWork.Students.Update(existingStudent); _unitOfWork.SaveChanges(); }
-                    catch (Exception studentEx) { TempData["ErrorMessage"] = "Lỗi cập nhật chương trình học."; System.Diagnostics.Debug.WriteLine($"Error saving student info: {studentEx.Message}"); }
+                    catch (Exception studentEx) { TempData["ErrorMessage"] = "Error updating school program."; System.Diagnostics.Debug.WriteLine($"Error saving student info: {studentEx.Message}"); }
                 }
 
-                if (!TempData.ContainsKey("ErrorMessage")) TempData["SuccessMessage"] = $"Đã cập nhật sinh viên '{model.Username}'.";
+                if (!TempData.ContainsKey("ErrorMessage")) TempData["SuccessMessage"] = $"Updated student '{model.Username}'.";
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi cập nhật."; System.Diagnostics.Debug.WriteLine($"Error saving student: {ex.Message}"); return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during update."; System.Diagnostics.Debug.WriteLine($"Error saving student: {ex.Message}"); return View("~/Views/Admin/StudentManagement/Edit.cshtml", model); }
         }
 
 
         // GET: /StudentManagement/Delete/{userId}
-        // Logic không đổi so với lần sửa trước
+        // Logic unchanged from previous revision
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận UserId
+        [Route("delete/{id}")] // Route for Delete action
+        public IActionResult Delete(string id) // Receives UserId
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Viewing delete confirmation for Student User ID '{id}'.");
             try
             {
                 var user = UserManagementService.GetInstance().GetUserById(id);
-                if (user == null || !user.Role.Equals("Student", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy sinh viên với user ID {id}."; return RedirectToAction("Index"); }
+                if (user == null || !user.Role.Equals("Student", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Student with user ID {id} not found."; return RedirectToAction("Index"); }
                 var student = _unitOfWork.Students.GetByUserId(id);
                 ViewBag.StudentIdToDelete = student?.StudentId;
                 return View("~/Views/Admin/StudentManagement/Delete.cshtml", user);
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi tải trang xóa."; System.Diagnostics.Debug.WriteLine($"Error loading delete student user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "Error loading delete page."; System.Diagnostics.Debug.WriteLine($"Error loading delete student user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
         // POST: /StudentManagement/Delete/{userId}
-        // Logic không đổi so với lần sửa trước
-        [HttpPost, ActionName("Delete")]
+        // Logic unchanged from previous revision
+        [HttpPost]
+        [Route("delete/{id}")] // Route for DeleteConfirmed action (POST)
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là UserId
+        public IActionResult DeleteConfirmed(string id) // id is UserId
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Invalid user ID.");
             System.Diagnostics.Debug.WriteLine($"Confirming deletion for User ID '{id}'.");
             try
             {
                 var userToDelete = UserManagementService.GetInstance().GetUserById(id);
                 string usernameToDelete = userToDelete?.Username ?? $"User ID {id}";
-                if (userToDelete == null || !userToDelete.Role.Equals("Student", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Không tìm thấy sinh viên '{usernameToDelete}'."; return RedirectToAction("Index"); }
+                if (userToDelete == null || !userToDelete.Role.Equals("Student", StringComparison.OrdinalIgnoreCase)) { TempData["ErrorMessage"] = $"Student '{usernameToDelete}' not found."; return RedirectToAction("Index"); }
                 bool result = UserManagementService.GetInstance().DeleteUser(id);
-                if (result) { TempData["SuccessMessage"] = $"Đã xóa sinh viên '{usernameToDelete}'."; } else { TempData["ErrorMessage"] = $"Lỗi xóa sinh viên '{usernameToDelete}'."; }
+                if (result) { TempData["SuccessMessage"] = $"Deleted student '{usernameToDelete}'."; } else { TempData["ErrorMessage"] = $"Error deleting student '{usernameToDelete}'."; }
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { TempData["ErrorMessage"] = "Lỗi hệ thống khi xóa."; System.Diagnostics.Debug.WriteLine($"Error deleting student user {id}: {ex.Message}"); return RedirectToAction("Index"); }
+            catch (Exception ex) { TempData["ErrorMessage"] = "System error during deletion."; System.Diagnostics.Debug.WriteLine($"Error deleting student user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
 
@@ -225,7 +235,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         private void LoadSchoolProgramsList(string? selectedProgramId = null)
         {
             try { var programs = _unitOfWork.SchoolPrograms.GetAll()?.OrderBy(p => p.SchoolProgramName).ToList() ?? new List<SchoolProgram>(); ViewBag.SchoolProgramsList = new SelectList(programs, "SchoolProgramId", "SchoolProgramName", selectedProgramId); }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Lỗi tải chương trình học."; }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Error loading school programs."; }
         }
         private void LogModelStateErrors(string contextId)
         {

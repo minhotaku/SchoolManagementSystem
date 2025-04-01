@@ -1,6 +1,6 @@
 ﻿@model SchoolManagementSystem.Models.FacultyEditViewModel
 @{
-    ViewData["Title"] = "Chỉnh Sửa Giảng Viên";
+    ViewData["Title"] = "Edit Faculty";
 }
 
 <div class="container mt-4">
@@ -21,34 +21,34 @@
                         <form asp-action="Edit" asp-route-id="@Model.FacultyId" method="post">
                             @Html.AntiForgeryToken()
                             <input type="hidden" asp-for="UserId" />
-                            <input type="hidden" asp-for="FacultyId" /> @* Cần để kiểm tra khớp id *@
+                            <input type="hidden" asp-for="FacultyId" /> @* Needed for id matching check *@
 
                             <div class="mb-3">
                                 @* FacultyId Readonly *@
-                                <label asp-for="FacultyId" class="form-label fw-bold"></label>
+                                <label asp-for="FacultyId" class="form-label fw-bold">Faculty ID</label>
                                 <input asp-for="FacultyId" class="form-control bg-light" readonly />
                             </div>
                             <div class="mb-3">
                                 @* Username *@
-                                <label asp-for="Username" class="form-label fw-bold required"></label>
+                                <label asp-for="Username" class="form-label fw-bold required">Username</label>
                                 <input asp-for="Username" class="form-control" />
                                 <span asp-validation-for="Username" class="text-danger"></span>
                             </div>
                             <div class="mb-3">
                                 @* Password *@
-                                <label asp-for="Password" class="form-label fw-bold"></label>
-                                <input asp-for="Password" class="form-control" placeholder="Để trống nếu không đổi" />
+                                <label asp-for="Password" class="form-label fw-bold">Password</label>
+                                <input asp-for="Password" class="form-control" placeholder="Leave blank if no change" />
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                             <hr />
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
-                                    @* Nút Hủy *@
-                                    <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                                    @* Cancel Button *@
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
                                 </a>
                                 <button type="submit" class="btn btn-danger">
-                                    @* Nút Lưu *@
-                                    <i class="bi bi-save me-1"></i> Lưu
+                                    @* Save Button *@
+                                    <i class="bi bi-save me-1"></i> Save
                                 </button>
                             </div>
                         </form>
@@ -59,9 +59,9 @@
     }
     else
     {
-        <div class="alert alert-danger">Không thể tải thông tin để chỉnh sửa. Dữ liệu không tìm thấy.</div>
+        <div class="alert alert-danger">Unable to load information for editing. Data not found.</div>
         <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Quay lại Danh sách
+            <i class="bi bi-arrow-left me-1"></i> Back to List
         </a>
     }
 </div>
@@ -80,7 +80,7 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        // Hiện/Ẩn mật khẩu
+        // Show/Hide password
         document.getElementById('togglePassword')?.addEventListener('click', function () {
             var passwordField = document.getElementById('Password');
             var icon = this.querySelector('i');
@@ -96,7 +96,7 @@
             }
         });
 
-         // Xử lý submit form validation
+         // Handle form validation on submit
          document.querySelector('form').addEventListener('submit', function(event) {
               if (!this.checkValidity()) {
                     event.preventDefault();

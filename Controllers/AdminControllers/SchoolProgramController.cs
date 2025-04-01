@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Data; // Để dùng IUnitOfWork
-using SchoolManagementSystem.Entities; // Để dùng SchoolProgram, Student
-using SchoolManagementSystem.Models; // Để dùng ViewModels
+using SchoolManagementSystem.Data; // To use IUnitOfWork
+using SchoolManagementSystem.Entities; // To use SchoolProgram, Student
+using SchoolManagementSystem.Models; // To use ViewModels
 using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
@@ -14,16 +14,16 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
-        private readonly string _currentUserLogin = "admin_son"; // Giả định admin là Sơn
+        private readonly string _currentUserLogin = "admin_son"; // Assuming admin is Son
 
-        // Constructor: Inject IUnitOfWork (thông qua Singleton trong trường hợp này)
+        // Constructor: Inject IUnitOfWork (through Singleton in this case)
         public SchoolProgramController()
         {
             _unitOfWork = UnitOfWork.GetInstance();
         }
 
         // GET: /SchoolProgram/Index
-        // Hiển thị danh sách chương trình học và số lượng sinh viên
+        // Display list of school programs and student count
         [HttpGet]
         public IActionResult Index()
         {
@@ -31,236 +31,236 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             LogActionEntry(actionName);
             try
             {
-                // Lấy dữ liệu cần thiết
+                // Retrieve necessary data
                 var programs = _unitOfWork.SchoolPrograms.GetAll()?.ToList() ?? new List<SchoolProgram>();
                 var students = _unitOfWork.Students.GetAll()?.ToList() ?? new List<Student>();
 
-                // Tạo danh sách ViewModel, bao gồm việc đếm số sinh viên
+                // Create ViewModel list, including student count
                 var viewModels = programs.Select(p => new SchoolProgramViewModel
                 {
                     SchoolProgramId = p.SchoolProgramId,
                     SchoolProgramName = p.SchoolProgramName,
-                    StudentCount = students.Count(s => s.SchoolProgramId == p.SchoolProgramId) // Đếm số SV
-                }).OrderBy(vm => vm.SchoolProgramName).ToList(); // Sắp xếp theo tên
+                    StudentCount = students.Count(s => s.SchoolProgramId == p.SchoolProgramId) // Count students
+                }).OrderBy(vm => vm.SchoolProgramName).ToList(); // Sort by name
 
                 LogActionSuccess(actionName, $"Displayed {viewModels.Count} programs.");
                 return View("~/Views/Admin/SchoolProgram/Index.cshtml", viewModels);
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi và hiển thị thông báo lỗi
+                // Log error and display error message
                 LogActionError(actionName, ex);
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tải danh sách chương trình học.";
-                // Trả về View với danh sách rỗng
+                TempData["ErrorMessage"] = "An error occurred while loading the school program list.";
+                // Return View with empty list
                 return View("~/Views/Admin/SchoolProgram/Index.cshtml", new List<SchoolProgramViewModel>());
             }
         }
 
         // GET: /SchoolProgram/Create
-        // Hiển thị form tạo mới chương trình học
+        // Display form to create new school program
         [HttpGet]
         public IActionResult Create()
         {
             LogActionEntry(nameof(Create) + " (GET)");
-            // Chỉ cần hiển thị View trống
+            // Simply display empty View
             return View("~/Views/Admin/SchoolProgram/Create.cshtml");
         }
 
         // POST: /SchoolProgram/Create
-        // Xử lý việc tạo mới chương trình học
+        // Handle creation of new school program
         [HttpPost]
-        [ValidateAntiForgeryToken] // Chống tấn công CSRF
+        [ValidateAntiForgeryToken] // Prevent CSRF attacks
         public IActionResult Create(SchoolProgramCreateViewModel model)
         {
             string actionName = nameof(Create) + " (POST)";
             LogActionEntry(actionName, $"Attempting to create program '{model.SchoolProgramName}'.");
 
-            // --- Validation phía Server ---
-            // 1. Kiểm tra tên chương trình đã tồn tại chưa (không phân biệt hoa thường, loại bỏ khoảng trắng thừa)
+            // --- Server-side Validation ---
+            // 1. Check if program name already exists (case-insensitive, remove extra whitespace)
             string trimmedName = model.SchoolProgramName?.Trim();
-            if (!string.IsNullOrEmpty(trimmedName)) // Chỉ kiểm tra nếu tên không rỗng
+            if (!string.IsNullOrEmpty(trimmedName)) // Only check if name is not empty
             {
                 bool nameExists = _unitOfWork.SchoolPrograms.GetAll()
                                     .Any(p => p.SchoolProgramName.Equals(trimmedName, StringComparison.OrdinalIgnoreCase));
                 if (nameExists)
                 {
-                    ModelState.AddModelError(nameof(model.SchoolProgramName), "Tên chương trình học này đã tồn tại.");
+                    ModelState.AddModelError(nameof(model.SchoolProgramName), "This school program name already exists.");
                 }
             }
-            // 2. Kiểm tra ModelState (bao gồm cả lỗi từ validation attribute và lỗi vừa thêm)
+            // 2. Check ModelState (including errors from validation attributes and newly added errors)
             if (!ModelState.IsValid)
             {
                 LogModelStateErrors(actionName);
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
-                return View("~/Views/Admin/SchoolProgram/Create.cshtml", model); // Trả về View với lỗi
+                TempData["ErrorMessage"] = "Invalid input data. Please check again.";
+                return View("~/Views/Admin/SchoolProgram/Create.cshtml", model); // Return View with errors
             }
-            // --- Kết thúc Validation ---
+            // --- End of Validation ---
 
             try
             {
-                // Tạo mã chương trình học mới
+                // Generate new school program ID
                 string newProgramId = GenerateNewProgramId();
                 if (string.IsNullOrEmpty(newProgramId))
                 {
-                    // Lỗi nghiêm trọng khi không tạo được ID
+                    // Critical error when ID cannot be generated
                     LogActionError(actionName, new InvalidOperationException("Could not generate a new Program ID."));
-                    TempData["ErrorMessage"] = "Lỗi hệ thống: Không thể tạo mã chương trình học mới. Vui lòng thử lại.";
+                    TempData["ErrorMessage"] = "System error: Could not generate a new school program ID. Please try again.";
                     return View("~/Views/Admin/SchoolProgram/Create.cshtml", model);
                 }
 
-                // Tạo đối tượng Entity mới
+                // Create new Entity object
                 var newProgram = new SchoolProgram
                 {
                     SchoolProgramId = newProgramId,
-                    SchoolProgramName = trimmedName // Dùng tên đã trim
+                    SchoolProgramName = trimmedName // Use trimmed name
                 };
 
-                // Thêm vào Repository và Lưu thay đổi
+                // Add to Repository and Save changes
                 _unitOfWork.SchoolPrograms.Add(newProgram);
                 _unitOfWork.SaveChanges();
 
-                // Thông báo thành công và chuyển hướng
-                TempData["SuccessMessage"] = $"Đã tạo thành công chương trình học '{newProgram.SchoolProgramName}'.";
+                // Success message and redirect
+                TempData["SuccessMessage"] = $"Successfully created school program '{newProgram.SchoolProgramName}'.";
                 LogActionSuccess(actionName, $"Created program '{newProgram.SchoolProgramName}' with ID '{newProgram.SchoolProgramId}'.");
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi và hiển thị thông báo lỗi
+                // Log error and display error message
                 LogActionError(actionName, ex);
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi hệ thống khi tạo chương trình học.";
+                TempData["ErrorMessage"] = "A system error occurred while creating the school program.";
                 return View("~/Views/Admin/SchoolProgram/Create.cshtml", model);
             }
         }
 
         // GET: /SchoolProgram/Edit/{programId}
-        // Hiển thị form chỉnh sửa chương trình học
+        // Display form to edit school program
         [HttpGet]
-        public IActionResult Edit(string id) // Nhận ProgramId từ route
+        public IActionResult Edit(string id) // Receive ProgramId from route
         {
             string actionName = nameof(Edit) + " (GET)";
             LogActionEntry(actionName, $"Loading edit page for Program ID '{id}'.");
 
-            // Kiểm tra ID hợp lệ
+            // Check if ID is valid
             if (string.IsNullOrWhiteSpace(id))
             {
                 LogActionWarning(actionName, "Program ID is null or whitespace.");
-                return NotFound("Mã chương trình học không hợp lệ.");
+                return NotFound("Invalid school program ID.");
             }
 
             try
             {
-                // Lấy chương trình học từ Repository
+                // Get school program from Repository
                 var program = _unitOfWork.SchoolPrograms.GetById(id);
                 if (program == null)
                 {
-                    // Không tìm thấy
+                    // Not found
                     LogActionWarning(actionName, $"Program with ID '{id}' not found.");
-                    TempData["ErrorMessage"] = $"Không tìm thấy chương trình học với mã {id}.";
+                    TempData["ErrorMessage"] = $"School program with ID {id} not found.";
                     return RedirectToAction("Index");
                 }
 
-                // Tạo ViewModel từ Entity
+                // Create ViewModel from Entity
                 var model = new SchoolProgramEditViewModel
                 {
                     SchoolProgramId = program.SchoolProgramId,
                     SchoolProgramName = program.SchoolProgramName
                 };
 
-                // Trả về View Edit với ViewModel
+                // Return Edit View with ViewModel
                 LogActionSuccess(actionName, $"Loaded program '{program.SchoolProgramName}' for edit.");
                 return View("~/Views/Admin/SchoolProgram/Edit.cshtml", model);
             }
             catch (Exception ex)
             {
                 LogActionError(actionName, ex, $"Error loading program {id} for edit.");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tải trang chỉnh sửa.";
+                TempData["ErrorMessage"] = "An error occurred while loading the edit page.";
                 return RedirectToAction("Index");
             }
         }
 
         // POST: /SchoolProgram/Edit/{programId}
-        // Xử lý việc cập nhật chương trình học
+        // Handle update of school program
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, SchoolProgramEditViewModel model) // id là ProgramId từ route
+        public IActionResult Edit(string id, SchoolProgramEditViewModel model) // id is ProgramId from route
         {
             string actionName = nameof(Edit) + " (POST)";
             LogActionEntry(actionName, $"Saving changes for Program ID '{id}'.");
 
-            // Kiểm tra ID khớp
+            // Check if ID matches
             if (id != model.SchoolProgramId)
             {
                 LogActionWarning(actionName, $"Route ID '{id}' does not match model ID '{model.SchoolProgramId}'.");
-                return BadRequest("Mã chương trình học không khớp.");
+                return BadRequest("School program ID mismatch.");
             }
 
-            // --- Validation phía Server ---
-            // 1. Kiểm tra tên mới có trùng với tên khác không (trừ chính nó)
+            // --- Server-side Validation ---
+            // 1. Check if new name is already used by another program (except itself)
             string trimmedName = model.SchoolProgramName?.Trim();
             if (!string.IsNullOrEmpty(trimmedName))
             {
                 bool nameExists = _unitOfWork.SchoolPrograms.GetAll()
-                                    .Any(p => p.SchoolProgramId != id && // Quan trọng: Loại trừ chính nó
+                                    .Any(p => p.SchoolProgramId != id && // Important: Exclude itself
                                                p.SchoolProgramName.Equals(trimmedName, StringComparison.OrdinalIgnoreCase));
                 if (nameExists)
                 {
-                    ModelState.AddModelError(nameof(model.SchoolProgramName), "Tên chương trình học này đã được sử dụng bởi một chương trình khác.");
+                    ModelState.AddModelError(nameof(model.SchoolProgramName), "This school program name is already used by another program.");
                 }
             }
-            // 2. Kiểm tra ModelState
+            // 2. Check ModelState
             if (!ModelState.IsValid)
             {
                 LogModelStateErrors(actionName);
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ.";
-                return View("~/Views/Admin/SchoolProgram/Edit.cshtml", model); // Trả về View với lỗi
+                TempData["ErrorMessage"] = "Invalid input data.";
+                return View("~/Views/Admin/SchoolProgram/Edit.cshtml", model); // Return View with errors
             }
-            // --- Kết thúc Validation ---
+            // --- End of Validation ---
 
             try
             {
-                // Lấy chương trình học hiện tại từ Repository
+                // Get current school program from Repository
                 var existingProgram = _unitOfWork.SchoolPrograms.GetById(id);
                 if (existingProgram == null)
                 {
                     LogActionWarning(actionName, $"Program with ID '{id}' not found for update.");
-                    TempData["ErrorMessage"] = $"Không tìm thấy chương trình học với mã {id} để cập nhật.";
+                    TempData["ErrorMessage"] = $"School program with ID {id} not found for update.";
                     return RedirectToAction("Index");
                 }
 
-                // Kiểm tra xem có thay đổi thực sự không
+                // Check if there are actual changes
                 if (existingProgram.SchoolProgramName != trimmedName)
                 {
-                    // Cập nhật tên
+                    // Update name
                     existingProgram.SchoolProgramName = trimmedName;
                     _unitOfWork.SchoolPrograms.Update(existingProgram);
-                    _unitOfWork.SaveChanges(); // Lưu thay đổi
+                    _unitOfWork.SaveChanges(); // Save changes
 
-                    TempData["SuccessMessage"] = $"Đã cập nhật thành công chương trình học '{existingProgram.SchoolProgramName}'.";
+                    TempData["SuccessMessage"] = $"Successfully updated school program '{existingProgram.SchoolProgramName}'.";
                     LogActionSuccess(actionName, $"Updated program {id}. New name: '{existingProgram.SchoolProgramName}'.");
                 }
                 else
                 {
-                    // Không có gì thay đổi
-                    TempData["SuccessMessage"] = "Không có thay đổi nào được thực hiện."; // Hoặc dùng TempData["InfoMessage"]
+                    // No changes made
+                    TempData["SuccessMessage"] = "No changes were made."; // Or use TempData["InfoMessage"]
                     LogActionInfo(actionName, $"No changes detected for program {id}.");
                 }
-                // Chuyển hướng về Index sau khi thành công hoặc không có thay đổi
+                // Redirect to Index after success or no changes
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi và hiển thị thông báo
+                // Log error and display message
                 LogActionError(actionName, ex, $"Error saving changes for program {id}.");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi hệ thống khi cập nhật chương trình học.";
-                return View("~/Views/Admin/SchoolProgram/Edit.cshtml", model); // Trả về View Edit với model cũ
+                TempData["ErrorMessage"] = "A system error occurred while updating the school program.";
+                return View("~/Views/Admin/SchoolProgram/Edit.cshtml", model); // Return Edit View with old model
             }
         }
 
         // GET: /SchoolProgram/Delete/{programId}
-        // Hiển thị trang xác nhận xóa
+        // Display delete confirmation page
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận ProgramId
+        public IActionResult Delete(string id) // Receive ProgramId
         {
             string actionName = nameof(Delete) + " (GET)";
             LogActionEntry(actionName, $"Viewing delete confirmation for Program ID '{id}'.");
@@ -270,23 +270,23 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 var program = _unitOfWork.SchoolPrograms.GetById(id);
-                if (program == null) { LogActionWarning(actionName, $"Program {id} not found."); TempData["ErrorMessage"] = $"Không tìm thấy chương trình {id}."; return RedirectToAction("Index"); }
+                if (program == null) { LogActionWarning(actionName, $"Program {id} not found."); TempData["ErrorMessage"] = $"Program {id} not found."; return RedirectToAction("Index"); }
 
-                // Đếm số sinh viên để cảnh báo
+                // Count students to warn
                 int studentCount = _unitOfWork.Students.GetBySchoolProgram(id).Count();
                 ViewBag.StudentCount = studentCount;
                 LogActionInfo(actionName, $"Program {id} ('{program.SchoolProgramName}') has {studentCount} students.");
 
                 return View("~/Views/Admin/SchoolProgram/Delete.cshtml", program);
             }
-            catch (Exception ex) { LogActionError(actionName, ex, $"Error loading program {id} for delete."); TempData["ErrorMessage"] = "Lỗi tải trang xóa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { LogActionError(actionName, ex, $"Error loading program {id} for delete."); TempData["ErrorMessage"] = "Error loading delete page."; return RedirectToAction("Index"); }
         }
 
         // POST: /SchoolProgram/Delete/{programId}
-        // Xử lý việc xóa chương trình học
+        // Handle deletion of school program
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là ProgramId
+        public IActionResult DeleteConfirmed(string id) // id is ProgramId
         {
             string actionName = nameof(DeleteConfirmed) + " (POST)";
             LogActionEntry(actionName, $"Confirming deletion for Program ID '{id}'.");
@@ -296,27 +296,27 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 var programToDelete = _unitOfWork.SchoolPrograms.GetById(id);
-                if (programToDelete == null) { LogActionWarning(actionName, $"Program {id} not found."); TempData["ErrorMessage"] = $"Không tìm thấy chương trình {id}."; return RedirectToAction("Index"); }
+                if (programToDelete == null) { LogActionWarning(actionName, $"Program {id} not found."); TempData["ErrorMessage"] = $"Program {id} not found."; return RedirectToAction("Index"); }
 
-                // *** Kiểm tra ràng buộc sinh viên ***
+                // *** Check student constraints ***
                 bool hasStudents = _unitOfWork.Students.GetBySchoolProgram(id).Any();
                 if (hasStudents)
                 {
                     LogActionWarning(actionName, $"Deletion failed for program {id}: Students assigned.");
-                    TempData["ErrorMessage"] = $"Không thể xóa chương trình '{programToDelete.SchoolProgramName}' vì đang có sinh viên tham gia.";
-                    // Không xóa, chỉ chuyển hướng về Index với lỗi
+                    TempData["ErrorMessage"] = $"Cannot delete program '{programToDelete.SchoolProgramName}' because students are currently enrolled.";
+                    // Do not delete, just redirect to Index with error
                     return RedirectToAction("Index");
                 }
 
-                // Thực hiện xóa
+                // Perform deletion
                 _unitOfWork.SchoolPrograms.Delete(id);
                 _unitOfWork.SaveChanges();
 
-                TempData["SuccessMessage"] = $"Đã xóa chương trình '{programToDelete.SchoolProgramName}'.";
+                TempData["SuccessMessage"] = $"Deleted program '{programToDelete.SchoolProgramName}'.";
                 LogActionSuccess(actionName, $"Deleted program {id}.");
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { LogActionError(actionName, ex, $"Error deleting program {id}."); TempData["ErrorMessage"] = "Lỗi hệ thống khi xóa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { LogActionError(actionName, ex, $"Error deleting program {id}."); TempData["ErrorMessage"] = "System error during deletion."; return RedirectToAction("Index"); }
         }
 
 
@@ -336,16 +336,16 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 LogActionError(nameof(GenerateNewProgramId), ex);
-                return null; // Trả về null nếu có lỗi
+                return null; // Return null if error occurs
             }
         }
 
-        // Helper ghi log (ví dụ)
+        // Helper logging methods (example)
         private void LogActionEntry(string actionName, string? message = null) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] User '{_currentUserLogin}' entered {actionName}. {message}"); }
         private void LogActionSuccess(string actionName, string message) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] SUCCESS: {actionName} by '{_currentUserLogin}'. {message}"); }
         private void LogActionInfo(string actionName, string message) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] INFO: {actionName} by '{_currentUserLogin}'. {message}"); }
         private void LogActionWarning(string actionName, string message) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] WARNING: {actionName} by '{_currentUserLogin}'. {message}"); }
-        private void LogActionError(string actionName, Exception ex, string? message = null) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] ERROR: {actionName} by '{_currentUserLogin}'. {message} Exception: {ex.Message}"); /* Ghi đầy đủ lỗi vào file log thực tế */ }
+        private void LogActionError(string actionName, Exception ex, string? message = null) { System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:T}] ERROR: {actionName} by '{_currentUserLogin}'. {message} Exception: {ex.Message}"); /* Write full error to actual log file */ }
         private void LogModelStateErrors(string actionName)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);

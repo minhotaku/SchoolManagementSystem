@@ -1,5 +1,4 @@
-﻿// SchoolManagementSystem/Models/AdminDashboardViewModel.cs
-namespace SchoolManagementSystem.Models
+﻿namespace SchoolManagementSystem.Models
 {
     public class AdminDashboardViewModel
     {
