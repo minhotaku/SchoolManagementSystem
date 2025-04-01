@@ -6,19 +6,19 @@ namespace SchoolManagementSystem.Models
     {
         public string UserId { get; set; }
 
-        [Display(Name = "Tên đăng nhập")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Display(Name = "Vai trò")]
+        [Display(Name = "Role")]
         public string Role { get; set; }
 
-        [Display(Name = "Chương trình học")]
+        [Display(Name = "School Program")]
         public string SchoolProgramName { get; set; }
 
-        [Display(Name = "Ngày tạo")]
+        [Display(Name = "Created Date")]
         public string CreatedDate { get; set; }
 
-        [Display(Name = "Người tạo")]
+        [Display(Name = "Created By")]
         public string CreatedBy { get; set; }
     }
 }

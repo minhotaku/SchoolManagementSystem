@@ -14,6 +14,8 @@ using SchoolManagementSystem.Utils;
 namespace SchoolManagementSystem.Controllers.Controllers
 {
     [Authorize(RoleConstants.Admin)]
+    [Route("admin/student-management")]  // Định nghĩa route cho StudentManagementController
+
     public class StudentManagementController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -30,6 +32,8 @@ namespace SchoolManagementSystem.Controllers.Controllers
         // GET: /StudentManagement/Index
         // Index logic is working correctly, keep it as is
         [HttpGet]
+        [Route("index")]  // Route: admin/student-management/index
+
         public IActionResult Index()
         {
             // ... (Index code already fixed join and working correctly) ...
@@ -75,6 +79,7 @@ namespace SchoolManagementSystem.Controllers.Controllers
         // *** REVISED GET Details - Ensure ViewModel values are assigned ***
         // GET: /StudentManagement/Details/{studentId}
         [HttpGet]
+        [Route("details/{id}")] // Route for Details action
         public IActionResult Details(string id) // Receives StudentId
         {
             if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid student ID.");
@@ -106,6 +111,7 @@ namespace SchoolManagementSystem.Controllers.Controllers
         // *** REVISED GET Edit - Ensure ViewModel values are assigned ***
         // GET: /StudentManagement/Edit/{studentId}
         [HttpGet]
+        [Route("edit/{id}")] // Route for Edit action
         public IActionResult Edit(string id) // Receives StudentId
         {
             if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid student ID.");
@@ -137,6 +143,7 @@ namespace SchoolManagementSystem.Controllers.Controllers
         // POST: /StudentManagement/Edit/{studentId}
         // Logic unchanged from previous revision
         [HttpPost]
+        [Route("edit/{id}")] // Route for Edit action (POST)
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, StudentEditViewModel model) // id is StudentId
         {
@@ -185,6 +192,7 @@ namespace SchoolManagementSystem.Controllers.Controllers
         // GET: /StudentManagement/Delete/{userId}
         // Logic unchanged from previous revision
         [HttpGet]
+        [Route("delete/{id}")] // Route for Delete action
         public IActionResult Delete(string id) // Receives UserId
         {
             if (string.IsNullOrWhiteSpace(id)) return NotFound("Invalid user ID.");
@@ -202,7 +210,9 @@ namespace SchoolManagementSystem.Controllers.Controllers
 
         // POST: /StudentManagement/Delete/{userId}
         // Logic unchanged from previous revision
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [Route("delete/{id}")] // Route for DeleteConfirmed action (POST)
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id) // id is UserId
         {

@@ -9,9 +9,8 @@
 
     public static class RoleConstants
     {
-        // sửa role về chữ thường
-        public const string Admin = "admin";
-        public const string Faculty = "faculty";
-        public const string Student = "student";
+        public const string Admin = "Admin";
+        public const string Faculty = "Faculty";
+        public const string Student = "Student";
     }
 }
