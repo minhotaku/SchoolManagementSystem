@@ -4,34 +4,168 @@
     ViewData["Title"] = "Student Management";
 }
 
-<h2>Student Management for Course @ViewBag.CourseId</h2>
+<style>
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        font-size: 16px; /* Font gốc cho rem */
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Student ID</th>
-            <th>Username</th>
-            <th>School Program</th>
-            <th>Average Score</th>
-            <th>Classification</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Enrollment.StudentId</td>
-                <td>@item.Username</td>
-                <td>@item.SchoolProgramName</td>
-                <td>@item.AverageScore.ToString("F2")</td>
-                <td>@item.Classification</td>
-                <td>
-                    <a asp-action="SendNotification" asp-controller="StudentManagement" asp-route-studentId="@item.Enrollment.StudentId" asp-route-courseId="@item.Enrollment.CourseId">Send Notification</a>
-                </td>
-            </tr>
+    .dashboard-container {
+        max-width: 1200px;
+        width: 95%;
+        margin: 2.5rem auto;
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .dashboard-title i {
+            color: #ff8c00;
         }
-    </tbody>
-</table>
 
-<a asp-action="Details" asp-controller="CourseDetails" asp-route-id="@ViewBag.CourseId">Back to Course</a>
+    .student-table {
+        width: 100%;
+        border-radius: 10px;
+        overflow-x: auto; /* Cuộn ngang trên mobile */
+        display: block;
+    }
+
+        .student-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .student-table thead {
+            background-color: #1a3c87;
+        }
+
+        .student-table th {
+            padding: 0.9375rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            letter-spacing: 0.5px;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .student-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .student-table tbody tr:hover {
+                background-color: #f1f5ff;
+            }
+
+        .student-table td {
+            padding: 0.9375rem;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        }
+
+    .action-link {
+        padding: 0.5rem 1rem;
+        background-color: #28a745;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 100px;
+        text-align: center;
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+    }
+
+        .action-link:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    .btn-back {
+        padding: 0.625rem 1.25rem;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 120px;
+        text-align: center;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    @@media (max-width: 768px) {
+        .student-table th, .student-table td {
+            padding: 0.625rem; /* Giảm padding trên mobile */
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <h2 class="dashboard-title">
+        <i class="bi bi-people-fill"></i> Student Management for Course @ViewBag.CourseId
+    </h2>
+
+    @if (!Model.Any())
+    {
+        <p>No students found for this course.</p>
+    }
+    else
+    {
+        <div class="student-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Username</th>
+                        <th>School Program</th>
+                        <th>Average Score</th>
+                        <th>Classification</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Enrollment.StudentId</td>
+                            <td>@item.Username</td>
+                            <td>@item.SchoolProgramName</td>
+                            <td>@item.AverageScore.ToString("F2")</td>
+                            <td>@item.Classification</td>
+                            <td>
+                                <a asp-action="SendNotification" asp-controller="StudentManagement" asp-route-studentId="@item.Enrollment.StudentId" asp-route-courseId="@item.Enrollment.CourseId" class="action-link">
+                                    <i class="bi bi-envelope-fill"></i> Send Notification
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="CourseDetails" asp-action="Details" asp-route-id="@ViewBag.CourseId" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Back to Course
+    </a>
+</div>

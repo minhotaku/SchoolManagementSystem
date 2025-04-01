@@ -4,43 +4,260 @@
     ViewData["Title"] = "Teaching Report";
 }
 
-<h2>Teaching Report</h2>
+<!-- Thêm Chart.js từ CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
-@if (Model == null || !Model.Any())
-{
-    <p>No courses found for this faculty.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Student Count</th>
-                <th>Class Average</th>
-                <th>Fail</th>
-                <th>Pass</th>
-                <th>Merit</th>
-                <th>Distinction</th>
-            </tr>
-        </thead>
-        <tbody>
+<style>
+    /* Reset và thiết lập nền */
+    body {
+        background-color: #f8f9fa; /* Nền xám nhạt của Bootstrap */
+    }
+
+    /* Nút Back */
+    .btn-back {
+        display: inline-block;
+        margin: 20px 40px; /* Căn trái với margin */
+        padding: 10px 20px;
+        background-color: #6c757d; /* Xám */
+        color: #fff;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-decoration: none;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    /* Container chính */
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto 40px auto; /* Bỏ margin-top vì nút Back đã ở trên */
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tiêu đề */
+    .dashboard-title {
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: #1a3c87; /* Xanh dương đậm */
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .dashboard-title i {
+            color: #ff8c00; /* Cam nổi bật */
+        }
+
+    /* Flexbox cho các card */
+    .report-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    /* Card cho mỗi khóa học */
+    .report-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around; /* Căn giữa các phần tử */
+        gap: 20px;
+    }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .report-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a3c87;
+            margin-bottom: 10px;
+        }
+
+        .report-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            margin: 5px 0;
+        }
+
+    /* Container cho biểu đồ và thông tin */
+    .chart-info-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Container cho biểu đồ */
+    .chart-container {
+        position: relative;
+        width: 300px; /* Kích thước lớn */
+        height: 300px;
+    }
+
+    /* Legend */
+    .chart-legend {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+
+        .chart-legend li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #1a3c87;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .dashboard-container {
+            margin: 0 20px 20px 20px;
+            padding: 15px;
+        }
+
+        .btn-back {
+            margin: 15px 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.8rem;
+        }
+
+        .report-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+            .report-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .report-card p {
+                font-size: 0.9rem;
+            }
+
+        .chart-container {
+            width: 250px; /* Giảm kích thước trên di động */
+            height: 250px;
+        }
+    }
+</style>
+
+<!-- Nút Back nằm bên ngoài khung báo cáo -->
+<a asp-controller="Faculty" asp-action="Index" class="btn-back">
+    <i class="bi bi-arrow-left"></i> Back to Course List
+</a>
+
+<div class="dashboard-container">
+    <h2 class="dashboard-title">
+        <i class="bi bi-file-earmark-text-fill"></i> Teaching Report
+    </h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p>No courses found for this faculty.</p>
+    }
+    else
+    {
+        <div class="report-grid">
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>@item.Course.CourseId</td>
-                    <td>@item.Course.CourseName</td>
-                    <td>@item.StudentCount</td>
-                    <td>@item.ClassAverage.ToString("F2")</td>
-                    <td>@item.ClassificationStats["Fail"]</td>
-                    <td>@item.ClassificationStats["Pass"]</td>
-                    <td>@item.ClassificationStats["Merit"]</td>
-                    <td>@item.ClassificationStats["Distinction"]</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                <div class="report-card">
+                    <div class="chart-info-container">
+                        <h3>@item.Course.CourseName (@item.Course.CourseId)</h3>
+                        <p><strong>Student Count:</strong> @item.StudentCount</p>
+                        <p><strong>Class Average:</strong> @item.ClassAverage.ToString("F2")</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chart-@item.Course.CourseId"></canvas>
+                    </div>
+                </div>
 
-<a asp-action="Index" asp-controller="Faculty">Back to Course List</a>
+                <script>
+                    // Dữ liệu cho biểu đồ
+                    const data_@item.Course.CourseId = {
+                        labels: ['Fail', 'Pass', 'Merit', 'Distinction'],
+                            datasets: [{
+                                data: [
+                    @item.ClassificationStats["Fail"],
+                    @item.ClassificationStats["Pass"],
+                    @item.ClassificationStats["Merit"],
+                    @item.ClassificationStats["Distinction"]
+                                                ],
+                                backgroundColor: [
+                                    '#dc3545', /* Đỏ - Fail */
+                                    '#28a745', /* Xanh lá - Pass */
+                                    '#ffc107', /* Vàng - Merit */
+                                    '#007bff'  /* Xanh dương - Distinction */
+                                ],
+                                borderWidth: 1,
+                                borderColor: '#fff'
+                            }]
+                    };
+
+                    // Cấu hình biểu đồ
+                    const config_@item.Course.CourseId = {
+                        type: 'pie',
+                            data: data_@item.Course.CourseId,
+                                options: {
+                            responsive: true,
+                                maintainAspectRatio: false,
+                                    plugins: {
+                                legend: {
+                                    position: 'right', /* Legend bên phải */
+                                        labels: {
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1a3c87',
+                                            boxWidth: 20,
+                                                padding: 10
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            let label = context.label || '';
+                                            let value = context.raw || 0;
+                                            let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            let percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return `${label}: ${value} (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            animation: {
+                                animateRotate: true, /* Hiệu ứng quay tròn */
+                                    animateScale: true   /* Hiệu ứng phóng to */
+                            }
+                        }
+                    };
+
+                    // Vẽ biểu đồ
+                    const ctx_@item.Course.CourseId = document.getElementById('chart-@item.Course.CourseId').getContext('2d');
+                    new Chart(ctx_@item.Course.CourseId, config_@item.Course.CourseId);
+                </script>
+            }
+        </div>
+    }
+</div>

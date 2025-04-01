@@ -3,12 +3,9 @@ using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Services.Implementation;
 using SchoolManagementSystem.Services.Interfaces;
 using System.Collections.Generic;
-using SchoolManagementSystem.Utils;
-using SchoolManagementSystem.Models;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    [Authorize(RoleConstants.Faculty)]
     [Route("faculty/teaching-report")]  // Định nghĩa route cho TeachingReportController
     public class TeachingReportController : Controller
     {

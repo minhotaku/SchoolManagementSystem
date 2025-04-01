@@ -2,17 +2,133 @@
     ViewData["Title"] = "Send Notification";
 }
 
-<h2>Send Notification to Student @ViewBag.StudentId</h2>
+<style>
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        font-size: 16px;
+    }
 
-<form asp-action="SendNotification" method="post">
-    <input type="hidden" name="userId" value="@ViewBag.UserId" />
-    <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
-    <div class="form-group">
-        <label for="message" class="control-label">Message</label>
-        <textarea name="message" class="form-control" required></textarea>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Send" class="btn btn-primary" />
-        <a asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+    .form-container {
+        max-width: 1200px;
+        width: 95%;
+        margin: 2.5rem auto;
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .form-title i {
+            color: #ff8c00;
+        }
+
+    .notification-form {
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            color: #1a3c87;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .form-group textarea {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 0.625rem;
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
+            resize: vertical;
+            min-height: 100px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.625rem;
+    }
+
+    .action-btn {
+        padding: 0.625rem 1.25rem;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 120px;
+        text-align: center;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .btn-send {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+    }
+
+        .btn-send:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    @@media (max-width: 768px) {
+        .action-btn {
+            flex: 1 0 100%; /* Nút chiếm toàn bộ chiều rộng trên mobile */
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">
+        <i class="bi bi-envelope-fill"></i> Send Notification to Student @ViewBag.StudentId
+    </h2>
+
+    <form asp-controller="StudentManagement" asp-action="SendNotification" asp-route-studentId="@ViewBag.StudentId" asp-route-courseId="@ViewBag.CourseId" method="post" class="notification-form">
+        <input type="hidden" name="userId" value="@ViewBag.UserId" />
+        <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+        <div class="form-group">
+            <label for="message" class="control-label">Message</label>
+            <textarea name="message" class="form-control" required></textarea>
+        </div>
+        <div class="action-buttons">
+            <input type="submit" value="Send" class="action-btn btn-send" />
+            <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="action-btn btn-cancel">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>

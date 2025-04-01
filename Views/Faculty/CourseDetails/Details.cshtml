@@ -4,25 +4,181 @@
     ViewData["Title"] = "Course Details";
 }
 
-<h2>Course Details</h2>
+<style>
+    /* Reset và thiết lập nền */
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        font-size: 16px; /* Font gốc để rem/em dựa vào */
+    }
 
-<div>
-    <h4>@Model.CourseName</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Course ID</dt>
-        <dd class="col-sm-10">@Model.CourseId</dd>
-        <dt class="col-sm-2">Course Name</dt>
-        <dd class="col-sm-10">@Model.CourseName</dd>
-        <dt class="col-sm-2">Credits</dt>
-        <dd class="col-sm-10">@Model.Credits</dd>
-        <dt class="col-sm-2">Faculty ID</dt>
-        <dd class="col-sm-10">@Model.FacultyId</dd>
-    </dl>
-</div>
+    /* Container chính */
+    .details-container {
+        max-width: 1200px;
+        width: 95%; /* Linh hoạt theo màn hình */
+        margin: 2.5rem auto;
+        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
-<div>
-    <a asp-controller="GradeManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Grades</a>
-    <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="btn btn-primary">Manage Students</a>
-    <a asp-controller="Faculty" asp-action="Index" asp-all-route-Id="@Model.CourseId" class="btn btn-primary">Back to List</a>
+    /* Tiêu đề */
+    .details-title {
+        font-size: clamp(1.8rem, 4vw, 2.2rem); /* Tự điều chỉnh từ 1.8rem đến 2.2rem */
+        font-weight: 600;
+        color: #1a3c87;
+        margin-bottom: 0.625rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+        .details-title i {
+            color: #ff8c00;
+        }
+
+    /* Tên khóa học */
+    .course-name {
+        font-size: clamp(1.3rem, 3vw, 1.5rem);
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Danh sách thông tin */
+    .course-info {
+        background-color: #f9fbfd;
+        padding: 1.25rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+    }
+
+        .course-info dl {
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.625rem;
+        }
+
+        .course-info dt {
+            font-weight: 600;
+            color: #1a3c87;
+            flex: 0 0 25%; /* Chiếm 25% chiều rộng, co lại nếu cần */
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .course-info dd {
+            margin: 0;
+            color: #555;
+            flex: 0 0 70%; /* Chiếm 70% chiều rộng */
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+    /* Nút hành động */
+    .action-buttons {
+        margin-top: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.625rem;
+    }
+
+    .action-btn {
+        padding: 0.625rem 1.25rem;
+        border-radius: 25px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        min-width: 120px; /* Đảm bảo dễ bấm trên mobile */
+        text-align: center;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .btn-manage-grades {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+        .btn-manage-grades:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    .btn-manage-students {
+        background-color: #17a2b8;
+        color: #fff;
+    }
+
+        .btn-manage-students:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    /* Media query tối thiểu cho mobile (nếu cần) */
+    @@media (max-width: 768px) {
+        .course-info dt {
+            flex: 0 0 100%; /* Xuống dòng trên mobile */
+        }
+
+        .course-info dd {
+            flex: 0 0 100%;
+            margin-left: 0;
+        }
+
+        .action-btn {
+            flex: 1 0 100%; /* Nút chiếm toàn bộ chiều rộng trên mobile */
+        }
+    }
+</style>
+
+<div class="details-container">
+    <h2 class="details-title">
+        <i class="bi bi-book-fill"></i> Course Details
+    </h2>
+
+    <div>
+        <h4 class="course-name">@Model.CourseName</h4>
+        <hr />
+        <div class="course-info">
+            <dl>
+                <dt>Course ID</dt>
+                <dd>@Model.CourseId</dd>
+                <dt>Course Name</dt>
+                <dd>@Model.CourseName</dd>
+                <dt>Credits</dt>
+                <dd>@Model.Credits</dd>
+                <dt>Faculty ID</dt>
+                <dd>@Model.FacultyId</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a asp-controller="GradeManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="action-btn btn-manage-grades">
+            <i class="bi bi-clipboard-check"></i> Manage Grades
+        </a>
+        <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@Model.CourseId" class="action-btn btn-manage-students">
+            <i class="bi bi-people-fill"></i> Manage Students
+        </a>
+        <a asp-controller="Faculty" asp-action="Index" asp-all-route-Id="@Model.CourseId" class="action-btn btn-back">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
 </div>
