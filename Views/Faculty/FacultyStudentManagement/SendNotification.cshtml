@@ -117,7 +117,7 @@
         <i class="bi bi-envelope-fill"></i> Send Notification to Student @ViewBag.StudentId
     </h2>
 
-    <form asp-controller="StudentManagement" asp-action="SendNotification" asp-route-studentId="@ViewBag.StudentId" asp-route-courseId="@ViewBag.CourseId" method="post" class="notification-form">
+    <form asp-controller="FacultyStudentManagement" asp-action="SendNotification" asp-route-studentId="@ViewBag.StudentId" asp-route-courseId="@ViewBag.CourseId" method="post" class="notification-form">
         <input type="hidden" name="userId" value="@ViewBag.UserId" />
         <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
         <div class="form-group">
@@ -126,7 +126,7 @@
         </div>
         <div class="action-buttons">
             <input type="submit" value="Send" class="action-btn btn-send" />
-            <a asp-controller="StudentManagement" asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="action-btn btn-cancel">
+            <a asp-controller="FacultyStudentManagement" asp-action="Index" asp-route-courseId="@ViewBag.CourseId" class="action-btn btn-cancel">
                 <i class="bi bi-x-circle"></i> Cancel
             </a>
         </div>

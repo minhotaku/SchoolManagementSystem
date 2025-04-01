@@ -154,7 +154,7 @@
                             <td>@item.AverageScore.ToString("F2")</td>
                             <td>@item.Classification</td>
                             <td>
-                                <a asp-action="SendNotification" asp-controller="StudentManagement" asp-route-studentId="@item.Enrollment.StudentId" asp-route-courseId="@item.Enrollment.CourseId" class="action-link">
+                                <a asp-action="SendNotification" asp-controller="FacultyStudentManagement" asp-area="Faculty" asp-route-studentId="@item.Enrollment.StudentId" asp-route-courseId="@item.Enrollment.CourseId" class="action-link">
                                     <i class="bi bi-envelope-fill"></i> Send Notification
                                 </a>
                             </td>
@@ -165,7 +165,7 @@
         </div>
     }
 
-    <a asp-controller="CourseDetails" asp-action="Details" asp-route-id="@ViewBag.CourseId" class="btn-back">
+    <a asp-controller="CourseDetails" asp-action="Details" asp-area="Faculty" asp-route-id="@ViewBag.CourseId" class="btn-back">
         <i class="bi bi-arrow-left"></i> Back to Course
     </a>
 </div>

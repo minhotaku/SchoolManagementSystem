@@ -8,13 +8,13 @@ using System.IO;
 
 namespace SchoolManagementSystem.Controllers.FacultyControllers
 {
-    [Route("faculty/student-management")]  // Định nghĩa route cho StudentManagementController
-    public class StudentManagementController : Controller
+    [Route("faculty/student-management", Name = "FacultyStudentManagement")]  // Giữ route như cũ
+    public class FacultyStudentManagementController : Controller
     {
         private readonly IFacultyService _facultyService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public StudentManagementController()
+        public FacultyStudentManagementController()
         {
             _facultyService = FacultyService.GetInstance();
             _unitOfWork = UnitOfWork.GetInstance();
@@ -63,13 +63,13 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "StudentManagement", new { courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "FacultyStudentManagement", new { courseId, area = "Faculty" }) });
             }
 
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "StudentManagement", new { courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "FacultyStudentManagement", new { courseId, area = "Faculty" }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -106,7 +106,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             ViewBag.CourseId = courseId;
-            return View("~/Views/Faculty/StudentManagement/Index.cshtml", studentDetails);
+            return View("~/Views/Faculty/FacultyStudentManagement/Index.cshtml", studentDetails);
         }
 
         [HttpGet]
@@ -116,13 +116,13 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "FacultyStudentManagement", new { studentId, courseId, area = "Faculty" }) });
             }
 
             var userId = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "FacultyStudentManagement", new { studentId, courseId, area = "Faculty" }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userId);
@@ -145,7 +145,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             ViewBag.StudentId = studentId;
             ViewBag.UserId = student.UserId;
             ViewBag.CourseId = courseId;
-            return View("~/Views/Faculty/StudentManagement/SendNotification.cshtml");
+            return View("~/Views/Faculty/FacultyStudentManagement/SendNotification.cshtml");
         }
 
         [HttpPost]
@@ -155,13 +155,13 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             var userRole = HttpContext.Session.GetString("_UserRole");
             if (userRole != "Faculty")
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "FacultyStudentManagement", new { studentId, courseId, area = "Faculty" }) });
             }
 
             var userIdFromSession = HttpContext.Session.GetString("_UserId");
             if (string.IsNullOrEmpty(userIdFromSession))
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "StudentManagement", new { studentId, courseId }) });
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("SendNotification", "FacultyStudentManagement", new { studentId, courseId, area = "Faculty" }) });
             }
 
             var facultyId = _facultyService.GetFacultyIdByUserId(userIdFromSession);
@@ -181,7 +181,7 @@ namespace SchoolManagementSystem.Controllers.FacultyControllers
             }
 
             _facultyService.SendNotification(userId, message);
-            return RedirectToAction("Index", new { courseId });
+            return RedirectToAction("Index", new { courseId, area = "Faculty" });
         }
     }
 }
