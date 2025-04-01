@@ -1,13 +1,13 @@
 ﻿@model SchoolManagementSystem.Models.Student.CourseViewModel
 @{
-    ViewData["Title"] = "Chi tiết khóa học";
+    ViewData["Title"] = "Course Details";
 }
 
 <div class="container py-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Dashboard">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Courses">Khóa học</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Student" asp-action="Courses">Courses</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.CourseName</li>
         </ol>
     </nav>
@@ -15,14 +15,14 @@
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">
-                <i class="bi bi-book me-2"></i>Thông tin khóa học
+                <i class="bi bi-book me-2"></i>Course Detail
             </h4>
             <div>
                 <a asp-controller="Student" asp-action="Courses" class="btn btn-outline-secondary me-2">
-                    <i class="bi bi-arrow-left me-1"></i>Quay lại
+                    <i class="bi bi-arrow-left me-1"></i>Back
                 </a>
                 <a asp-controller="Student" asp-action="GradeDetail" asp-route-id="@Model.EnrollmentId" class="btn btn-primary">
-                    <i class="bi bi-graph-up me-1"></i>Xem điểm
+                    <i class="bi bi-graph-up me-1"></i>View Grades
                 </a>
             </div>
         </div>
@@ -32,7 +32,7 @@
                     <table class="table table-borderless">
                         <tbody>
                             <tr>
-                                <th class="w-25">Mã khóa học:</th>
+                                <th class="w-25">CourseID:</th>
                                 <td>@Model.CourseId</td>
                             </tr>
                             <tr>
@@ -57,7 +57,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Thông tin học tập</h5>
+                            <h5 class="card-title"></h5>
                             <p class="card-text">
                                 <strong>Mã đăng ký:</strong> @Model.EnrollmentId
                             </p>
