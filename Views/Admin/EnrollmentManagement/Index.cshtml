@@ -1,31 +1,31 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.EnrollmentViewModel>
 @{
-    ViewData["Title"] = "Quản Lý Đăng Ký Khóa Học";
+    ViewData["Title"] = "Course Enrollment Management";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề và Nút Thêm --- *@
+    @* --- Title and Add New Button --- *@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-card-checklist me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Quản lý việc đăng ký khóa học của sinh viên.</p>
+            <p class="text-muted mb-0">Manage student course enrollments.</p>
         </div>
         <div class="col-auto">
             <a asp-controller="EnrollmentManagement" asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Đăng Ký Mới
+                <i class="bi bi-plus-lg me-1"></i> New Enrollment
             </a>
         </div>
     </div>
 
-    @* --- Hiển thị TempData messages --- *@
+    @* --- Display TempData messages --- *@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -35,31 +35,31 @@
         <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    @* --- Card chứa Filter và Bảng --- *@
+    @* --- Card containing Filter and Table --- *@
     <div class="card shadow-sm">
         <div class="card-header bg-light py-3">
             @* --- Filter Form --- *@
             <form method="get" asp-controller="EnrollmentManagement" asp-action="Index">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-4">
-                        <label for="studentFilter" class="form-label form-label-sm">Sinh viên (Tên/Mã)</label>
-                        @* Có thể dùng Input hoặc Dropdown *@
+                        <label for="studentFilter" class="form-label form-label-sm">Student (Name/Code)</label>
+                        @* Can use Input or Dropdown *@
                         <input type="text" name="studentFilter" id="studentFilter" class="form-control form-control-sm" value="@Context.Request.Query["studentFilter"]" />
-                        @* <select name="studentFilter" asp-items="ViewBag.StudentFilterList" class="form-select form-select-sm"><option value="">-- Tất cả SV --</option></select> *@
+                        @* <select name="studentFilter" asp-items="ViewBag.StudentFilterList" class="form-select form-select-sm"><option value="">-- All Students --</option></select> *@
                     </div>
                     <div class="col-md-3">
-                        <label for="courseFilter" class="form-label form-label-sm">Khóa học (Tên/Mã)</label>
+                        <label for="courseFilter" class="form-label form-label-sm">Course (Name/Code)</label>
                         <input type="text" name="courseFilter" id="courseFilter" class="form-control form-control-sm" value="@Context.Request.Query["courseFilter"]" />
-                        @* <select name="courseFilter" asp-items="ViewBag.CourseFilterList" class="form-select form-select-sm"><option value="">-- Tất cả KH --</option></select> *@
+                        @* <select name="courseFilter" asp-items="ViewBag.CourseFilterList" class="form-select form-select-sm"><option value="">-- All Courses --</option></select> *@
                     </div>
                     <div class="col-md-3">
-                        <label for="semesterFilter" class="form-label form-label-sm">Học kỳ</label>
-                        <input type="text" name="semesterFilter" id="semesterFilter" class="form-control form-control-sm" placeholder="vd: Fall 2024" value="@Context.Request.Query["semesterFilter"]" />
-                        @* <select name="semesterFilter" asp-items="ViewBag.SemesterFilterList" class="form-select form-select-sm"><option value="">-- Tất cả HK --</option></select> *@
+                        <label for="semesterFilter" class="form-label form-label-sm">Semester</label>
+                        <input type="text" name="semesterFilter" id="semesterFilter" class="form-control form-control-sm" placeholder="e.g., Fall 2024" value="@Context.Request.Query["semesterFilter"]" />
+                        @* <select name="semesterFilter" asp-items="ViewBag.SemesterFilterList" class="form-select form-select-sm"><option value="">-- All Semesters --</option></select> *@
                     </div>
                     <div class="col-md-2 d-grid">
-                        @* d-grid để nút chiếm hết chiều cao *@
-                        <button type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-funnel-fill me-1"></i> Lọc</button>
+                        @* d-grid to make button take full height *@
+                        <button type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-funnel-fill me-1"></i> Filter</button>
                     </div>
                 </div>
             </form>
@@ -67,18 +67,18 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped mb-0 align-middle small">
-                    @* Dùng class 'small' *@
+                    @* Using class 'small' *@
                     <thead class="table-light">
                         <tr>
-                            <th>Mã ĐK</th>
-                            <th>Học kỳ</th>
-                            <th>Mã SV</th>
-                            <th>Tên SV</th>
-                            <th>Mã KH</th>
-                            <th>Tên Khóa Học</th>
-                            <th class="text-center">Số TC</th>
-                            <th>Giảng Viên</th>
-                            <th class="text-center">Thao tác</th>
+                            <th>Enrollment ID</th>
+                            <th>Semester</th>
+                            <th>Student Code</th>
+                            <th>Student Name</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th class="text-center">Credits</th>
+                            <th>Faculty</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,11 +97,11 @@
                                     <td>@enrollment.FacultyUsername</td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm">
-                                            @* Nút Hủy Đăng ký *@
-                                            <a asp-controller="EnrollmentManagement" asp-action="Delete" asp-route-id="@enrollment.EnrollmentId" class="btn btn-outline-danger" title="Hủy Đăng ký">
+                                            @* Cancel Enrollment Button *@
+                                            <a asp-controller="EnrollmentManagement" asp-action="Delete" asp-route-id="@enrollment.EnrollmentId" class="btn btn-outline-danger" title="Cancel Enrollment">
                                                 <i class="bi bi-trash"></i>
                                             </a>
-                                            @* Có thể thêm nút khác sau *@
+                                            @* Can add other buttons later *@
                                         </div>
                                     </td>
                                 </tr>
@@ -109,12 +109,12 @@
                         }
                         else
                         {
-                            <tr><td colspan="9" class="text-center py-4 text-muted">Không có dữ liệu đăng ký nào phù hợp.</td></tr>
+                            <tr><td colspan="9" class="text-center py-4 text-muted">No matching enrollment data found.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-light text-muted">Tổng số: @(Model?.Count() ?? 0) lượt đăng ký.</div>
+        <div class="card-footer bg-light text-muted">Total: @(Model?.Count() ?? 0) enrollments.</div>
     </div>
 </div>

@@ -41,6 +41,11 @@ builder.Services.AddSingleton<ISessionService>(provider =>
 var csvBasePath = Path.Combine(Directory.GetCurrentDirectory(), "App_Data", "CSV");
 UnitOfWork.GetInstance(csvBasePath);
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5000); // Lắng nghe tất cả IP trên cổng 5000
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline

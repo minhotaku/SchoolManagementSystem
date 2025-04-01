@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.GradeReportViewModel>
 @{
-    ViewData["Title"] = "Báo Cáo Tổng Hợp Điểm Số";
-    // Lấy lại giá trị filter từ ViewBag
+    ViewData["Title"] = "Comprehensive Grade Report";
+    // Retrieve filter values from ViewBag
     string currentStudentFilter = ViewBag.CurrentStudentFilter as string ?? "";
     string currentCourseFilter = ViewBag.CurrentCourseFilter as string ?? "";
     string currentSemesterFilter = ViewBag.CurrentSemesterFilter as string ?? "";
@@ -11,46 +11,46 @@
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Báo cáo</li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Reports</li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề --- *@
+    @* --- Title --- *@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-clipboard-data-fill me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Xem điểm chi tiết của sinh viên theo khóa học và học kỳ.</p>
+            <p class="text-muted mb-0">View detailed student grades by course and semester.</p>
         </div>
     </div>
 
-    @* --- Filter Form trong Card riêng --- *@
+    @* --- Filter Form in a separate Card --- *@
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light py-3">
-            <h6 class="mb-0"><i class="bi bi-funnel-fill me-1"></i> Bộ lọc báo cáo</h6>
+            <h6 class="mb-0"><i class="bi bi-funnel-fill me-1"></i> Report Filters</h6>
         </div>
         <div class="card-body">
             <form method="get" asp-controller="Reports" asp-action="GradeReport">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
-                        <label for="studentFilter" class="form-label form-label-sm">Sinh viên (Tên/Mã)</label>
+                        <label for="studentFilter" class="form-label form-label-sm">Student (Name/Code)</label>
                         <input type="text" name="studentFilter" id="studentFilter" class="form-control form-control-sm" value="@currentStudentFilter" />
-                        @* <select name="studentFilter" asp-items="@ViewBag.StudentList" class="form-select form-select-sm"><option value="">-- Tất cả SV --</option></select> *@
+                        @* <select name="studentFilter" asp-items="@ViewBag.StudentList" class="form-select form-select-sm"><option value="">-- All Students --</option></select> *@
                     </div>
                     <div class="col-md-3">
-                        <label for="courseFilter" class="form-label form-label-sm">Khóa học (Tên/Mã)</label>
+                        <label for="courseFilter" class="form-label form-label-sm">Course (Name/Code)</label>
                         <input type="text" name="courseFilter" id="courseFilter" class="form-control form-control-sm" value="@currentCourseFilter" />
-                        @* <select name="courseFilter" asp-items="@ViewBag.CourseList" class="form-select form-select-sm"><option value="">-- Tất cả KH --</option></select> *@
+                        @* <select name="courseFilter" asp-items="@ViewBag.CourseList" class="form-select form-select-sm"><option value="">-- All Courses --</option></select> *@
                     </div>
                     <div class="col-md-3">
-                        <label for="semesterFilter" class="form-label form-label-sm">Học kỳ</label>
+                        <label for="semesterFilter" class="form-label form-label-sm">Semester</label>
                         <select name="semesterFilter" id="semesterFilter" asp-items="@ViewBag.SemesterList" class="form-select form-select-sm">
-                            <option value="">-- Tất cả HK --</option>
+                            <option value="">-- All Semesters --</option>
                         </select>
                     </div>
                     <div class="col-md-3 d-grid">
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i> Xem Kết Quả</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i> View Results</button>
                     </div>
                 </div>
             </form>
@@ -64,20 +64,20 @@
         <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    @* --- Bảng Báo cáo Điểm --- *@
+    @* --- Grade Report Table --- *@
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped mb-0 align-middle small">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 10%;">Học kỳ</th>
-                            <th style="width: 10%;">Mã SV</th>
-                            <th style="width: 15%;">Tên SV</th>
-                            <th style="width: 10%;">Mã KH</th>
-                            <th style="width: 25%;">Tên Khóa Học</th>
-                            <th style="width: 15%;">Thành phần</th>
-                            <th style="width: 15%;" class="text-end">Điểm số</th>
+                            <th style="width: 10%;">Semester</th>
+                            <th style="width: 10%;">Student Code</th>
+                            <th style="width: 15%;">Student Name</th>
+                            <th style="width: 10%;">Course Code</th>
+                            <th style="width: 25%;">Course Name</th>
+                            <th style="width: 15%;">Component</th>
+                            <th style="width: 15%;" class="text-end">Score</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,20 +92,20 @@
                                     <td>@item.CourseCode</td>
                                     <td>@item.CourseName</td>
                                     <td>@item.Component</td>
-                                    <td class="text-end fw-bold">@item.FormattedScore</td> @* Căn phải và in đậm điểm *@
+                                    <td class="text-end fw-bold">@item.FormattedScore</td> @* Right-align and bold score *@
                                 </tr>
                             }
                         }
                         else
                         {
-                            <tr><td colspan="7" class="text-center py-4 text-muted">Không có dữ liệu điểm nào phù hợp với bộ lọc.</td></tr>
+                            <tr><td colspan="7" class="text-center py-4 text-muted">No grade data matches the filter.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="card-footer bg-light text-muted">
-            Tổng số: @(Model?.Count() ?? 0) bản ghi điểm được hiển thị.
+            Total: @(Model?.Count() ?? 0) grade records shown.
         </div>
     </div>
 </div>

@@ -1,14 +1,14 @@
 ﻿@model SchoolManagementSystem.Models.CourseCreateViewModel
 @{
-    ViewData["Title"] = "Thêm Khóa Học Mới";
+    ViewData["Title"] = "Add New Course";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="CourseManagement" asp-action="Index">Quản lý Khóa học</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="CourseManagement" asp-action="Index">Course Management</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -31,7 +31,7 @@
                     <form asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
 
-                        @* --- Tên Khóa Học --- *@
+                        @* --- Course Name --- *@
                         <div class="mb-3">
                             <label asp-for="CourseName" class="form-label fw-bold required"></label>
                             <div class="input-group">
@@ -41,7 +41,7 @@
                             <span asp-validation-for="CourseName" class="text-danger"></span>
                         </div>
 
-                        @* --- Số Tín Chỉ và Giảng Viên (trên cùng hàng) --- *@
+                        @* --- Credits and Faculty (on the same row) --- *@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label asp-for="Credits" class="form-label fw-bold required"></label>
@@ -55,13 +55,13 @@
                                 <label asp-for="FacultyId" class="form-label fw-bold required"></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-video3"></i></span>
-                                    @* Dropdown Giảng viên *@
+                                    @* Faculty Dropdown *@
                                     <select asp-for="FacultyId" class="form-select" asp-items="@ViewBag.FacultyList">
-                                        <option value="" selected disabled>-- Chọn giảng viên --</option>
+                                        <option value="" selected disabled>-- Select Faculty --</option>
                                     </select>
                                 </div>
                                 <span asp-validation-for="FacultyId" class="text-danger"></span>
-                                @* Hiển thị lỗi load GV nếu có *@
+                                @* Display Faculty loading error if any *@
                                 @if (TempData["ErrorMessageLoading"] != null)
                                 {
                                     <div class="text-danger small mt-1">@TempData["ErrorMessageLoading"]</div>
@@ -70,10 +70,10 @@
                         </div>
 
                         <hr />
-                        @* --- Nút Bấm --- *@
+                        @* --- Buttons --- *@
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-1"></i> Thêm Khóa Học</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-1"></i> Add Course</button>
                         </div>
                     </form>
                 </div>
@@ -82,13 +82,13 @@
     </div>
 </div>
 @section Styles {
-     <style>
+    <style>
         .required::after {
             content: " *";
             color: red;
         }
     </style>
-} @* Đánh dấu required *@
+} @* Mark as required *@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

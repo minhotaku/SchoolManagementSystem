@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SchoolManagementSystem.Models
 {
-    public class StudentEditViewModel 
+    public class StudentEditViewModel
     {
         [Required]
         public string UserId { get; set; }

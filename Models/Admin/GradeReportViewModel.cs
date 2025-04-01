@@ -6,26 +6,26 @@ namespace SchoolManagementSystem.Models
     public class GradeReportViewModel
     {
         public string GradeId { get; set; } = "";
-        [Display(Name = "Thành phần")]
+        [Display(Name = "Component")]
         public string Component { get; set; } = "";
-        [Display(Name = "Điểm số")]
+        [Display(Name = "Score")]
         [DisplayFormat(DataFormatString = "{0:N1}")]
         public decimal Score { get; set; }
 
         public string EnrollmentId { get; set; } = "";
-        [Display(Name = "Học kỳ")]
+        [Display(Name = "Semester")]
         public string Semester { get; set; } = "";
 
         public string StudentId { get; set; } = "";
-        [Display(Name = "Mã SV")]
+        [Display(Name = "Student ID")]
         public string StudentCode { get; set; } = "";
-        [Display(Name = "Tên SV")]
+        [Display(Name = "Student Name")]
         public string StudentUsername { get; set; } = "";
 
         public string CourseId { get; set; } = "";
-        [Display(Name = "Mã KH")]
+        [Display(Name = "Course ID")]
         public string CourseCode { get; set; } = "";
-        [Display(Name = "Tên Khóa học")]
+        [Display(Name = "Course Name")]
         public string CourseName { get; set; } = "";
 
         public string FormattedScore => Score.ToString("N1", CultureInfo.InvariantCulture);

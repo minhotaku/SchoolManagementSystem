@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BCrypt.Net; // Cần để hash password khi tạo/sửa
+using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // Cần cho SelectList
-using SchoolManagementSystem.Data; // Để lấy UnitOfWork
-using SchoolManagementSystem.Entities; // Để dùng User, Student,...
-using SchoolManagementSystem.Services.Implementation; // Để lấy UserManagementService instance
-using SchoolManagementSystem.Services.Interfaces; // Để dùng IUserManagementService
-using SchoolManagementSystem.Models; // Namespace cho ViewModels
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SchoolManagementSystem.Data;
+using SchoolManagementSystem.Entities;
+using SchoolManagementSystem.Services.Implementation;
+using SchoolManagementSystem.Services.Interfaces;
+using SchoolManagementSystem.Models;
 using SchoolManagementSystem.Utils;
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
@@ -19,7 +19,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         private readonly IUserManagementService _userManagementService;
         private readonly IUnitOfWork _unitOfWork;
 
-        // Thông tin người dùng hiện tại (Tạm thời)
+        // Current user information (Temporary)
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
         private readonly string _currentUserLogin = "admin_son";
 
@@ -57,7 +57,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                         FacultyId = facultyInfo?.FacultyId,
                         AdminId = adminInfo?.AdminId,
                         SchoolProgramId = studentInfo?.SchoolProgramId,
-                        SchoolProgramName = programInfo?.SchoolProgramName ?? (studentInfo != null ? "(Chương trình không xác định)" : null)
+                        SchoolProgramName = programInfo?.SchoolProgramName ?? (studentInfo != null ? "(Undefined Program)" : null)
                     };
                 }).ToList();
 
@@ -66,7 +66,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error accessing Admin User Management Index: {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tải danh sách người dùng.";
+                TempData["ErrorMessage"] = "An error occurred while loading the user list.";
                 return View("~/Views/Admin/AdminUserManagement/Index.cshtml", new List<AdminUserViewModel>());
             }
         }
@@ -84,7 +84,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error loading programs for Create User: {ex.Message}");
                 ViewBag.SchoolPrograms = new SelectList(new List<SchoolProgram>());
-                TempData["ErrorMessage"] = "Lỗi tải danh sách chương trình học.";
+                TempData["ErrorMessage"] = "Error loading school program list.";
             }
             return View("~/Views/Admin/AdminUserManagement/Create.cshtml");
         }
@@ -109,14 +109,14 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
+                TempData["ErrorMessage"] = "Invalid input data. Please check again.";
                 return View("~/Views/Admin/AdminUserManagement/Create.cshtml", model);
             }
 
             if (model.Role.Equals("Student", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(model.SchoolProgramId))
             {
-                ModelState.AddModelError(nameof(model.SchoolProgramId), "Vui lòng chọn chương trình học cho sinh viên.");
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
+                ModelState.AddModelError(nameof(model.SchoolProgramId), "Please select a school program for the student.");
+                TempData["ErrorMessage"] = "Invalid input data. Please check again.";
                 return View("~/Views/Admin/AdminUserManagement/Create.cshtml", model);
             }
 
@@ -132,13 +132,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 if (userId != null)
                 {
-                    TempData["SuccessMessage"] = $"Đã tạo thành công người dùng '{model.Username}' với vai trò {model.Role}.";
+                    TempData["SuccessMessage"] = $"Successfully created user '{model.Username}' with role {model.Role}.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' successfully created user '{model.Username}' (ID: {userId}).");
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Lỗi khi tạo người dùng. Tên đăng nhập có thể đã tồn tại hoặc chương trình học không hợp lệ.";
+                    TempData["ErrorMessage"] = "Error creating user. Username may already exist or school program is invalid.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' failed to create user '{model.Username}'. Service returned null.");
                     return View("~/Views/Admin/AdminUserManagement/Create.cshtml", model);
                 }
@@ -146,7 +146,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error creating user '{model.Username}': {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi hệ thống khi tạo người dùng.";
+                TempData["ErrorMessage"] = "A system error occurred while creating the user.";
                 return View("~/Views/Admin/AdminUserManagement/Create.cshtml", model);
             }
         }
@@ -155,7 +155,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         [HttpGet]
         public IActionResult Edit(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Không tìm thấy ID người dùng.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("User ID not found.");
 
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' attempting to load edit page for user ID '{id}'.");
 
@@ -164,7 +164,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 var user = _userManagementService.GetUserById(id);
                 if (user == null)
                 {
-                    TempData["ErrorMessage"] = $"Không tìm thấy người dùng với ID {id}.";
+                    TempData["ErrorMessage"] = $"User with ID {id} not found.";
                     return RedirectToAction("Index");
                 }
 
@@ -172,7 +172,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 {
                     UserId = user.UserId,
                     Username = user.Username,
-                    CurrentRole = user.Role // Gán CurrentRole
+                    CurrentRole = user.Role // Assign CurrentRole
                 };
 
                 bool isStudent = user.Role.Equals("Student", StringComparison.OrdinalIgnoreCase);
@@ -183,7 +183,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     if (student == null) System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Warning: Student record not found for user ID '{id}'.");
                 }
 
-                // Luôn tải Programs nếu là student hoặc chuẩn bị sẵn ViewBag rỗng
+                // Always load Programs if student or prepare empty ViewBag
                 if (isStudent)
                 {
                     try
@@ -195,7 +195,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     {
                         System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error loading programs for Edit User GET: {progEx.Message}");
                         ViewBag.SchoolPrograms = new SelectList(new List<SchoolProgram>());
-                        TempData["ErrorMessage"] = "Lỗi tải danh sách chương trình học.";
+                        TempData["ErrorMessage"] = "Error loading school program list.";
                     }
                 }
                 else
@@ -208,7 +208,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error loading user '{id}' for edit: {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tải thông tin người dùng để chỉnh sửa.";
+                TempData["ErrorMessage"] = "An error occurred while loading user information for editing.";
                 return RedirectToAction("Index");
             }
         }
@@ -218,13 +218,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, UserEditViewModel model)
         {
-            if (id != model.UserId) return BadRequest("ID người dùng không khớp.");
+            if (id != model.UserId) return BadRequest("User ID mismatch.");
 
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' attempting to save changes for user ID '{id}'. Submitted Password: '{(string.IsNullOrEmpty(model.Password) ? "[Empty]" : "[Provided]")}'");
 
             bool isStudent = model.CurrentRole.Equals("Student", StringComparison.OrdinalIgnoreCase);
 
-            // Reload ViewBag nếu là Student
+            // Reload ViewBag if Student
             if (isStudent)
             {
                 try
@@ -245,12 +245,12 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
 
 
-            // --- Thêm kiểm tra độ dài mật khẩu thủ công NẾU mật khẩu được cung cấp ---
+            // --- Add manual password length check IF password is provided ---
             const int minPasswordLength = 6;
             if (!string.IsNullOrEmpty(model.Password) && model.Password.Length < minPasswordLength)
             {
-                // Thêm lỗi vào ModelState nếu mật khẩu nhập vào quá ngắn
-                ModelState.AddModelError(nameof(model.Password), $"Mật khẩu mới phải có ít nhất {minPasswordLength} ký tự.");
+                // Add error to ModelState if the entered password is too short
+                ModelState.AddModelError(nameof(model.Password), $"New password must be at least {minPasswordLength} characters long.");
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Password validation failed for user ID '{id}': Too short.");
             }
             else if (!string.IsNullOrEmpty(model.Password))
@@ -263,7 +263,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
 
 
-            // Kiểm tra ModelState tổng thể (bao gồm cả lỗi mật khẩu thủ công nếu có)
+            // Check overall ModelState (including manual password error if any)
             if (!ModelState.IsValid)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] ModelState invalid for user ID '{id}'. Errors:");
@@ -278,15 +278,15 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                         }
                     }
                 }
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại các trường báo lỗi.";
+                TempData["ErrorMessage"] = "Invalid input data. Please re-check the fields with errors.";
                 return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
             }
 
-            // Kiểm tra SchoolProgramId nếu là Student
+            // Check SchoolProgramId if Student
             if (isStudent && string.IsNullOrWhiteSpace(model.SchoolProgramId))
             {
-                ModelState.AddModelError(nameof(model.SchoolProgramId), "Vui lòng chọn chương trình học cho sinh viên.");
-                TempData["ErrorMessage"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
+                ModelState.AddModelError(nameof(model.SchoolProgramId), "Please select a school program for the student.");
+                TempData["ErrorMessage"] = "Invalid input data. Please check again.";
                 return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
             }
 
@@ -295,13 +295,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 var existingUser = _userManagementService.GetUserById(id);
                 if (existingUser == null)
                 {
-                    TempData["ErrorMessage"] = $"Không tìm thấy người dùng với ID {id} để cập nhật.";
+                    TempData["ErrorMessage"] = $"User with ID {id} not found for update.";
                     return RedirectToAction("Index");
                 }
 
                 existingUser.Username = model.Username;
 
-                // Chỉ hash và cập nhật mật khẩu nếu được cung cấp VÀ đã vượt qua kiểm tra độ dài
+                // Only hash and update password if provided AND passed length check
                 if (!string.IsNullOrEmpty(model.Password) &&
                     (!ModelState.ContainsKey(nameof(model.Password)) || !ModelState[nameof(model.Password)].Errors.Any()))
                 {
@@ -313,7 +313,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 if (!userUpdateResult)
                 {
-                    TempData["ErrorMessage"] = "Lỗi khi cập nhật thông tin người dùng cơ bản.";
+                    TempData["ErrorMessage"] = "Error updating basic user information.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' failed to update basic info for user ID '{id}'.");
                     return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
                 }
@@ -340,14 +340,14 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                                 {
                                     specificInfoUpdateResult = false;
                                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error saving student info for user ID '{id}': {studentEx.Message}");
-                                    TempData["ErrorMessage"] = "Lỗi khi cập nhật chương trình học.";
+                                    TempData["ErrorMessage"] = "Error updating school program.";
                                 }
                             }
                             else
                             {
                                 specificInfoUpdateResult = false;
-                                TempData["ErrorMessage"] = "Chương trình học được chọn không hợp lệ.";
-                                ModelState.AddModelError(nameof(model.SchoolProgramId), "Chương trình học không hợp lệ.");
+                                TempData["ErrorMessage"] = "Selected school program is invalid.";
+                                ModelState.AddModelError(nameof(model.SchoolProgramId), "Invalid school program.");
                                 return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
                             }
                         }
@@ -356,26 +356,26 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     {
                         specificInfoUpdateResult = false;
                         System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error: Student record not found for user ID '{id}'.");
-                        TempData["ErrorMessage"] = "Lỗi: Không tìm thấy bản ghi sinh viên tương ứng.";
+                        TempData["ErrorMessage"] = "Error: Corresponding student record not found.";
                     }
                 }
 
                 if (specificInfoUpdateResult)
                 {
-                    TempData["SuccessMessage"] = $"Đã cập nhật thành công thông tin người dùng '{model.Username}'.";
+                    TempData["SuccessMessage"] = $"Successfully updated user information for '{model.Username}'.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' successfully updated user ID '{id}'.");
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    // Lỗi đã được đặt trong TempData/ModelState
+                    // Error already set in TempData/ModelState
                     return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error saving changes for user ID '{id}': {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi hệ thống khi cập nhật người dùng.";
+                TempData["ErrorMessage"] = "A system error occurred while updating the user.";
                 return View("~/Views/Admin/AdminUserManagement/Edit.cshtml", model);
             }
         }
@@ -385,7 +385,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         [HttpGet]
         public IActionResult Delete(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound("Không tìm thấy ID người dùng.");
+            if (string.IsNullOrWhiteSpace(id)) return NotFound("User ID not found.");
 
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' viewing delete confirmation for user ID '{id}'.");
 
@@ -394,7 +394,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 var user = _userManagementService.GetUserById(id);
                 if (user == null)
                 {
-                    TempData["ErrorMessage"] = $"Không tìm thấy người dùng với ID {id} để xóa.";
+                    TempData["ErrorMessage"] = $"User with ID {id} not found for deletion.";
                     return RedirectToAction("Index");
                 }
                 return View("~/Views/Admin/AdminUserManagement/Delete.cshtml", user);
@@ -402,7 +402,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error loading user '{id}' for delete confirmation: {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tải thông tin người dùng để xóa.";
+                TempData["ErrorMessage"] = "An error occurred while loading user information for deletion.";
                 return RedirectToAction("Index");
             }
         }
@@ -412,7 +412,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("ID người dùng không hợp lệ.");
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Invalid User ID.");
 
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] User '{_currentUserLogin}' confirming deletion for user ID '{id}'.");
 
@@ -423,7 +423,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 if (userToDelete == null)
                 {
-                    TempData["ErrorMessage"] = $"Không tìm thấy người dùng '{usernameToDelete}'. Có thể đã bị xóa.";
+                    TempData["ErrorMessage"] = $"User '{usernameToDelete}' not found. May have already been deleted.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Delete failed: User ID '{id}' not found.");
                     return RedirectToAction("Index");
                 }
@@ -432,12 +432,12 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 if (result)
                 {
-                    TempData["SuccessMessage"] = $"Đã xóa thành công người dùng '{usernameToDelete}'.";
+                    TempData["SuccessMessage"] = $"Successfully deleted user '{usernameToDelete}'.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Successfully deleted user ID '{id}' ('{usernameToDelete}').");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = $"Lỗi khi xóa người dùng '{usernameToDelete}'.";
+                    TempData["ErrorMessage"] = $"Error deleting user '{usernameToDelete}'.";
                     System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Delete failed for user ID '{id}'. Service returned false.");
                 }
                 return RedirectToAction("Index");
@@ -445,7 +445,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] Error deleting user ID '{id}': {ex.Message}");
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi hệ thống khi xóa người dùng.";
+                TempData["ErrorMessage"] = "A system error occurred while deleting the user.";
                 return RedirectToAction("Index");
             }
         }

@@ -7,11 +7,11 @@ namespace SchoolManagementSystem.Models
     public class CourseGradeDetailsViewModel
     {
         public string CourseId { get; set; } = "";
-        [Display(Name = "Mã KH")]
+        [Display(Name = "Course Code")]
         public string CourseCode { get; set; } = "";
-        [Display(Name = "Tên Khóa học")]
+        [Display(Name = "Course Name")]
         public string CourseName { get; set; } = "";
-        [Display(Name = "Số TC")]
+        [Display(Name = "Credits")]
         public int Credits { get; set; }
         public string EnrollmentId { get; set; } = "";
 
@@ -19,7 +19,6 @@ namespace SchoolManagementSystem.Models
 
         public CourseGradeDetailsViewModel()
         {
-            // Khởi tạo List
             Grades = new List<GradeComponentViewModel>();
         }
     }

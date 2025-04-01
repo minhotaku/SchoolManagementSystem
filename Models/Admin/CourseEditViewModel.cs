@@ -6,20 +6,20 @@ namespace SchoolManagementSystem.Models
     public class CourseEditViewModel
     {
         [Required]
-        [Display(Name = "Mã Khóa học")]
-        public string CourseId { get; set; } // Readonly
+        [Display(Name = "Course ID")]
+        public string CourseId { get; set; }
 
-        [Required(ErrorMessage = "Tên khóa học không được để trống.")]
-        [Display(Name = "Tên Khóa học")]
+        [Required(ErrorMessage = "Course name cannot be empty.")]
+        [Display(Name = "Course Name")]
         public string CourseName { get; set; }
 
-        [Required(ErrorMessage = "Số tín chỉ không được để trống.")]
-        [Range(1, 10, ErrorMessage = "Số tín chỉ phải từ 1 đến 10.")]
-        [Display(Name = "Số tín chỉ")]
+        [Required(ErrorMessage = "Credits cannot be empty.")]
+        [Range(1, 10, ErrorMessage = "Credits must be between 1 and 10.")]
+        [Display(Name = "Credits")]
         public int Credits { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn giảng viên phụ trách.")]
-        [Display(Name = "Giảng viên phụ trách")]
+        [Required(ErrorMessage = "Please select a faculty in charge.")]
+        [Display(Name = "Faculty in Charge")]
         public string FacultyId { get; set; }
 
         public SelectList? FacultyList { get; set; }

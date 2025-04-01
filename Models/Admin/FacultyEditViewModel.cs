@@ -8,14 +8,14 @@ namespace SchoolManagementSystem.Models
         public string UserId { get; set; }
 
         [Required]
-        [Display(Name = "Mã Giảng viên")]
-        public string FacultyId { get; set; } // Readonly
+        [Display(Name = "Faculty ID")]
+        public string FacultyId { get; set; }
 
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống.")]
-        [Display(Name = "Tên đăng nhập")]
+        [Required(ErrorMessage = "Username cannot be empty.")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Display(Name = "Mật khẩu mới (để trống nếu không đổi)")]
+        [Display(Name = "New password (leave blank to keep current password)")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
     }

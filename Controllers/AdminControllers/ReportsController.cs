@@ -57,25 +57,25 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                     {
                         CourseId = course.CourseId,
                         CourseName = course.CourseName,
-                        FacultyUsername = uf?.Username ?? "(Chưa gán)",
+                        FacultyUsername = uf?.Username ?? "(Not assigned)",
                         Credits = course.Credits,
                         EnrollmentCount = enrollmentCount
                     }).ToList();
 
                 LogActionSuccess(actionName, $"Generated {reportViewModels.Count} report items.");
-                // Sử dụng allEnrollments để tạo list học kỳ
+                // Use allEnrollments to create semester list
                 ViewBag.SemesterList = new SelectList(allEnrollments.Select(e => e.Semester).Distinct().OrderBy(s => s), semesterFilter);
                 ViewBag.SelectedSemester = semesterFilter;
-                // *** Trả về đúng View ***
+                // *** Return the correct View ***
                 return View("~/Views/Admin/Reports/CourseEnrollmentReport.cshtml", reportViewModels);
             }
             catch (Exception ex)
             {
                 LogActionError(actionName, ex);
-                TempData["ErrorMessage"] = "Lỗi tạo báo cáo đăng ký khóa học.";
+                TempData["ErrorMessage"] = "Error creating course enrollment report.";
                 ViewBag.SemesterList = new SelectList(Enumerable.Empty<string>());
                 ViewBag.SelectedSemester = semesterFilter;
-                // *** Trả về đúng View ***
+                // *** Return the correct View ***
                 return View("~/Views/Admin/Reports/CourseEnrollmentReport.cshtml", reportViewModels);
             }
         }
@@ -123,21 +123,21 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 finalResult = gradeViewModels.OrderBy(g => g.Semester).ThenBy(g => g.StudentUsername).ThenBy(g => g.CourseName).ThenBy(g => g.Component).ToList();
 
                 LogActionSuccess(actionName, $"Generated {finalResult.Count} grade report items.");
-                // Chuẩn bị ViewBag
+                // Prepare ViewBag
                 ViewBag.StudentList = new SelectList(allStudents.Join(allUsers, s => s.UserId, u => u.UserId, (s, u) => new { Value = s.StudentId, Text = $"{u.Username} ({s.StudentId})" }).OrderBy(x => x.Text), "Value", "Text", studentFilter);
                 ViewBag.CourseList = new SelectList(allCourses.OrderBy(c => c.CourseName), "CourseId", "CourseName", courseFilter);
                 ViewBag.SemesterList = new SelectList(allEnrollments.Select(e => e.Semester).Distinct().OrderBy(s => s), semesterFilter);
                 ViewBag.CurrentStudentFilter = studentFilter; ViewBag.CurrentCourseFilter = courseFilter; ViewBag.CurrentSemesterFilter = semesterFilter;
 
-                // *** Trả về đúng View ***
+                // *** Return the correct View ***
                 return View("~/Views/Admin/Reports/GradeReport.cshtml", finalResult);
             }
             catch (Exception ex)
             {
                 LogActionError(actionName, ex);
-                TempData["ErrorMessage"] = "Lỗi tạo báo cáo điểm số.";
+                TempData["ErrorMessage"] = "Error creating grade report.";
                 ViewBag.StudentList = new SelectList(Enumerable.Empty<SelectListItem>()); ViewBag.CourseList = new SelectList(Enumerable.Empty<SelectListItem>()); ViewBag.SemesterList = new SelectList(Enumerable.Empty<string>());
-                // *** Trả về đúng View ***
+                // *** Return the correct View ***
                 return View("~/Views/Admin/Reports/GradeReport.cshtml", finalResult);
             }
         }
@@ -156,14 +156,14 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 var student = _unitOfWork.Students.GetById(studentId);
-                if (student == null) { LogActionWarning(actionName, $"Student {studentId} not found."); TempData["ErrorMessage"] = $"Không tìm thấy sinh viên {studentId}."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
+                if (student == null) { LogActionWarning(actionName, $"Student {studentId} not found."); TempData["ErrorMessage"] = $"Student {studentId} not found."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
                 var user = UserManagementService.GetInstance().GetUserById(student.UserId);
-                if (user == null) { LogActionWarning(actionName, $"User {student.UserId} not found."); TempData["ErrorMessage"] = $"Lỗi user cho sinh viên {studentId}."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
+                if (user == null) { LogActionWarning(actionName, $"User {student.UserId} not found."); TempData["ErrorMessage"] = $"User error for student {studentId}."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
 
                 viewModel.StudentId = student.StudentId; viewModel.StudentUsername = user.Username;
 
                 var studentEnrollments = _unitOfWork.Enrollments.GetByStudent(studentId)?.ToList() ?? new List<Enrollment>();
-                if (!studentEnrollments.Any()) { LogActionInfo(actionName, $"No enrollments for student {studentId}."); TempData["InfoMessage"] = $"Sinh viên '{user.Username}' chưa đăng ký khóa học nào."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
+                if (!studentEnrollments.Any()) { LogActionInfo(actionName, $"No enrollments for student {studentId}."); TempData["InfoMessage"] = $"Student '{user.Username}' has not enrolled in any courses yet."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
 
                 var enrollmentIds = studentEnrollments.Select(e => e.EnrollmentId).ToList();
                 var studentGrades = _unitOfWork.Grades.GetAll()?.Where(g => enrollmentIds.Contains(g.EnrollmentId)).ToList() ?? new List<Grade>();
@@ -197,10 +197,10 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 }
 
                 LogActionSuccess(actionName, $"Generated progress report for student {studentId}.");
-                // *** Trả về đúng View ***
+                // *** Return the correct View ***
                 return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel);
             }
-            catch (Exception ex) { LogActionError(actionName, ex, $"Error generating progress report for {studentId}."); TempData["ErrorMessage"] = "Lỗi tạo báo cáo tiến độ."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
+            catch (Exception ex) { LogActionError(actionName, ex, $"Error generating progress report for {studentId}."); TempData["ErrorMessage"] = "Error creating progress report."; return View("~/Views/Admin/Reports/StudentProgressReport.cshtml", viewModel); }
         }
 
         // --- Helper Methods ---
@@ -209,32 +209,32 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 // --- Load Students ---
-                // 1. Lấy nguồn dữ liệu, đảm bảo không null
+                // 1. Get data source, ensure not null
                 var studentsSource = _unitOfWork.Students.GetAll() ?? Enumerable.Empty<Student>();
                 var usersSource = _unitOfWork.Users.GetAll() ?? Enumerable.Empty<User>();
 
-                // 2. Thực hiện Join, OrderBy và ToList
+                // 2. Perform Join, OrderBy and ToList
                 var studentData = studentsSource
                     .Join(usersSource,
                         s => s.UserId, u => u.UserId,
-                        (s, u) => new // Tạo anonymous type
+                        (s, u) => new // Create anonymous type
                         {
                             Value = s.StudentId,
                             Text = $"{u.Username} ({s.StudentId})"
                         })
                     .OrderBy(x => x.Text)
-                    .ToList(); // studentData giờ là List<AnonymousType>, không null
+                    .ToList(); // studentData is now List<AnonymousType>, not null
 
-                // 3. Tạo SelectList trực tiếp từ danh sách đã ToList()
+                // 3. Create SelectList directly from the ToList() list
                 ViewBag.StudentList = new SelectList(studentData, "Value", "Text", selectedStudentId);
                 LogActionInfo(nameof(LoadStudentList), $"Loaded {studentData.Count} students for dropdown.");
             }
             catch (Exception ex)
             {
                 LogActionError(nameof(LoadStudentList), ex);
-                // Cung cấp SelectList rỗng khi có lỗi
-                ViewBag.StudentList = new SelectList(Enumerable.Empty<SelectListItem>()); // Dùng kiểu rõ ràng hơn
-                TempData["ErrorMessageLoading"] = "Lỗi tải DS SV."; // Có thể báo lỗi cụ thể hơn
+                // Provide an empty SelectList when there is an error
+                ViewBag.StudentList = new SelectList(Enumerable.Empty<SelectListItem>()); // Use more explicit type
+                TempData["ErrorMessageLoading"] = "Error loading student list."; // Could report more specific error
             }
         }
 

@@ -1,14 +1,14 @@
 ﻿@model SchoolManagementSystem.Models.SchoolProgramCreateViewModel
 @{
-    ViewData["Title"] = "Thêm Chương Trình Học Mới";
+    ViewData["Title"] = "Create New School Program";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Quản lý Chương trình</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Manage School Programs</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -36,8 +36,8 @@
                         <hr />
                         @* --- Nút Bấm --- *@
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-1"></i> Thêm Chương Trình</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle-fill me-1"></i> Create School Program</button>
                         </div>
                     </form>
                 </div>
@@ -46,7 +46,7 @@
     </div>
 </div>
 @section Styles {
-     <style>
+    <style>
         .required::after {
             content: " *";
             color: red;

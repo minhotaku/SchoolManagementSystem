@@ -5,14 +5,15 @@ namespace SchoolManagementSystem.Models
     public class StudentViewModel
     {
         public string UserId { get; set; }
-        [Display(Name = "Tên đăng nhập")]
+
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Display(Name = "Mã Sinh viên")]
+        [Display(Name = "Student Id")]
         public string StudentId { get; set; }
         public string SchoolProgramId { get; set; }
 
-        [Display(Name = "Chương trình học")]
+        [Display(Name = "School Program Name")]
         public string SchoolProgramName { get; set; }
     }
 }

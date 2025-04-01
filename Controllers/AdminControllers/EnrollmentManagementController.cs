@@ -30,7 +30,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         {
             string actionName = nameof(Index);
             LogActionEntry(actionName, $"Filters: Student='{studentFilter}', Course='{courseFilter}', Semester='{semesterFilter}'");
-            List<EnrollmentViewModel> finalResult = new List<EnrollmentViewModel>(); // Khai báo ở ngoài
+            List<EnrollmentViewModel> finalResult = new List<EnrollmentViewModel>(); // Declaration outside
             try
             {
                 var allEnrollments = _unitOfWork.Enrollments.GetAll()?.ToList() ?? new List<Enrollment>();
@@ -58,7 +58,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                         CourseCode = course.CourseId,
                         CourseName = course.CourseName,
                         Credits = course.Credits,
-                        FacultyUsername = uf?.Username ?? "(Chưa gán GV)",
+                        FacultyUsername = uf?.Username ?? "(Unassigned Faculty)",
                         Semester = enrollment.Semester
                     }).AsQueryable();
 
@@ -66,9 +66,9 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 if (!string.IsNullOrWhiteSpace(courseFilter)) { enrollmentViewModels = enrollmentViewModels.Where(e => e.CourseCode.Contains(courseFilter, StringComparison.OrdinalIgnoreCase) || e.CourseName.Contains(courseFilter, StringComparison.OrdinalIgnoreCase)); }
                 if (!string.IsNullOrWhiteSpace(semesterFilter)) { enrollmentViewModels = enrollmentViewModels.Where(e => e.Semester.Equals(semesterFilter, StringComparison.OrdinalIgnoreCase)); }
 
-                finalResult = enrollmentViewModels.OrderBy(e => e.Semester).ThenBy(e => e.StudentUsername).ThenBy(e => e.CourseName).ToList(); // Gán giá trị
+                finalResult = enrollmentViewModels.OrderBy(e => e.Semester).ThenBy(e => e.StudentUsername).ThenBy(e => e.CourseName).ToList(); // Assign value
 
-                // Chuẩn bị ViewBag cho filter dropdowns
+                // Prepare ViewBag for filter dropdowns
                 ViewBag.StudentFilterList = new SelectList(allStudents.Join(allUsers, s => s.UserId, u => u.UserId, (s, u) => new { s.StudentId, Display = $"{u.Username} ({s.StudentId})" }).OrderBy(x => x.Display), "StudentId", "Display", studentFilter);
                 ViewBag.CourseFilterList = new SelectList(allCourses.OrderBy(c => c.CourseName), "CourseId", "CourseName", courseFilter);
                 ViewBag.SemesterFilterList = new SelectList(allEnrollments.Select(e => e.Semester).Distinct().OrderBy(s => s), semesterFilter);
@@ -79,12 +79,12 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex)
             {
                 LogActionError(actionName, ex);
-                TempData["ErrorMessage"] = "Lỗi tải danh sách đăng ký.";
-                // Chuẩn bị ViewBag rỗng khi lỗi
+                TempData["ErrorMessage"] = "Error loading enrollment list.";
+                // Prepare empty ViewBag on error
                 ViewBag.StudentFilterList = new SelectList(Enumerable.Empty<object>());
                 ViewBag.CourseFilterList = new SelectList(Enumerable.Empty<object>());
                 ViewBag.SemesterFilterList = new SelectList(Enumerable.Empty<string>());
-                return View("~/Views/Admin/EnrollmentManagement/Index.cshtml", finalResult); // Trả về list rỗng
+                return View("~/Views/Admin/EnrollmentManagement/Index.cshtml", finalResult); // Return empty list
             }
         }
 
@@ -94,7 +94,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         {
             LogActionEntry(nameof(Create) + " (GET)");
             LoadStudentAndCourseLists(); // Load dropdowns
-            return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", new EnrollmentCreateViewModel()); // Gửi model rỗng
+            return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", new EnrollmentCreateViewModel()); // Send empty model
         }
 
         // POST: /EnrollmentManagement/Create
@@ -104,27 +104,27 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         {
             string actionName = nameof(Create) + " (POST)";
             LogActionEntry(actionName, $"Attempting enroll S:{model.StudentId} C:{model.CourseId} Sem:{model.Semester}");
-            LoadStudentAndCourseLists(model.StudentId, model.CourseId); // Load lại dropdowns
+            LoadStudentAndCourseLists(model.StudentId, model.CourseId); // Reload dropdowns
 
             // Server-side validation
             var studentExists = _unitOfWork.Students.GetById(model.StudentId) != null;
             var courseExists = _unitOfWork.Courses.GetById(model.CourseId) != null;
-            if (!studentExists) ModelState.AddModelError(nameof(model.StudentId), "Sinh viên không tồn tại.");
-            if (!courseExists) ModelState.AddModelError(nameof(model.CourseId), "Khóa học không tồn tại.");
+            if (!studentExists) ModelState.AddModelError(nameof(model.StudentId), "Student does not exist.");
+            if (!courseExists) ModelState.AddModelError(nameof(model.CourseId), "Course does not exist.");
             bool alreadyEnrolled = _unitOfWork.Enrollments.GetAll().Any(e => e.StudentId == model.StudentId && e.CourseId == model.CourseId && e.Semester.Equals(model.Semester?.Trim(), StringComparison.OrdinalIgnoreCase));
-            if (alreadyEnrolled) { ModelState.AddModelError(string.Empty, $"Sinh viên đã đăng ký khóa học này trong học kỳ {model.Semester}."); }
+            if (alreadyEnrolled) { ModelState.AddModelError(string.Empty, $"Student is already enrolled in this course for semester {model.Semester}."); }
 
             if (!ModelState.IsValid)
             {
                 LogModelStateErrors(actionName);
-                TempData["ErrorMessage"] = "Thông tin không hợp lệ.";
+                TempData["ErrorMessage"] = "Invalid information.";
                 return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", model);
             }
 
             try
             {
                 string newEnrollmentId = GenerateNewEnrollmentId();
-                if (string.IsNullOrEmpty(newEnrollmentId)) { TempData["ErrorMessage"] = "Lỗi tạo mã đăng ký."; return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", model); }
+                if (string.IsNullOrEmpty(newEnrollmentId)) { TempData["ErrorMessage"] = "Error creating enrollment ID."; return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", model); }
 
                 var newEnrollment = new Enrollment
                 {
@@ -136,25 +136,25 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 _unitOfWork.Enrollments.Add(newEnrollment);
                 _unitOfWork.SaveChanges();
 
-                TempData["SuccessMessage"] = $"Đã đăng ký thành công SV '{_unitOfWork.Users.GetById(_unitOfWork.Students.GetById(model.StudentId)?.UserId)?.Username}' vào KH '{_unitOfWork.Courses.GetById(model.CourseId)?.CourseName}' cho học kỳ {model.Semester}.";
+                TempData["SuccessMessage"] = $"Successfully enrolled student '{_unitOfWork.Users.GetById(_unitOfWork.Students.GetById(model.StudentId)?.UserId)?.Username}' in course '{_unitOfWork.Courses.GetById(model.CourseId)?.CourseName}' for semester {model.Semester}.";
                 LogActionSuccess(actionName, $"Created enrollment '{newEnrollment.EnrollmentId}'.");
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { LogActionError(actionName, ex); TempData["ErrorMessage"] = "Lỗi hệ thống khi tạo đăng ký."; return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", model); }
+            catch (Exception ex) { LogActionError(actionName, ex); TempData["ErrorMessage"] = "System error while creating enrollment."; return View("~/Views/Admin/EnrollmentManagement/Create.cshtml", model); }
         }
 
         // GET: /EnrollmentManagement/Delete/{enrollmentId}
         [HttpGet]
-        public IActionResult Delete(string id) // Nhận EnrollmentId
+        public IActionResult Delete(string id) // Receive EnrollmentId
         {
             string actionName = nameof(Delete) + " (GET)";
             LogActionEntry(actionName, $"Viewing delete confirmation for Enrollment ID '{id}'.");
             if (string.IsNullOrWhiteSpace(id)) { LogActionWarning(actionName, "ID is null."); return NotFound(); }
-            EnrollmentViewModel? deleteInfo = null; // Khai báo ở ngoài
+            EnrollmentViewModel? deleteInfo = null; // Declaration outside
             try
             {
                 var enrollment = _unitOfWork.Enrollments.GetById(id);
-                if (enrollment == null) { LogActionWarning(actionName, $"Enrollment {id} not found."); TempData["ErrorMessage"] = $"Không tìm thấy đăng ký {id}."; return RedirectToAction("Index"); }
+                if (enrollment == null) { LogActionWarning(actionName, $"Enrollment {id} not found."); TempData["ErrorMessage"] = $"Enrollment {id} not found."; return RedirectToAction("Index"); }
 
                 var student = _unitOfWork.Students.GetById(enrollment.StudentId);
                 var user = (student != null) ? UserManagementService.GetInstance().GetUserById(student.UserId) : null;
@@ -174,13 +174,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
 
                 return View("~/Views/Admin/EnrollmentManagement/Delete.cshtml", deleteInfo);
             }
-            catch (Exception ex) { LogActionError(actionName, ex, $"Error loading enrollment {id} for delete."); TempData["ErrorMessage"] = "Lỗi tải trang xóa."; return RedirectToAction("Index"); }
+            catch (Exception ex) { LogActionError(actionName, ex, $"Error loading enrollment {id} for delete."); TempData["ErrorMessage"] = "Error loading delete page."; return RedirectToAction("Index"); }
         }
 
         // POST: /EnrollmentManagement/Delete/{enrollmentId}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id) // id là EnrollmentId
+        public IActionResult DeleteConfirmed(string id) // id is EnrollmentId
         {
             string actionName = nameof(DeleteConfirmed) + " (POST)";
             LogActionEntry(actionName, $"Confirming deletion for Enrollment ID '{id}'.");
@@ -188,17 +188,17 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 var enrollmentToDelete = _unitOfWork.Enrollments.GetById(id);
-                if (enrollmentToDelete == null) { LogActionWarning(actionName, $"Enrollment {id} not found."); TempData["ErrorMessage"] = $"Không tìm thấy đăng ký {id}."; return RedirectToAction("Index"); }
+                if (enrollmentToDelete == null) { LogActionWarning(actionName, $"Enrollment {id} not found."); TempData["ErrorMessage"] = $"Enrollment {id} not found."; return RedirectToAction("Index"); }
 
                 bool hasGrades = _unitOfWork.Grades.GetByEnrollment(id).Any();
-                if (hasGrades) { LogActionWarning(actionName, $"Deletion failed for enrollment {id}: Grades found."); TempData["ErrorMessage"] = "Không thể hủy đăng ký này vì đã có điểm."; return RedirectToAction("Index"); }
+                if (hasGrades) { LogActionWarning(actionName, $"Deletion failed for enrollment {id}: Grades found."); TempData["ErrorMessage"] = "Cannot delete this enrollment because grades are already assigned."; return RedirectToAction("Index"); }
 
                 _unitOfWork.Enrollments.Delete(id); _unitOfWork.SaveChanges();
-                TempData["SuccessMessage"] = $"Đã hủy đăng ký (Mã: {id}).";
+                TempData["SuccessMessage"] = $"Enrollment deleted successfully (ID: {id}).";
                 LogActionSuccess(actionName, $"Deleted enrollment {id}.");
                 return RedirectToAction("Index");
             }
-            catch (Exception ex) { LogActionError(actionName, ex, $"Error deleting enrollment {id}."); TempData["ErrorMessage"] = "Lỗi hệ thống khi hủy đăng ký."; return RedirectToAction("Index"); }
+            catch (Exception ex) { LogActionError(actionName, ex, $"Error deleting enrollment {id}."); TempData["ErrorMessage"] = "System error while deleting enrollment."; return RedirectToAction("Index"); }
         }
 
         // --- Helper Methods ---
@@ -207,51 +207,51 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             try
             {
                 // --- Load Students ---
-                // 1. Lấy nguồn dữ liệu, đảm bảo không null
+                // 1. Get data source, ensure not null
                 var studentsSource = _unitOfWork.Students.GetAll() ?? Enumerable.Empty<Student>();
                 var usersSource = _unitOfWork.Users.GetAll() ?? Enumerable.Empty<User>();
 
-                // 2. Thực hiện Join, OrderBy và ToList để có List<> cụ thể (không phải anonymous nữa nếu có thể)
-                //    Hoặc giữ anonymous nhưng xử lý khác
+                // 2. Perform Join, OrderBy and ToList to get concrete List<> (not anonymous anymore if possible)
+                //    Or keep anonymous but handle differently
                 var studentData = studentsSource
                                     .Join(usersSource,
                                           s => s.UserId, u => u.UserId,
-                                          (s, u) => new // Tạo anonymous type
+                                          (s, u) => new // Create anonymous type
                                           {
                                               Value = s.StudentId,
                                               Text = $"{u.Username} ({s.StudentId})"
                                           })
                                     .OrderBy(x => x.Text)
-                                    .ToList(); // studentData giờ là List<AnonymousType>, không null
+                                    .ToList(); // studentData is now List<AnonymousType>, not null
 
-                // 3. Tạo SelectList trực tiếp từ danh sách đã ToList()
-                //    Nếu studentData rỗng, SelectList sẽ tự động rỗng.
+                // 3. Create SelectList directly from the ToList() list
+                //    If studentData is empty, SelectList will automatically be empty.
                 ViewBag.StudentList = new SelectList(studentData, "Value", "Text", selectedStudentId);
                 LogActionInfo(nameof(LoadStudentAndCourseLists), $"Loaded {studentData.Count} students for dropdown.");
 
 
                 // --- Load Courses ---
-                // 1. Lấy nguồn dữ liệu, đảm bảo không null
+                // 1. Get data source, ensure not null
                 var coursesSource = _unitOfWork.Courses.GetAll() ?? Enumerable.Empty<Course>();
 
-                // 2. OrderBy và ToList
-                var courseData = coursesSource.OrderBy(c => c.CourseName).ToList(); // courseData là List<Course>, không null
+                // 2. OrderBy and ToList
+                var courseData = coursesSource.OrderBy(c => c.CourseName).ToList(); // courseData is List<Course>, not null
 
-                // 3. Tạo SelectList trực tiếp
+                // 3. Create SelectList directly
                 ViewBag.CourseList = new SelectList(courseData, "CourseId", "CourseName", selectedCourseId);
                 LogActionInfo(nameof(LoadStudentAndCourseLists), $"Loaded {courseData.Count} courses for dropdown.");
             }
             catch (Exception ex)
             {
                 LogActionError(nameof(LoadStudentAndCourseLists), ex);
-                // Cung cấp SelectList rỗng khi có lỗi
-                ViewBag.StudentList = new SelectList(Enumerable.Empty<SelectListItem>()); // Dùng kiểu rõ ràng hơn
+                // Provide empty SelectList when error occurs
+                ViewBag.StudentList = new SelectList(Enumerable.Empty<SelectListItem>()); // Use more explicit type
                 ViewBag.CourseList = new SelectList(Enumerable.Empty<SelectListItem>());
-                TempData["ErrorMessageLoading"] = "Lỗi tải DS SV/KH.";
+                TempData["ErrorMessageLoading"] = "Error loading Student/Course lists.";
             }
         }
 
-        // *** Đảm bảo hàm GenerateNewEnrollmentId tồn tại và đúng tên ***
+        // *** Ensure GenerateNewEnrollmentId function exists and has correct name ***
         private string GenerateNewEnrollmentId()
         {
             try

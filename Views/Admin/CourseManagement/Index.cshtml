@@ -1,21 +1,21 @@
 ﻿@model IEnumerable<SchoolManagementSystem.Models.CourseViewModel>
 @{
-    ViewData["Title"] = "Quản Lý Khóa Học";
+    ViewData["Title"] = "Course Management";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Homepage</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
 
-    @* --- Tiêu đề và Nút Thêm --- *@
+    @* --- Title and Add Button --- *@
     <div class="row mb-3 align-items-center">
-        <div class="col"><h3><i class="bi bi-book-half me-2"></i>@ViewData["Title"]</h3> <p class="text-muted mb-0">Quản lý danh sách các khóa học.</p></div>
-        <div class="col-auto"><a asp-controller="CourseManagement" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm Khóa Học Mới</a></div>
+        <div class="col"><h3><i class="bi bi-book-half me-2"></i>@ViewData["Title"]</h3> <p class="text-muted mb-0">Manage the list of courses.</p></div>
+        <div class="col-auto"><a asp-controller="CourseManagement" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add New Course</a></div>
     </div>
 
     @* --- TempData messages --- *@
@@ -28,20 +28,20 @@
         <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    @* --- Card chứa Bảng và Filter --- *@
+    @* --- Card containing Table and Filter --- *@
     <div class="card shadow-sm">
         <div class="card-header bg-light py-3">
             <div class="row g-2 align-items-center">
                 <div class="col-md-7 col-lg-8">
-                    @* Tìm kiếm *@
+                    @* Search *@
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo Tên, Mã KH hoặc Tên GV...">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Name, Course ID, or Teacher Name...">
                         <button class="btn btn-outline-secondary" type="button" id="searchButton"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
                 <div class="col-md-5 col-lg-4">
-                    @* Filter (Có thể thêm filter GV ở đây) *@
-                    @* <select id="facultyFilter" class="form-select" asp-items="@ViewBag.FacultyListForFilter"><option value="">-- Lọc theo Giảng viên --</option></select> *@
+                    @* Filter (Faculty filter could be added here) *@
+                    @* <select id="facultyFilter" class="form-select" asp-items="@ViewBag.FacultyListForFilter"><option value="">-- Filter by Faculty --</option></select> *@
                 </div>
             </div>
         </div>
@@ -50,11 +50,11 @@
                 <table class="table table-hover table-striped mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 15%;">Mã KH</th>
-                            <th style="width: 35%;">Tên Khóa Học</th>
-                            <th style="width: 10%;">Số TC</th>
-                            <th style="width: 20%;">Giảng viên</th>
-                            <th style="width: 20%;" class="text-center">Thao tác</th>
+                            <th style="width: 15%;">Course ID</th>
+                            <th style="width: 35%;">Course Name</th>
+                            <th style="width: 10%;">Credits</th>
+                            <th style="width: 20%;">Teacher</th>
+                            <th style="width: 20%;" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="courseTableBody">
@@ -65,13 +65,13 @@
                                 <tr class="course-row" data-coursename="@course.CourseName.ToLower()" data-courseid="@course.CourseId.ToLower()" data-facultyname="@course.FacultyUsername?.ToLower()">
                                     <td><span class="badge bg-secondary font-monospace">@course.CourseId</span></td>
                                     <td>@course.CourseName</td>
-                                    <td class="text-center">@course.Credits</td> @* Căn giữa số TC *@
+                                    <td class="text-center">@course.Credits</td> @* Center Credits number *@
                                     <td>@course.FacultyUsername</td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm">
-                                            <a asp-controller="CourseManagement" asp-action="Edit" asp-route-id="@course.CourseId" class="btn btn-outline-primary"><i class="bi bi-pencil-square me-1"></i> Sửa</a>
-                                            <a asp-controller="CourseManagement" asp-action="Delete" asp-route-id="@course.CourseId" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Xóa</a>
-                                            @* Không cần nút chi tiết riêng vì thông tin đã đủ trên bảng *@
+                                            <a asp-controller="CourseManagement" asp-action="Edit" asp-route-id="@course.CourseId" class="btn btn-outline-primary"><i class="bi bi-pencil-square me-1"></i> Edit</a>
+                                            <a asp-controller="CourseManagement" asp-action="Delete" asp-route-id="@course.CourseId" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Delete</a>
+                                            @* No separate detail button needed as info is sufficient in table *@
                                         </div>
                                     </td>
                                 </tr>
@@ -79,18 +79,18 @@
                         }
                         else
                         {
-                            <tr><td colspan="5" class="text-center py-4 text-muted">Chưa có khóa học nào.</td></tr>
+                            <tr><td colspan="5" class="text-center py-4 text-muted">No courses available.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-light text-muted">Tổng số: <span id="courseCount">@(Model?.Count() ?? 0)</span> khóa học.</div>
+        <div class="card-footer bg-light text-muted">Total: <span id="courseCount">@(Model?.Count() ?? 0)</span> courses.</div>
     </div>
 </div>
 @section Scripts {
     <script>
-        // JS Tìm kiếm (tìm trong tên KH, mã KH, tên GV)
+        // JS Search (search in course name, course ID, teacher name)
         $(document).ready(function() {
             function filterCourseTable() {
                 var searchTerm = $("#searchInput").val().toLowerCase();
@@ -98,13 +98,13 @@
                 $("#courseTableBody tr.course-row").each(function() {
                     var rowCourseName = $(this).data('coursename');
                     var rowCourseId = $(this).data('courseid');
-                    var rowFacultyName = $(this).data('facultyname') || ""; // Lấy tên GV, xử lý null
+                    var rowFacultyName = $(this).data('facultyname') || ""; // Get teacher name, handle null
                     var show = true;
 
                     if (searchTerm &&
                         rowCourseName.indexOf(searchTerm) === -1 &&
                         rowCourseId.indexOf(searchTerm) === -1 &&
-                        rowFacultyName.indexOf(searchTerm) === -1 ) // Tìm cả tên GV
+                        rowFacultyName.indexOf(searchTerm) === -1 ) // Search also teacher name
                     {
                         show = false;
                     }
@@ -114,10 +114,10 @@
                 $("#courseCount").text(count);
                  $("#noResultsRowCourse").remove();
                  if (count === 0 && $("#courseTableBody tr.course-row").length > 0) {
-                     $("#courseTableBody").append('<tr id="noResultsRowCourse"><td colspan="5" class="text-center text-muted py-3">Không tìm thấy kết quả.</td></tr>');
+                     $("#courseTableBody").append('<tr id="noResultsRowCourse"><td colspan="5" class="text-center text-muted py-3">No results found.</td></tr>');
                  }
             }
-            $("#searchInput").on("keyup", filterCourseTable); // Trigger bằng nút thì đổi thành #searchButton click
+            $("#searchInput").on("keyup", filterCourseTable); // If triggering by button, change to #searchButton click
             $("#courseCount").text($("#courseTableBody tr.course-row").length);
         });
     </script>

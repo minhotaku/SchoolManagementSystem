@@ -6,10 +6,10 @@ namespace SchoolManagementSystem.Models
     {
         public string UserId { get; set; }
 
-        [Display(Name = "Tên đăng nhập")]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Display(Name = "Mã Admin")]
+        [Display(Name = "Admin ID")]
         public string AdminId { get; set; }
     }
 }

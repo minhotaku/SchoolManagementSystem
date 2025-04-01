@@ -1,11 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Http
 
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Quản Trị Hệ Thống Trường Học</title>
+    <title>@ViewData["Title"] - School Management System Administration</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
@@ -133,11 +133,11 @@
         }
 
             .submenu.open {
-                max-height: 300px; /* Giới hạn chiều cao tối đa */
-                overflow-y: auto; /* Hiển thị thanh cuộn khi cần thiết */
+                max-height: 300px; /* Maximum height limit */
+                overflow-y: auto; /* Show scrollbar when needed */
             }
 
-            /* Thêm kiểu scrollbar cho submenu */
+            /* Add scrollbar style for submenu */
             .submenu::-webkit-scrollbar {
                 width: 4px;
             }
@@ -423,14 +423,14 @@
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="logo-container">
             <i class="bi bi-mortarboard-fill fs-3"></i>
-            <span class="logo-text">Hệ Thống Quản Lý</span>
+            <span class="logo-text">School Management System</span>
         </div>
 
         <ul class="nav-menu p-0">
             <li class="nav-menu-item">
                 <a href="/AdminDashboard/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "AdminDashboard" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                     <i class="bi bi-speedometer2"></i>
-                    <span class="nav-menu-text">Tổng quan</span>
+                    <span class="nav-menu-text">Dashboard</span>
                 </a>
             </li>
 
@@ -438,26 +438,26 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link has-submenu @(ViewContext.RouteData.Values["controller"].ToString() == "UserManagement" || ViewContext.RouteData.Values["controller"].ToString() == "AdminManagement" ? "active" : "")" id="userManagementToggle">
                     <i class="bi bi-people"></i>
-                    <span class="nav-menu-text">Quản lý người dùng</span>
+                    <span class="nav-menu-text">User Management</span>
                     <i class="bi bi-chevron-down dropdown-icon"></i>
                 </a>
                 <ul class="submenu @(ViewContext.RouteData.Values["controller"].ToString() == "UserManagement" || ViewContext.RouteData.Values["controller"].ToString() == "AdminManagement" ? "open" : "")" id="userManagementSubMenu">
                     <li class="nav-menu-item">
                         <a href="/UserManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "UserManagement" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                             <i class="bi bi-person"></i>
-                            <span class="nav-menu-text">Danh sách người dùng</span>
+                            <span class="nav-menu-text">User List</span>
                         </a>
                     </li>
                     <li class="nav-menu-item">
                         <a href="/UserManagement/Register" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "UserManagement" && ViewContext.RouteData.Values["action"].ToString() == "Register" ? "active" : "")">
                             <i class="bi bi-person-plus"></i>
-                            <span class="nav-menu-text">Đăng ký người dùng</span>
+                            <span class="nav-menu-text">Register User</span>
                         </a>
                     </li>
                     <li class="nav-menu-item">
                         <a href="/AdminManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "AdminManagement" ? "active" : "")">
                             <i class="bi bi-shield-lock"></i>
-                            <span class="nav-menu-text">Quản lý Admin</span>
+                            <span class="nav-menu-text">Admin Management</span>
                         </a>
                     </li>
                 </ul>
@@ -467,7 +467,7 @@
             <li class="nav-menu-item">
                 <a href="/StudentManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "StudentManagement" ? "active" : "")">
                     <i class="bi bi-mortarboard"></i>
-                    <span class="nav-menu-text">Quản lý sinh viên</span>
+                    <span class="nav-menu-text">Student Management</span>
                 </a>
             </li>
 
@@ -475,20 +475,20 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link has-submenu @(ViewContext.RouteData.Values["controller"].ToString() == "CourseManagement" || ViewContext.RouteData.Values["controller"].ToString() == "EnrollmentManagement" ? "active" : "")" id="courseManagementToggle">
                     <i class="bi bi-book"></i>
-                    <span class="nav-menu-text">Quản lý khóa học</span>
+                    <span class="nav-menu-text">Course Management</span>
                     <i class="bi bi-chevron-down dropdown-icon"></i>
                 </a>
                 <ul class="submenu @(ViewContext.RouteData.Values["controller"].ToString() == "CourseManagement" || ViewContext.RouteData.Values["controller"].ToString() == "EnrollmentManagement" ? "open" : "")" id="courseManagementSubMenu">
                     <li class="nav-menu-item">
                         <a href="/CourseManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "CourseManagement" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                             <i class="bi bi-list-ul"></i>
-                            <span class="nav-menu-text">Danh sách khóa học</span>
+                            <span class="nav-menu-text">Course List</span>
                         </a>
                     </li>
                     <li class="nav-menu-item">
                         <a href="/EnrollmentManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "EnrollmentManagement" ? "active" : "")">
                             <i class="bi bi-clipboard-check"></i>
-                            <span class="nav-menu-text">Quản lý đăng ký</span>
+                            <span class="nav-menu-text">Enrollment Management</span>
                         </a>
                     </li>
                 </ul>
@@ -498,7 +498,7 @@
             <li class="nav-menu-item">
                 <a href="/FacultyManagement/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "FacultyManagement" ? "active" : "")">
                     <i class="bi bi-building"></i>
-                    <span class="nav-menu-text">Quản lý khoa</span>
+                    <span class="nav-menu-text">Faculty Management</span>
                 </a>
             </li>
 
@@ -506,14 +506,14 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link has-submenu @(ViewContext.RouteData.Values["controller"].ToString() == "SchoolProgram" ? "active" : "")" id="programManagementToggle">
                     <i class="bi bi-journal-text"></i>
-                    <span class="nav-menu-text">Chương trình học</span>
+                    <span class="nav-menu-text">School Program</span>
                     <i class="bi bi-chevron-down dropdown-icon"></i>
                 </a>
                 <ul class="submenu @(ViewContext.RouteData.Values["controller"].ToString() == "SchoolProgram" ? "open" : "")" id="programManagementSubMenu">
                     <li class="nav-menu-item">
                         <a href="/SchoolProgram/Index" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "SchoolProgram" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                             <i class="bi bi-list-check"></i>
-                            <span class="nav-menu-text">Danh sách chương trình</span>
+                            <span class="nav-menu-text">Program List</span>
                         </a>
                     </li>
                 </ul>
@@ -523,26 +523,26 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link has-submenu @(ViewContext.RouteData.Values["controller"].ToString() == "Reports" ? "active" : "")" id="reportsToggle">
                     <i class="bi bi-graph-up"></i>
-                    <span class="nav-menu-text">Báo cáo</span>
+                    <span class="nav-menu-text">Reports</span>
                     <i class="bi bi-chevron-down dropdown-icon"></i>
                 </a>
                 <ul class="submenu @(ViewContext.RouteData.Values["controller"].ToString() == "Reports" ? "open" : "")" id="reportsSubMenu">
                     <li class="nav-menu-item">
                         <a href="/Reports/CourseEnrollmentReport" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Reports" && ViewContext.RouteData.Values["action"].ToString() == "CourseEnrollmentReport" ? "active" : "")">
                             <i class="bi bi-bar-chart"></i>
-                            <span class="nav-menu-text">Báo cáo đăng ký</span>
+                            <span class="nav-menu-text">Enrollment Report</span>
                         </a>
                     </li>
                     <li class="nav-menu-item">
                         <a href="/Reports/GradeReport" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Reports" && ViewContext.RouteData.Values["action"].ToString() == "GradeReport" ? "active" : "")">
                             <i class="bi bi-card-checklist"></i>
-                            <span class="nav-menu-text">Báo cáo điểm số</span>
+                            <span class="nav-menu-text">Grade Report</span>
                         </a>
                     </li>
                     <li class="nav-menu-item">
                         <a href="/Reports/StudentProgressReport" class="nav-menu-link @(ViewContext.RouteData.Values["controller"].ToString() == "Reports" && ViewContext.RouteData.Values["action"].ToString() == "StudentProgressReport" ? "active" : "")">
                             <i class="bi bi-arrow-up-right"></i>
-                            <span class="nav-menu-text">Tiến độ sinh viên</span>
+                            <span class="nav-menu-text">Student Progress</span>
                         </a>
                     </li>
                 </ul>
@@ -554,7 +554,7 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link">
                     <i class="bi bi-gear"></i>
-                    <span class="nav-menu-text">Cài đặt hệ thống</span>
+                    <span class="nav-menu-text">System Settings</span>
                 </a>
             </li>
 
@@ -562,7 +562,7 @@
             <li class="nav-menu-item">
                 <a href="#" class="nav-menu-link">
                     <i class="bi bi-question-circle"></i>
-                    <span class="nav-menu-text">Trợ giúp</span>
+                    <span class="nav-menu-text">Help</span>
                 </a>
             </li>
         </ul>
@@ -612,14 +612,14 @@
                     </div>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Cài đặt</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="dropdown-item">
-                                <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </button>
                         </form>
                     </li>
@@ -636,10 +636,10 @@
         <footer class="admin-footer">
             <div class="row">
                 <div class="col-md-6">
-                    © @DateTime.Now.Year - Hệ Thống Quản Lý Trường Học - <a href="#">Chính sách bảo mật</a>
+                    © @DateTime.Now.Year - School Management System - <a href="#">Privacy Policy</a>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    Thời gian máy chủ (UTC): <span id="currentDateTime">2025-03-31 14:17:27</span>
+                    Server time (UTC): <span id="currentDateTime">2025-03-31 14:17:27</span>
                 </div>
             </div>
         </footer>
@@ -656,14 +656,14 @@
             const toggleSidebarBtn = document.getElementById('toggleSidebar');
             const mobileOverlay = document.getElementById('mobileOverlay');
             const submenuToggles = document.querySelectorAll('.has-submenu');
-            const allSubmenus = document.querySelectorAll('.submenu'); // Lấy tất cả submenu
-            const allSidebarLinks = adminSidebar.querySelectorAll('a'); // Lấy tất cả các link trong sidebar
+            const allSubmenus = document.querySelectorAll('.submenu'); // Get all submenus
+            const allSidebarLinks = adminSidebar.querySelectorAll('a'); // Get all links in sidebar
 
             // --- Constants ---
-            const ACTIVE_SUBMENUS_KEY = 'activeSubmenus'; // Key cho localStorage
+            const ACTIVE_SUBMENUS_KEY = 'activeSubmenus'; // Key for localStorage
 
-            // --- Hàm đóng tất cả submenu ---
-            // (Hàm này giữ nguyên, hữu ích khi thu gọn sidebar)
+            // --- Function to close all submenus ---
+            // (This function remains the same, useful when collapsing sidebar)
             function closeAllSubmenus() {
                 allSubmenus.forEach(submenu => {
                     submenu.classList.remove('open');
@@ -672,12 +672,12 @@
                         toggle.classList.remove('open');
                     }
                 });
-                // Xóa trạng thái đã lưu khi đóng tất cả một cách chủ động
+                // Clear saved state when actively closing all
                 localStorage.removeItem(ACTIVE_SUBMENUS_KEY);
             }
 
-            // --- Hàm đóng một submenu cụ thể ---
-            // Hàm này sẽ được dùng nhiều hơn
+            // --- Function to close a specific submenu ---
+            // This function will be used more often
             function closeSpecificSubmenu(submenuToClose) {
                 if (submenuToClose && submenuToClose.classList.contains('open')) {
                      submenuToClose.classList.remove('open');
@@ -685,27 +685,27 @@
                      if (toggle && toggle.classList.contains('has-submenu')) {
                          toggle.classList.remove('open');
                      }
-                     // Sau khi đóng, cập nhật lại trạng thái lưu trữ
+                     // After closing, update the stored state
                      saveOpenSubmenusState();
                 }
             }
 
 
-            // --- Hàm lưu trạng thái submenu đang mở ---
-            // Chỉ lưu tối đa 1 ID
+            // --- Function to save the state of open submenus ---
+            // Only save up to 1 ID
             function saveOpenSubmenusState() {
                 const activeSubmenuIds = [];
-                const openSubmenu = adminSidebar.querySelector('.submenu.open'); // Query trong sidebar
+                const openSubmenu = adminSidebar.querySelector('.submenu.open'); // Query within sidebar
                 if (openSubmenu && openSubmenu.id) {
                     activeSubmenuIds.push(openSubmenu.id);
                 } else if (openSubmenu && !openSubmenu.id) {
-                    console.warn("Submenu đang mở không có ID, không thể lưu trạng thái:", openSubmenu);
+                    console.warn("Open submenu does not have an ID, cannot save state:", openSubmenu);
                 }
                 localStorage.setItem(ACTIVE_SUBMENUS_KEY, JSON.stringify(activeSubmenuIds));
             }
 
-            // --- Hàm khôi phục trạng thái submenu từ localStorage ---
-            // (Hàm này giữ nguyên)
+            // --- Function to restore submenu state from localStorage ---
+            // (This function remains the same)
             function restoreOpenSubmenusState() {
                 const savedSubmenuIds = JSON.parse(localStorage.getItem(ACTIVE_SUBMENUS_KEY) || '[]');
                 if (savedSubmenuIds && savedSubmenuIds.length > 0) {
@@ -722,7 +722,7 @@
                 }
             }
 
-            // --- Khôi phục trạng thái submenu khi trang tải xong ---
+            // --- Restore submenu state when page loads ---
             const isDesktop = window.innerWidth >= 992;
             if (!isDesktop || (isDesktop && adminSidebar && !adminSidebar.classList.contains('collapsed'))) {
                 restoreOpenSubmenusState();
@@ -742,10 +742,10 @@
                         adminContent.classList.toggle('expanded');
 
                         if (adminSidebar.classList.contains('collapsed')) {
-                            // Khi thu gọn, đóng hết và xóa trạng thái lưu
+                            // When collapsed, close all and clear saved state
                             closeAllSubmenus();
                         } else {
-                            // Khi mở rộng lại, khôi phục (nếu có)
+                            // When expanded again, restore (if any)
                             restoreOpenSubmenusState();
                         }
                     }
@@ -760,91 +760,91 @@
                 });
             }
 
-            // --- Submenu Toggle Logic (CHỈ MỘT SUBMENU MỞ) ---
+            // --- Submenu Toggle Logic (ONLY ONE SUBMENU OPEN) ---
             submenuToggles.forEach(toggle => {
-                // Đảm bảo ID cho submenu (quan trọng cho lưu/khôi phục)
+                // Ensure ID for submenu (important for saving/restoring)
                 const submenu = toggle.nextElementSibling;
                 if (submenu && submenu.classList.contains('submenu') && !submenu.id) {
                     const generatedId = 'submenu-' + (toggle.getAttribute('href') || toggle.textContent.trim().replace(/\s+/g, '-') || Math.random().toString(36).substring(7));
                     submenu.id = generatedId;
-                    console.warn("Submenu đã được gán ID tự động:", generatedId, submenu);
+                    console.warn("Submenu was automatically assigned ID:", generatedId, submenu);
                 }
 
                 toggle.addEventListener('click', (e) => {
-                    e.preventDefault(); // Ngăn thẻ <a> điều hướng
+                    e.preventDefault(); // Prevent <a> tag from navigating
 
                     const currentSubmenu = toggle.nextElementSibling;
 
                     if (!currentSubmenu || !currentSubmenu.classList.contains('submenu')) {
-                        console.error("Không tìm thấy .submenu hợp lệ sau toggle:", toggle);
+                        console.error("Valid .submenu not found after toggle:", toggle);
                         return;
                     }
 
                     const isCurrentlyOpen = currentSubmenu.classList.contains('open');
 
-                    // Tìm và đóng submenu *khác* đang mở (nếu có)
+                    // Find and close *other* open submenu (if any)
                     const currentlyOpenSubmenu = adminSidebar.querySelector('.submenu.open');
                     if (currentlyOpenSubmenu && currentlyOpenSubmenu !== currentSubmenu) {
-                         closeSpecificSubmenu(currentlyOpenSubmenu); // Dùng hàm mới
+                         closeSpecificSubmenu(currentlyOpenSubmenu); // Use new function
                     }
 
-                    // Bây giờ, quyết định trạng thái cho cái vừa click
+                    // Now, decide state for the clicked one
                     if (isCurrentlyOpen) {
-                        // Nếu nó đang mở, thì đóng nó lại
+                        // If it's open, then close it
                         currentSubmenu.classList.remove('open');
                         toggle.classList.remove('open');
                     } else {
-                        // Nếu nó đang đóng, thì mở nó ra
+                        // If it's closed, then open it
                         currentSubmenu.classList.add('open');
                         toggle.classList.add('open');
                     }
 
-                    // Lưu trạng thái cuối cùng vào localStorage
+                    // Save the final state to localStorage
                     saveOpenSubmenusState();
                 });
             });
 
-            // --- *** MỚI: Đóng submenu khi click vào item khác *** ---
+            // --- *** NEW: Close submenu when clicking on another item *** ---
             adminSidebar.addEventListener('click', (event) => {
                 const clickedElement = event.target;
 
-                // Tìm xem có submenu nào đang mở không
+                // Check if any submenu is currently open
                 const openSubmenu = adminSidebar.querySelector('.submenu.open');
 
-                // Nếu không có submenu nào đang mở, không cần làm gì cả
+                // If no submenu is open, no need to do anything
                 if (!openSubmenu) {
                     return;
                 }
 
-                // Kiểm tra xem click có phải là vào toggle của submenu đang mở không
+                // Check if the click is on the toggle of the currently open submenu
                 const openSubmenuToggle = openSubmenu.previousElementSibling;
                 if (openSubmenuToggle && openSubmenuToggle.contains(clickedElement)) {
-                    // Click vào chính toggle đang mở -> listener của toggle đó sẽ xử lý việc đóng/mở lại
+                    // Clicked on the toggle itself -> the toggle's listener will handle open/close toggle
                     return;
                 }
 
-                // Kiểm tra xem click có phải là vào BÊN TRONG submenu đang mở không
+                // Check if the click is INSIDE the currently open submenu
                 if (openSubmenu.contains(clickedElement)) {
-                    // Click vào một link/item bên trong submenu đang mở, không đóng nó
+                    // Clicked on a link/item inside the open submenu, do not close it
                     return;
                 }
 
-                // Kiểm tra xem có phải click vào một toggle CỦA SUBMENU KHÁC không
+                // Check if clicked on a toggle OF ANOTHER SUBMENU
                 const clickedToggle = clickedElement.closest('.has-submenu');
                 if (clickedToggle) {
-                    // Click vào một toggle khác -> listener của toggle đó sẽ xử lý việc đóng cái cũ, mở cái mới
+                    // Clicked on another toggle -> that toggle's listener will handle closing the old one, opening the new one
                     return;
                 }
 
-                // --- ĐIỀU KIỆN ĐÓNG SUBMENU ---
-                // Nếu đến được đây, có nghĩa là:
-                // 1. Có một submenu đang mở.
-                // 2. Click KHÔNG phải vào toggle của submenu đó.
-                // 3. Click KHÔNG phải vào bên trong submenu đó.
-                // 4. Click KHÔNG phải vào một toggle submenu khác.
-                // => Click vào một item thông thường hoặc khoảng trống trong sidebar.
-                // --> Tiến hành đóng submenu đang mở.
-                closeSpecificSubmenu(openSubmenu); // Dùng hàm mới và nó tự động lưu state
+                // --- SUBMENU CLOSING CONDITION ---
+                // If reached here, it means:
+                // 1. There is an open submenu.
+                // 2. Click is NOT on the toggle of that submenu.
+                // 3. Click is NOT inside that submenu.
+                // 4. Click is NOT on another submenu toggle.
+                // => Clicked on a regular item or empty space in the sidebar.
+                // --> Proceed to close the currently open submenu.
+                closeSpecificSubmenu(openSubmenu); // Use new function and it automatically saves state
             });
 
 
@@ -855,9 +855,9 @@
                 const sidebarIsShowingMobile = adminSidebar.classList.contains('show');
 
                 if (isMobile) {
-                    // Chuyển sang mobile
+                    // Switching to mobile
                     if (sidebarIsCollapsed) {
-                        adminSidebar.classList.remove('collapsed'); // Bỏ collapsed trên mobile
+                        adminSidebar.classList.remove('collapsed'); // Remove collapsed on mobile
                         adminContent.classList.remove('expanded');
                     }
                     if (sidebarIsShowingMobile) {
@@ -865,13 +865,13 @@
                     } else {
                         mobileOverlay.classList.remove('show');
                     }
-                    // Không cần đóng submenu khi resize sang mobile, giữ nguyên trạng thái
+                    // No need to close submenu when resizing to mobile, keep current state
                 } else {
-                    // Chuyển sang desktop
-                    adminSidebar.classList.remove('show'); // Tắt trạng thái mobile show
+                    // Switching to desktop
+                    adminSidebar.classList.remove('show'); // Turn off mobile show state
                     mobileOverlay.classList.remove('show');
                     if (sidebarIsCollapsed) {
-                        // Nếu đang ở trạng thái collapsed trên desktop, đảm bảo các submenu đóng (không cần lưu lại state)
+                        // If in collapsed state on desktop, ensure submenus are closed (no need to save state)
                         document.querySelectorAll('.submenu.open').forEach(submenu => {
                             submenu.classList.remove('open');
                             const toggle = submenu.previousElementSibling;
@@ -880,7 +880,7 @@
                             }
                         });
                     }
-                    // Nếu không collapsed, trạng thái submenu được quản lý bởi restore/save
+                    // If not collapsed, submenu state is managed by restore/save
                 }
             });
 
@@ -902,7 +902,7 @@
             updateCurrentTime();
             setInterval(updateCurrentTime, 1000);
 
-        }); // Kết thúc DOMContentLoaded
+        }); // End of DOMContentLoaded
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

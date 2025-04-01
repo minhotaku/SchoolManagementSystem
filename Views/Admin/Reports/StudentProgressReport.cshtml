@@ -1,6 +1,6 @@
 ﻿@model SchoolManagementSystem.Models.StudentProgressViewModel
 @{
-    ViewData["Title"] = "Báo Cáo Tiến Độ Học Tập Sinh Viên";
+    ViewData["Title"] = "Student Progress Report";
     string selectedStudentId = Context.Request.Query["studentId"];
 }
 
@@ -8,8 +8,8 @@
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Báo cáo</li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Reports</li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -18,24 +18,24 @@
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h3><i class="bi bi-graph-up me-2"></i>@ViewData["Title"]</h3>
-            <p class="text-muted mb-0">Xem chi tiết điểm số của từng sinh viên qua các học kỳ.</p>
+            <p class="text-muted mb-0">View detailed grades of each student across semesters.</p>
         </div>
     </div>
 
     @* --- Card Filter Sinh Viên --- *@
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light py-3">
-            <h6 class="mb-0"><i class="bi bi-funnel-fill me-1"></i> Chọn Sinh Viên</h6>
+            <h6 class="mb-0"><i class="bi bi-funnel-fill me-1"></i> Select Student</h6>
         </div>
         <div class="card-body">
             <form method="get" asp-controller="Reports" asp-action="StudentProgressReport">
                 <div class="row g-2 align-items-center">
                     @* Đổi thành align-items-center *@
                     <div class="col-md-9">
-                        <label for="studentId" class="form-label visually-hidden">Sinh viên:</label> @* Ẩn label nếu không cần thiết *@
+                        <label for="studentId" class="form-label visually-hidden">Student:</label> @* Ẩn label nếu không cần thiết *@
                         <select name="studentId" id="studentId" class="form-select form-select" asp-items="@ViewBag.StudentList">
                             @* Bỏ form-select-sm để to hơn *@
-                            <option value="">-- Chọn hoặc tìm sinh viên --</option> @* Sửa placeholder *@
+                            <option value="">-- Select or find a student --</option> @* Sửa placeholder *@
                         </select>
                         @if (TempData["ErrorMessageLoading"] != null)
                         {
@@ -43,7 +43,7 @@
                         }
                     </div>
                     <div class="col-md-3 d-grid">
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i> Xem Báo Cáo</button> @* Bỏ btn-sm *@
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-search me-1"></i> View Report</button> @* Bỏ btn-sm *@
                     </div>
                 </div>
             </form>
@@ -66,7 +66,7 @@
         <div class="card shadow-sm mb-4">
             @* Card kết quả *@
             <div class="card-header bg-light">
-                <h5 class="mb-0">Kết quả học tập: <span class="fw-normal">@Model.StudentUsername (@Model.StudentId)</span></h5>
+                <h5 class="mb-0">Academic results: <span class="fw-normal">@Model.StudentUsername (@Model.StudentId)</span></h5>
             </div>
             <div class="card-body px-0 py-0">
                 @if (Model.SemesterGrades != null && Model.SemesterGrades.Any())
@@ -85,8 +85,8 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="@headerId">
                                     <button class="accordion-button @(isShow ? "" : "collapsed") fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="@(isShow ? "true" : "false")" aria-controls="@collapseId">
-                                        Học kỳ: @semester
-                                        <span class="badge bg-primary rounded-pill ms-2">@coursesInSemester.Count Khóa học</span>
+                                        Semester: @semester
+                                        <span class="badge bg-primary rounded-pill ms-2">@coursesInSemester.Count Courses</span>
                                     </button>
                                 </h2>
                                 <div id="@collapseId" class="accordion-collapse collapse @(isShow ? "show" : "")" aria-labelledby="@headerId" data-bs-parent="#semesterAccordion">
@@ -97,10 +97,10 @@
                                                 <thead class="table-light">
                                                     @* Dùng màu sáng hơn thead chính *@
                                                     <tr>
-                                                        <th style="width: 10%;">Mã KH</th>
-                                                        <th style="width: 30%;">Tên Khóa Học</th>
-                                                        <th style="width: 10%;" class="text-center">Số TC</th>
-                                                        <th style="width: 50%;">Điểm thành phần</th>
+                                                        <th style="width: 10%;">Course Code</th>
+                                                        <th style="width: 30%;">Course Name</th>
+                                                        <th style="width: 10%;" class="text-center">Credits</th>
+                                                        <th style="width: 50%;">Component Grades</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -127,7 +127,7 @@
                                                                     }
                                                                     else
                                                                     {
-                                                                        <span class="text-muted fst-italic">Chưa có điểm</span>
+                                                                        <span class="text-muted fst-italic">No grades yet</span>
                                                                     }
                                                                 </td>
                                                             </tr>
@@ -135,7 +135,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <tr><td colspan="4" class="text-center text-muted py-2">Lỗi dữ liệu.</td></tr>
+                                                        <tr><td colspan="4" class="text-center text-muted py-2">Data error.</td></tr>
                                                     }
                                                 </tbody>
                                             </table>
@@ -148,14 +148,14 @@
                 }
                 else
                 {
-                    <div class="alert alert-info m-3">Chưa có dữ liệu điểm/đăng ký.</div>
+                    <div class="alert alert-info m-3">No grade/enrollment data available.</div>
                 }
             </div>
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(selectedStudentId))
     {
-        <div class="alert alert-warning">Không tìm thấy SV đã chọn.</div>
+        <div class="alert alert-warning">Selected student not found.</div>
     }
 
 </div>
@@ -168,6 +168,7 @@
             height: calc(1.5em + .75rem + 2px) !important;
             padding: .375rem .75rem !important; /* ... */
         }
+
         .badge.rounded-pill {
             font-size: 0.85em;
         }
@@ -179,7 +180,7 @@
     <script>
         $(document).ready(function() {
             $('#studentId').select2({
-                placeholder: "-- Chọn hoặc tìm sinh viên --",
+                placeholder: "-- Select or find a student --",
                 allowClear: true, theme: "bootstrap-5", width: '100%'
             });
         });

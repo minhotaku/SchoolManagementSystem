@@ -1,14 +1,14 @@
 ﻿@model SchoolManagementSystem.Models.SchoolProgramEditViewModel
 @{
-    ViewData["Title"] = "Chỉnh Sửa Chương Trình Học";
+    ViewData["Title"] = "Edit School Program";
 }
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Quản lý Chương trình</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="SchoolProgram" asp-action="Index">Manage Programs</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]: @(Model?.SchoolProgramName ?? "...")</li>
         </ol>
     </nav>
@@ -30,13 +30,13 @@
                         <form asp-action="Edit" asp-route-id="@Model.SchoolProgramId" method="post">
                             @Html.AntiForgeryToken() <input type="hidden" asp-for="SchoolProgramId" />
 
-                            @* --- Mã Chương Trình (Readonly) --- *@
+                            @* --- Program Code (Readonly) --- *@
                             <div class="mb-3">
                                 <label asp-for="SchoolProgramId" class="form-label fw-bold"></label>
                                 <div class="input-group"><span class="input-group-text"><i class="bi bi-upc"></i></span><input asp-for="SchoolProgramId" class="form-control bg-light" readonly /></div>
                             </div>
 
-                            @* --- Tên Chương Trình --- *@
+                            @* --- Program Name --- *@
                             <div class="mb-3">
                                 <label asp-for="SchoolProgramName" class="form-label fw-bold required"></label>
                                 <div class="input-group"><span class="input-group-text"><i class="bi bi-card-heading"></i></span><input asp-for="SchoolProgramName" class="form-control" /></div>
@@ -44,10 +44,10 @@
                             </div>
 
                             <hr />
-                            @* --- Nút Bấm --- *@
+                            @* --- Buttons --- *@
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
-                                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu Thay Đổi</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -57,11 +57,11 @@
     }
     else
     {
-        <div class="alert alert-danger">Lỗi tải thông tin.</div> <a asp-action="Index">Quay lại</a>
+        <div class="alert alert-danger">Error loading information.</div> <a asp-action="Index">Back</a>
     }
 </div>
 @section Styles {
-     <style>
+    <style>
         .required::after {
             content: " *";
             color: red;

@@ -1,8 +1,8 @@
 ﻿@model SchoolManagementSystem.Entities.User
 @{
-    ViewData["Title"] = "Chỉnh Sửa Người Dùng";
-    // Ngày giờ hiện tại: 2025-03-27 15:22:04
-    // Người dùng hiện tại: minhotaku
+    ViewData["Title"] = "Edit User";
+    // Current date and time: 2025-03-27 15:22:04
+    // Current user: minhotaku
 }
 
 <div class="container mt-4">
@@ -10,15 +10,15 @@
         <div class="col-md-8 col-lg-6">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa người dùng</li>
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">User Management</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit User</li>
                 </ol>
             </nav>
 
             <div class="card shadow">
                 <div class="card-header bg-info text-white">
-                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Chỉnh Sửa Người Dùng</h4>
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Edit User</h4>
                 </div>
                 <div class="card-body">
                     @if (TempData["ErrorMessage"] != null)
@@ -35,7 +35,7 @@
                         <input type="hidden" asp-for="PasswordHash" />
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">ID Người dùng</label>
+                            <label class="form-label fw-bold">User ID</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                                 <input type="text" class="form-control bg-light" value="@Model.UserId" readonly />
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="Username" class="form-label fw-bold required">Tên đăng nhập</label>
+                            <label for="Username" class="form-label fw-bold required">Username</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <input asp-for="Username" class="form-control" required />
@@ -52,40 +52,40 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Vai trò</label>
+                            <label class="form-label fw-bold">Role</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                                 <input type="text" class="form-control bg-light" value="@Model.Role" readonly />
                             </div>
-                            <div class="form-text">Vai trò không thể thay đổi sau khi tạo.</div>
+                            <div class="form-text">Role cannot be changed after creation.</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="newPassword" class="form-label fw-bold">Mật khẩu mới</label>
+                            <label for="newPassword" class="form-label fw-bold">New Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                 <input type="password" id="newPassword" name="newPassword" class="form-control"
-                                       placeholder="Để trống nếu không thay đổi" />
+                                       placeholder="Leave blank to not change" />
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div class="form-text">Chỉ điền nếu muốn thay đổi mật khẩu.</div>
+                            <div class="form-text">Fill in only if you want to change the password.</div>
                         </div>
 
                         <div class="mb-3 form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="confirmUpdate">
                             <label class="form-check-label" for="confirmUpdate">
-                                Tôi xác nhận thay đổi thông tin người dùng này
+                                I confirm to change the information of this user
                             </label>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-info text-white" id="updateButton" disabled>
-                                <i class="bi bi-save me-2"></i>Lưu Thay Đổi
+                                <i class="bi bi-save me-2"></i>Save Changes
                             </button>
                             <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                                <i class="bi bi-arrow-left me-2"></i>Back
                             </a>
                         </div>
                     </form>
@@ -93,7 +93,7 @@
                 <div class="card-footer bg-light">
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">ID: @Model.UserId</small>
-                        <small class="text-muted">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</small>
+                        <small class="text-muted">Last updated: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</small>
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
 
 @section Scripts {
     <script>
-        // Xử lý nút hiển thị/ẩn mật khẩu
+        // Handle show/hide password button
         document.getElementById('togglePassword').addEventListener('click', function () {
             var passwordField = document.getElementById('newPassword');
             var icon = this.querySelector('i');
@@ -141,7 +141,7 @@
             }
         });
 
-        // Xử lý checkbox xác nhận
+        // Handle confirmation checkbox
         document.getElementById('confirmUpdate').addEventListener('change', function() {
             document.getElementById('updateButton').disabled = !this.checked;
         });

@@ -1,12 +1,14 @@
 ﻿@model SchoolManagementSystem.Models.EnrollmentCreateViewModel
-@{ ViewData["Title"] = "Đăng Ký Khóa Học Mới"; }
+@{
+    ViewData["Title"] = "Create New Enrollment";
+}
 
 <div class="container mt-4">
     @* --- Breadcrumb --- *@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a asp-controller="EnrollmentManagement" asp-action="Index">Quản lý Đăng ký</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="EnrollmentManagement" asp-action="Index">Enrollment Management</a></li>
             <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
         </ol>
     </nav>
@@ -20,49 +22,55 @@
                 </div>
                 <div class="card-body">
                     @* --- Validation & Error Messages --- *@
-                    <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="@(ViewData.ModelState.IsValid ? "display:none;" : "")"></div> @* Chỉ hiện khi có lỗi *@
-                    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
-                    @if (TempData["ErrorMessageLoading"] != null) { <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessageLoading"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="@(ViewData.ModelState.IsValid ? "display:none;" : "")"></div> @* Only show when there are errors *@
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                    }
+                    @if (TempData["ErrorMessageLoading"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessageLoading"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                    }
 
 
                     <form asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
 
-                        @* --- Chọn Sinh viên (Sẽ được nâng cấp bởi Select2) --- *@
+                        @* --- Select Student (Will be enhanced by Select2) --- *@
                         <div class="mb-3">
-                             <label asp-for="StudentId" class="form-label fw-bold required"></label>
-                             @* Giữ nguyên thẻ select, Select2 sẽ tự động áp dụng *@
-                             <select asp-for="StudentId" class="form-select" asp-items="@ViewBag.StudentList">
-                                 <option value=""></option> @* Option rỗng để placeholder của Select2 hoạt động *@
-                             </select>
-                             <span asp-validation-for="StudentId" class="text-danger"></span>
+                            <label asp-for="StudentId" class="form-label fw-bold required">Student</label>
+                            @* Keep the select tag, Select2 will automatically apply *@
+                            <select asp-for="StudentId" class="form-select" asp-items="@ViewBag.StudentList">
+                                <option value=""></option> @* Empty option for Select2 placeholder to work *@
+                            </select>
+                            <span asp-validation-for="StudentId" class="text-danger"></span>
                         </div>
 
-                        @* --- Chọn Khóa học (Sẽ được nâng cấp bởi Select2) --- *@
+                        @* --- Select Course (Will be enhanced by Select2) --- *@
                         <div class="mb-3">
-                             <label asp-for="CourseId" class="form-label fw-bold required"></label>
-                             @* Giữ nguyên thẻ select *@
-                             <select asp-for="CourseId" class="form-select" asp-items="@ViewBag.CourseList">
-                                  <option value=""></option> @* Option rỗng *@
-                             </select>
-                             <span asp-validation-for="CourseId" class="text-danger"></span>
+                            <label asp-for="CourseId" class="form-label fw-bold required">Course</label>
+                            @* Keep the select tag *@
+                            <select asp-for="CourseId" class="form-select" asp-items="@ViewBag.CourseList">
+                                <option value=""></option> @* Empty option *@
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
                         </div>
 
-                        @* --- Nhập Học kỳ --- *@
+                        @* --- Enter Semester --- *@
                         <div class="mb-3">
-                            <label asp-for="Semester" class="form-label fw-bold required"></label>
+                            <label asp-for="Semester" class="form-label fw-bold required">Semester</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-calendar-range"></i></span>
-                                <input asp-for="Semester" class="form-control" placeholder="vd: Fall 2024"/>
+                                <input asp-for="Semester" class="form-control" placeholder="e.g., Fall 2024" />
                             </div>
                             <span asp-validation-for="Semester" class="text-danger"></span>
                         </div>
 
-                        <hr/>
-                        @* --- Nút Bấm --- *@
+                        <hr />
+                        @* --- Buttons --- *@
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i> Đăng Ký</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i> Enroll</button>
                         </div>
                     </form>
                 </div>
@@ -71,53 +79,60 @@
     </div>
 </div>
 
-@* --- Thêm link CSS cho Select2 và Theme --- *@
+@* --- Add CSS links for Select2 and Theme --- *@
 @section Styles {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <style>
-        .required::after { content:" *"; color:red; }
-        /* Tùy chỉnh thêm nếu cần để Select2 hiển thị đẹp hơn */
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        /* Customize further if needed for Select2 to display nicely */
         .select2-container--bootstrap-5 .select2-selection--single {
-            height: calc(1.5em + .75rem + 2px) !important; /* Giống chiều cao input Bootstrap */
+            height: calc(1.5em + .75rem + 2px) !important; /* Same height as Bootstrap input */
             padding: .375rem .75rem !important;
             border: 1px solid #ced4da !important;
         }
-         .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-            line-height: 1.5 !important;
-            padding-left: 0 !important; /* Reset padding */
-        }
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
-            height: calc(1.5em + .75rem) !important; /* Chiều cao mũi tên */
-            right: 0.5rem !important;
-        }
-         /* Style khi lỗi validation */
+
+            .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5 !important;
+                padding-left: 0 !important; /* Reset padding */
+            }
+
+            .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
+                height: calc(1.5em + .75rem) !important; /* Arrow height */
+                right: 0.5rem !important;
+            }
+        /* Style for validation error */
         .select2-container--bootstrap-5.is-invalid .select2-selection {
-             border-color: #dc3545 !important;
+            border-color: #dc3545 !important;
         }
 
     </style>
 }
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-    @* --- Thêm link JS cho Select2 (SAU JQUERY) --- *@
+    @* --- Add JS link for Select2 (AFTER JQUERY) --- *@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    @* --- Script khởi tạo Select2 --- *@
+    @* --- Script to initialize Select2 --- *@
     <script>
         $(document).ready(function() {
-            // Khởi tạo Select2 cho Student dropdown
+            // Initialize Select2 for Student dropdown
             $('#StudentId').select2({
-                placeholder: "-- Chọn hoặc tìm sinh viên --",
+                placeholder: "-- Select or search for a student --",
                 allowClear: true,
                 theme: "bootstrap-5"
             });
 
-            // Khởi tạo Select2 cho Course dropdown
+            // Initialize Select2 for Course dropdown
             $('#CourseId').select2({
-                placeholder: "-- Chọn hoặc tìm khóa học --",
+                placeholder: "-- Select or search for a course --",
                 allowClear: true,
                 theme: "bootstrap-5"
             });
