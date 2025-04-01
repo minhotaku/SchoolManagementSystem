@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Hệ Thống Thông Tin Sinh Viên</title>
+    <title>@ViewData["Title"] - Student Information System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/student.css" asp-append-version="true" />
@@ -38,35 +38,35 @@
                     <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Dashboard") == true ? "active" : "")"
                        asp-controller="Student" asp-action="Dashboard">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Tổng quan</span>
+                        <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Courses") == true && !Context.Request.Path.Value?.Contains("/CourseDetail") == true ? "active" : "")"
                        asp-controller="Student" asp-action="Courses">
                         <i class="bi bi-book"></i>
-                        <span>Khóa học</span>
+                        <span>Courses</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Grades") == true && !Context.Request.Path.Value?.Contains("/GradeDetail") == true ? "active" : "")"
                        asp-controller="Student" asp-action="Grades">
                         <i class="bi bi-award"></i>
-                        <span>Điểm số</span>
+                        <span>Grades</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Notifications") == true ? "active" : "")"
                        asp-controller="Student" asp-action="Notifications">
                         <i class="bi bi-bell"></i>
-                        <span>Thông báo</span>
+                        <span>Notifications</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link @(Context.Request.Path.Value?.Contains("/Student/Profile") == true ? "active" : "")"
                        asp-controller="Student" asp-action="Profile">
                         <i class="bi bi-person"></i>
-                        <span>Hồ sơ</span>
+                        <span>Profile</span>
                     </a>
                 </li>
             </ul>
@@ -82,7 +82,7 @@
                 <div class="sidebar-actions">
                     <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-logout" title="Đăng xuất">
+                        <button type="submit" class="btn-logout" title="Logout">
                             <i class="bi bi-box-arrow-right"></i>
                         </button>
                     </form>
@@ -100,7 +100,7 @@
                 <div class="header-actions">
                     <!-- Notification icon without badge counter -->
                     <div class="notification-icon">
-                        <a href="#" title="Thông báo">
+                        <a href="#" title="Notifications">
                             <i class="bi bi-bell"></i>
                         </a>
                     </div>
@@ -115,7 +115,7 @@
             <!-- Footer with Fixed Date -->
             <footer class="main-footer">
                 <div class="footer-left">
-                    © 2025 - Hệ Thống Quản Lý Trường Học
+                    © 2025 - School Management System
                 </div>
        
             </footer>
