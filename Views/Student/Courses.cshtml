@@ -1,16 +1,16 @@
 ﻿@model List<SchoolManagementSystem.Models.Student.CourseViewModel>
 @{
-    ViewData["Title"] = "Danh sách khóa học";
+    ViewData["Title"] = "Course List";
 }
 
 <div class="container py-4">
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">
-                <i class="bi bi-book me-2"></i>Danh sách khóa học đã đăng ký
+                <i class="bi bi-book me-2"></i>List of Registered Courses
             </h4>
             <a asp-controller="Student" asp-action="Dashboard" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Quay lại
+                <i class="bi bi-arrow-left me-1"></i>Back
             </a>
         </div>
         <div class="card-body">
@@ -18,7 +18,7 @@
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
@@ -26,7 +26,7 @@
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     @TempData["ErrorMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
@@ -34,7 +34,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm khóa học...">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Find Course...">
                         <button class="btn btn-outline-secondary" type="button">
                             <i class="bi bi-search"></i>
                         </button>
@@ -42,9 +42,9 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-primary" id="filterAll">Tất cả</button>
-                        <button type="button" class="btn btn-outline-primary" id="filterCurrent">Học kỳ hiện tại</button>
-                        <button type="button" class="btn btn-outline-primary" id="filterPast">Học kỳ trước</button>
+                        <button type="button" class="btn btn-outline-primary" id="filterAll">All</button>
+                        <button type="button" class="btn btn-outline-primary" id="filterCurrent">Current Semester</button>
+                        <button type="button" class="btn btn-outline-primary" id="filterPast">Previous Semester/button>
                     </div>
                 </div>
             </div>
@@ -56,12 +56,12 @@
                     <table class="table table-hover" id="coursesTable">
                         <thead class="table-light">
                             <tr>
-                                <th>Mã khóa học</th>
-                                <th>Tên khóa học</th>
-                                <th>Tín chỉ</th>
-                                <th>Học kỳ</th>
-                                <th>Giảng viên</th>
-                                <th>Thao tác</th>
+                                <th>Course ID</th>
+                                <th>Course Name</th>
+                                <th>Credit</th>
+                                <th>Semester</th>
+                                <th>Faculty</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,11 +77,11 @@
                                         <div class="btn-group" role="group">
                                             <a asp-controller="Student" asp-action="CourseDetail" asp-route-id="@course.CourseId"
                                                class="btn btn-sm btn-outline-info">
-                                                <i class="bi bi-info-circle me-1"></i>Chi tiết
+                                                <i class="bi bi-info-circle me-1"></i> Detail
                                             </a>
                                             <a asp-controller="Student" asp-action="GradeDetail" asp-route-id="@course.EnrollmentId"
                                                class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-graph-up me-1"></i>Xem điểm
+                                                <i class="bi bi-graph-up me-1"></i>View Grade
                                             </a>
                                         </div>
                                     </td>
@@ -94,7 +94,7 @@
             else
             {
                 <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>Bạn chưa đăng ký khóa học nào.
+                    <i class="bi bi-info-circle me-2"></i>You have not registered for any courses.
                 </div>
             }
         </div>
