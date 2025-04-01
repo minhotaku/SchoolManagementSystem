@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Grade Detail";
 }
+<!-- Notifications -->
 
 <div class="container py-4">
     <nav aria-label="breadcrumb">
@@ -44,7 +45,7 @@
                                 <td>@Model.Semester</td>
                             </tr>
                             <tr>
-                                <th>Điểm trung bình:</th>
+                                <th>Average Grade:</th>
                                 <td>
                                     <span class="badge bg-@(Model.AverageScore >= 80 ? "success" : (Model.AverageScore >= 60 ? "warning" : "danger")) p-2">
                                         @Model.AverageScore
@@ -57,16 +58,16 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Đánh giá tổng quan</h5>
+                            <h5 class="card-title">Overview Evaluation</h5>
                             <p>
                                 <strong>Xếp loại:</strong>
                                 @{
                                     string gradeLevel = "";
-                                    if (Model.AverageScore >= 90) gradeLevel = "A (Xuất sắc)";
-                                    else if (Model.AverageScore >= 80) gradeLevel = "B (Giỏi)";
-                                    else if (Model.AverageScore >= 70) gradeLevel = "C (Khá)";
-                                    else if (Model.AverageScore >= 60) gradeLevel = "D (Trung bình)";
-                                    else gradeLevel = "F (Không đạt)";
+                                    if (Model.AverageScore >= 90) gradeLevel = "A (Excellent)";
+                                    else if (Model.AverageScore >= 80) gradeLevel = "B (Good)";
+                                    else if (Model.AverageScore >= 70) gradeLevel = "C (Fair)";
+                                    else if (Model.AverageScore >= 60) gradeLevel = "D (Average)";
+                                    else gradeLevel = "F (Fail)";
                                 }
                                 <span class="badge bg-@(Model.AverageScore >= 80 ? "success" : (Model.AverageScore >= 60 ? "warning" : "danger"))">
                                     @gradeLevel
@@ -76,11 +77,11 @@
                                 <strong>Trạng thái:</strong>
                                 @if (Model.AverageScore >= 60)
                                 {
-                                    <span class="badge bg-success">Đạt</span>
+                                    <span class="badge bg-success">Pass</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger">Chưa đạt</span>
+                                    <span class="badge bg-danger">Fail</span>
                                 }
                             </p>
                         </div>
@@ -88,7 +89,7 @@
                 </div>
             </div>
 
-            <h5 class="mb-3">Chi tiết thành phần điểm</h5>
+            <h5 class="mb-3">Grade Component Details</h5>
 
             <!-- Biểu đồ điểm -->
             <div class="row mb-4">
@@ -106,10 +107,10 @@
                 <table class="table table-hover table-striped">
                     <thead class="table-light">
                         <tr>
-                            <th>Thành phần</th>
-                            <th>Điểm</th>
-                            <th>Đánh giá</th>
-                            <th>Tỷ trọng</th>
+                            <th>Component</th>
+                            <th>Grade</th>
+                            <th>Evaluation</th>
+                            <th>Weighting</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,14 +159,14 @@
             <!-- Ghi chú -->
             <div class="card bg-light mt-4">
                 <div class="card-body">
-                    <h6 class="card-title">Ghi chú:</h6>
+                    <h6 class="card-title">Note:</h6>
                     <ul class="mb-0">
-                        <li>Thang điểm: 0-100</li>
-                        <li>A (Xuất sắc): 90-100</li>
-                        <li>B (Giỏi): 80-89</li>
-                        <li>C (Khá): 70-79</li>
-                        <li>D (Trung bình): 60-69</li>
-                        <li>F (Không đạt): 0-59</li>
+                        <li>Grading Scale: 0-100</li>
+                        <li>A (Excellent): 90-100</li>
+                        <li>B (Goode): 80-89</li>
+                        <li>C (Fair): 70-79</li>
+                        <li>D (Average ): 60-69</li>
+                        <li>F (Fail): 0-59</li> 
                     </ul>
                 </div>
             </div>

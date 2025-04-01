@@ -1,16 +1,17 @@
 ﻿@model List<SchoolManagementSystem.Models.Student.GradeViewModel>
 @{
-    ViewData["Title"] = "Bảng điểm";
+    ViewData["Title"] = "Transcript";
 }
+            <!-- Notifications -->
 
 <div class="container py-4">
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">
-                <i class="bi bi-graph-up me-2"></i>Bảng điểm
+                <i class="bi bi-graph-up me-2"></i>Transcript
             </h4>
             <a asp-controller="Student" asp-action="Dashboard" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Quay lại
+                <i class="bi bi-arrow-left me-1"></i>Back
             </a>
         </div>
         <div class="card-body">
@@ -18,7 +19,7 @@
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
@@ -26,14 +27,14 @@
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     @TempData["ErrorMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
             <div class="row mb-4">
                 <div class="col-md-6">
                     <select id="semesterFilter" class="form-select">
-                        <option value="">Tất cả học kỳ</option>
+                        <option value="">All Semesters</option>
                         @foreach (var semester in Model.Select(g => g.Semester).Distinct())
                         {
                             <option value="@semester">@semester</option>
@@ -42,63 +43,63 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <button class="btn btn-outline-primary" onclick="printGrades()">
-                        <i class="bi bi-printer me-1"></i>In bảng điểm
+                        <i class="bi bi-printer me-1"></i>View Transcript
                     </button>
                 </div>
             </div>
-
+            
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card bg-primary text-white">
                         <div class="card-body">
-                            <h5 class="card-title">Điểm trung bình tích lũy</h5>
+                            <h5 class="card-title">Cumulative GPA (Grade Point Average)</h5>
                             <h2 class="display-4">
                                 @{
                                     decimal gpa = Model.Any() ? Math.Round(Model.Average(g => g.AverageScore) / 20, 2) : 0;
                                 }
                                 @gpa
                             </h2>
-                            <p>Thang điểm 4.0</p>
+                            <p>Grading Scale 4.0</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card bg-success text-white">
                         <div class="card-body">
-                            <h5 class="card-title">Số tín chỉ đã hoàn thành</h5>
+                            <h5 class="card-title">Credits Earned</h5>
                             <h2 class="display-4">
                                 @{
                                     int totalCredits = Model.Any() && Model.All(g => g.AverageScore >= 50) ? Model.Count() * 3 : 0;
                                 }
                                 @totalCredits
                             </h2>
-                            <p>Tín chỉ</p>
+                            <p>Credits</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card bg-info text-white">
                         <div class="card-body">
-                            <h5 class="card-title">Khóa học đã hoàn thành</h5>
+                            <h5 class="card-title">Completed Courses</h5>
                             <h2 class="display-4">@Model.Count()</h2>
-                            <p>Khóa học</p>
+                            <p>Course</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="table-responsive" id="gradePrintArea">
-                <h4 class="d-none printHeader text-center mb-4">BẢNG ĐIỂM CHI TIẾT</h4>
+                <h4 class="d-none printHeader text-center mb-4">Detailed Transcript</h4>
                 @if (Model.Any())
                 {
                     <table class="table table-hover" id="gradesTable">
                         <thead class="table-light">
                             <tr>
-                                <th>Mã khóa học</th>
-                                <th>Tên khóa học</th>
-                                <th>Học kỳ</th>
-                                <th>Điểm trung bình</th>
-                                <th class="no-print">Thao tác</th>
+                                <th>Course ID</th>
+                                <th>Course Name</th>
+                                <th>Semester</th>
+                                <th>Grade Point Average (GPA)</th>
+                                <th class="no-print">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,7 +137,7 @@
                 else
                 {
                     <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>Chưa có dữ liệu điểm.
+                        <i class="bi bi-info-circle me-2"></i>No grade data available.
                     </div>
                 }
             </div>
@@ -153,7 +154,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $("#semesterFilter").change(function() {
+            $("#semesterFilter").change(function() { 
                 var value = $(this).val().toLowerCase();
                 if (value === "") {
                     $("#gradesTable tbody tr").show();
@@ -164,7 +165,7 @@
             });
         });
 
-        function printGrades() {
+        function printGrades() { 
             window.print();
         }
     </script>
