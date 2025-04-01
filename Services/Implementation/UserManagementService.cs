@@ -69,13 +69,14 @@ namespace SchoolManagementSystem.Services.Implementation
                 // Kiểm tra vai trò hợp lệ
                 if (!IsValidRole(role))
                 {
+                    Console.WriteLine("Người dùng không hợp lệ");
                     return null; // Vai trò không hợp lệ
                 }
 
                 // Tạo ID ngẫu nhiên cho người dùng mới
                 var userId = GenerateUniqueId();
 
-                // Tạo đối tượng người dùng mới với mật khẩu đã mã hóa bằng BCrypt
+                // Tạo đối tượng người dùng mới với mật khẩu đã mã hóa bằng SHA-256
                 var newUser = new User
                 {
                     UserId = userId,
@@ -88,9 +89,9 @@ namespace SchoolManagementSystem.Services.Implementation
                 _unitOfWork.Users.Add(newUser);
 
                 // Tạo các đối tượng phụ thuộc dựa trên vai trò
-                switch (role.ToLower())
+                switch (role)
                 {
-                    case "student":
+                    case "Student":
                         // Kiểm tra thông tin chương trình học cần thiết cho sinh viên
                         if (additionalInfo == null || !additionalInfo.ContainsKey("SchoolProgramId"))
                         {
@@ -120,7 +121,7 @@ namespace SchoolManagementSystem.Services.Implementation
                         _unitOfWork.Students.Add(student);
                         break;
 
-                    case "faculty":
+                    case "Faculty":
                         // Tạo đối tượng giảng viên
                         var faculty = new Faculty
                         {
@@ -132,7 +133,7 @@ namespace SchoolManagementSystem.Services.Implementation
                         _unitOfWork.Faculty.Add(faculty);
                         break;
 
-                    case "admin":
+                    case "Admin":
                         // Tạo đối tượng quản trị viên
                         var admin = new Admin
                         {
@@ -335,9 +336,9 @@ namespace SchoolManagementSystem.Services.Implementation
                 }
 
                 // Xóa các đối tượng liên quan dựa trên vai trò người dùng
-                switch (user.Role.ToLower())
+                switch (user.Role)
                 {
-                    case "student":
+                    case "Student":
                         // Xóa thông tin sinh viên liên quan
                         var student = _unitOfWork.Students.GetByUserId(userId);
                         if (student != null)
@@ -346,7 +347,7 @@ namespace SchoolManagementSystem.Services.Implementation
                         }
                         break;
 
-                    case "faculty":
+                    case "Faculty":
                         // Xóa thông tin giảng viên liên quan
                         var faculty = _unitOfWork.Faculty.GetByUserId(userId);
                         if (faculty != null)
@@ -355,7 +356,7 @@ namespace SchoolManagementSystem.Services.Implementation
                         }
                         break;
 
-                    case "admin":
+                    case "Admin":
                         // Xóa thông tin quản trị viên liên quan
                         var admin = _unitOfWork.Admins.GetByUserId(userId);
                         if (admin != null)
@@ -389,14 +390,14 @@ namespace SchoolManagementSystem.Services.Implementation
         /// </summary>
         private bool IsValidRole(string role)
         {
+            Console.WriteLine(role);
             if (string.IsNullOrWhiteSpace(role))
             {
                 return false;
             }
 
             // Danh sách các vai trò hợp lệ
-            string roleLower = role.ToLower();
-            return roleLower == "student" || roleLower == "faculty" || roleLower == "admin";
+            return role == "Student" || role == "Faculty" || role == "Admin";
         }
 
         /// <summary>

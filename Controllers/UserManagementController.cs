@@ -80,7 +80,7 @@ namespace SchoolManagementSystem.Controllers
 
             // Chuẩn bị thông tin bổ sung cho sinh viên
             Dictionary<string, string> additionalInfo = null;
-            if (role.ToLower() == "student" && !string.IsNullOrWhiteSpace(schoolProgramId))
+            if (role == "Student" && !string.IsNullOrWhiteSpace(schoolProgramId))
             {
                 additionalInfo = new Dictionary<string, string>
                 {
