@@ -180,17 +180,8 @@
             font-size: 0.8rem;
             color: #dc3545;
             margin-top: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            display: block;
         }
-
-            .validation-message:before {
-                content: "\f071";
-                font-family: "Font Awesome 6 Free";
-                font-weight: 900;
-                font-size: 0.75rem;
-            }
 
         .btn-login {
             background-color: var(--primary-color);
@@ -239,27 +230,25 @@
             display: none; /* Hide the original validation summary */
         }
 
-        /* Enhanced Toast notification style */
+        /* Toast notification style */
         .toast-notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: rgba(220, 53, 69, 0.95);
-            border-left: 4px solid #c82333;
-            color: white;
-            padding: 12px 15px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             z-index: 1050;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             max-width: 350px;
-            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            transition: transform 0.3s ease, opacity 0.3s ease;
             transform: translateX(400px);
             opacity: 0;
-            font-size: 0.9rem;
-            line-height: 1.5;
         }
 
             .toast-notification.show {
@@ -269,63 +258,18 @@
 
         .toast-notification-content {
             flex: 1;
-            padding-right: 10px;
         }
-
-            .toast-notification-content ul {
-                list-style-type: none;
-                padding: 0;
-                margin: 0;
-            }
-
-                .toast-notification-content ul li {
-                    position: relative;
-                    padding-left: 1.2rem;
-                    margin-bottom: 6px;
-                }
-
-                    .toast-notification-content ul li:last-child {
-                        margin-bottom: 0;
-                    }
-
-                    .toast-notification-content ul li:before {
-                        content: "\f057";
-                        font-family: "Font Awesome 6 Free";
-                        font-weight: 900;
-                        position: absolute;
-                        left: 0;
-                        top: 2px;
-                        font-size: 0.85rem;
-                    }
-
-        .toast-notification-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-            .toast-notification-header i {
-                margin-right: 8px;
-            }
 
         .toast-notification-close {
             background: transparent;
             border: none;
-            color: white;
-            font-size: 1.1rem;
+            color: #721c24;
+            font-size: 1.2rem;
             cursor: pointer;
+            margin-left: 10px;
             padding: 0;
             line-height: 1;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-            margin-top: 2px;
         }
-
-            .toast-notification-close:hover {
-                opacity: 1;
-            }
 
         /* Responsive adjustments */
         @@media (max-width: 992px) {
@@ -438,14 +382,9 @@
                 <!-- Hidden validation summary - will be used as a source for the toast notification -->
                 <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
 
-                <!-- Enhanced Toast notification for validation errors -->
+                <!-- Toast notification for validation errors -->
                 <div id="validationToast" class="toast-notification">
-                    <div class="toast-notification-content">
-                        <div class="toast-notification-header">
-                            <i class="fas fa-exclamation-circle"></i> Validation Error
-                        </div>
-                        <div id="toastMessages"></div>
-                    </div>
+                    <div class="toast-notification-content"></div>
                     <button type="button" class="toast-notification-close" onclick="closeToast()">
                         <i class="fas fa-times"></i>
                     </button>
@@ -467,8 +406,6 @@
                 <button type="submit" class="btn btn-login w-100">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
-
-
             </form>
         </div>
     </div>
@@ -480,36 +417,25 @@
     <script>
         // Function to show validation errors as toast notification
         $(document).ready(function() {
-            // Change the default validation error message for required fields
-            $.validator.messages.required = "This field is required";
-
-            // Handle validation summary errors
             if ($('.validation-summary ul li').length > 0) {
-                let messageHtml = '<ul>';
+                let messages = '';
                 $('.validation-summary ul li').each(function() {
-                    messageHtml += '<li>' + $(this).text() + '</li>';
+                    messages += $(this).text() + '<br>';
                 });
-                messageHtml += '</ul>';
 
-                $('#toastMessages').html(messageHtml);
+                $('.toast-notification-content').html(messages);
                 $('#validationToast').addClass('show');
 
-                // Auto-hide after 6 seconds
+                // Auto-hide after 5 seconds
                 setTimeout(function() {
-                    closeToast();
-                }, 6000);
+                    $('#validationToast').removeClass('show');
+                }, 5000);
             }
-
-            // Enhance field validation
-            $('.field-validation-error').addClass('validation-message');
         });
 
-        // Function to close the toast notification with animation
+        // Function to close the toast notification
         function closeToast() {
-            $('#validationToast').css('opacity', '0');
-            setTimeout(function() {
-                $('#validationToast').removeClass('show').css('opacity', '');
-            }, 300);
+            $('#validationToast').removeClass('show');
         }
     </script>
 </body>
