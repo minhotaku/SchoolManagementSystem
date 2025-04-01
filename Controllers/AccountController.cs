@@ -7,6 +7,7 @@ using SchoolManagementSystem.Data; // Thêm namespace cho UnitOfWork nếu cần
 using SchoolManagementSystem.Utils;
 using SchoolManagementSystem.Entities;
 using SchoolManagementSystem.Models;
+
 namespace SchoolManagementSystem.Controllers
 {
     public class AccountController : BaseController
@@ -20,7 +21,6 @@ namespace SchoolManagementSystem.Controllers
 
         public AccountController()
         {
-  
             _authenticationService = AuthenticationService.GetInstance();
         }
 
@@ -28,6 +28,26 @@ namespace SchoolManagementSystem.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
+            // Check if user is already logged in
+            if (HttpContext.Session.GetString(SessionKeyUserId) != null)
+            {
+                // User is already logged in, redirect based on their role
+                string userRole = HttpContext.Session.GetString(SessionKeyUserRole);
+
+                switch (userRole)
+                {
+                    case RoleConstants.Admin:
+                        return RedirectToAction("Index", "AdminDashboard");
+                    case RoleConstants.Faculty:
+                        return RedirectToAction("Index", "Faculty");
+                    case RoleConstants.Student:
+                        return RedirectToAction("Dashboard", "Student");
+                    default:
+                        // If role is somehow invalid, proceed to home or some default page
+                        return RedirectToAction("Index", "Home");
+                }
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -37,6 +57,27 @@ namespace SchoolManagementSystem.Controllers
         [ValidateAntiForgeryToken] // Important for security
         public IActionResult Login(LoginViewModel model, string returnUrl = null)
         {
+            // Check if user is already logged in
+            if (HttpContext.Session.GetString(SessionKeyUserId) != null)
+            {
+                // User is already logged in, redirect based on their role
+                string userRole = HttpContext.Session.GetString(SessionKeyUserRole);
+
+                switch (userRole)
+                {
+                    case RoleConstants.Admin:
+                        return RedirectToAction("Index", "AdminDashboard");
+                    case RoleConstants.Faculty:
+                        return RedirectToAction("Index", "Faculty");
+                    case RoleConstants.Student:
+                        return RedirectToAction("Dashboard", "Student");
+                    default:
+                        // If role is somehow invalid, proceed to home or some default page
+                        return RedirectToAction("Index", "Home");
+                }
+            }
+
+            // Existing login logic for users who aren't logged in
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
@@ -51,6 +92,13 @@ namespace SchoolManagementSystem.Controllers
 
                     _sessionService.SetUserSession(user.UserId, user.Username, user.Role); // Logic hiện tại cần để phân quyền HTTP Sesion phía trên đã lỗi thời
 
+                    // If returnUrl is specified, redirect there
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                    // Otherwise redirect based on role
                     switch (user.Role)
                     {
                         case RoleConstants.Admin:
@@ -59,6 +107,8 @@ namespace SchoolManagementSystem.Controllers
                             return RedirectToAction("Index", "Faculty");
                         case RoleConstants.Student:
                             return RedirectToAction("Dashboard", "Student");
+                        default:
+                            return RedirectToAction("Index", "Home");
                     }
                 }
                 else
@@ -86,7 +136,6 @@ namespace SchoolManagementSystem.Controllers
             return RedirectToAction("Login");
         }
 
-     
         [HttpGet]
         public IActionResult AccessDenied()
         {
