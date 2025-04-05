@@ -1,33 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Data;
-using SchoolManagementSystem.Entities;
-using SchoolManagementSystem.Services.Implementation;
-using SchoolManagementSystem.Services.Interfaces;
-using SchoolManagementSystem.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using SchoolManagementSystem.Utils;
+using BCrypt.Net;  // Using for password hashing
+using Microsoft.AspNetCore.Mvc; // Using for MVC controllers and actions
+using SchoolManagementSystem.Data; // Using for data access layer
+using SchoolManagementSystem.Entities; // Using for entities/models
+using SchoolManagementSystem.Services.Implementation; // Using for service implementations
+using SchoolManagementSystem.Services.Interfaces; // Using for service interfaces
+using SchoolManagementSystem.Models; // Using for view models
+using Microsoft.AspNetCore.Mvc.Rendering; // Using for SelectList (dropdown lists)
+using SchoolManagementSystem.Utils; // Using for utility classes (e.g., Authorize attribute, RoleConstants)
 
 namespace SchoolManagementSystem.Controllers.AdminControllers
 {
-    [Authorize(RoleConstants.Admin)]
+    /// <summary>
+    /// Controller for managing admin accounts.
+    /// Handles actions such as listing, viewing details, editing, and deleting admin accounts.
+    /// </summary>
+    [Authorize(RoleConstants.Admin)] // Restricts access to users with the "Admin" role.
     public class AdminManagementController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork; // Unit of work for accessing repositories
 
-        // Current user information (Temporary)
+        // Current user information (Temporary - consider using a more robust authentication system)
         private readonly DateTime _currentDateTime = DateTime.UtcNow;
         private readonly string _currentUserLogin = "admin_son";
 
+        /// <summary>
+        /// Constructor for the AdminManagementController.
+        /// Initializes the unit of work.
+        /// </summary>
         public AdminManagementController()
         {
             _unitOfWork = UnitOfWork.GetInstance();
         }
 
-        // GET: /AdminManagement/Index
+        /// <summary>
+        /// Line: 44 - 85
+        /// GET: /AdminManagement/Index
+        /// Displays a list of all admin accounts.
+        /// </summary>
+        /// <returns>The view containing the list of admin accounts.</returns>
         [HttpGet]
         public IActionResult Index()
         {
@@ -38,6 +51,7 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
                 var allAdmins = _unitOfWork.Admins.GetAll()?.ToList() ?? new List<Admin>();
                 System.Diagnostics.Debug.WriteLine($"Found {allUsers.Count} users, {allAdmins.Count} admin records.");
 
+                //  LINQ query to join users with admin records and create AdminViewModel objects.
                 var adminViewModels = (
                     from user in allUsers
                     where user.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase) // Only get users who are Admins
@@ -70,7 +84,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             }
         }
 
-        // GET: /AdminManagement/Details/{adminId}
+        /// <summary>
+        /// Line: 94 - 116
+        /// GET: /AdminManagement/Details/{adminId}
+        /// Displays details of a specific admin account.
+        /// </summary>
+        /// <param name="id">The AdminId of the admin account to display.</param>
+        /// <returns>The view containing the details of the admin account.</returns>
         [HttpGet]
         public IActionResult Details(string id) // Receive AdminId
         {
@@ -95,7 +115,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error details admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error viewing details."; return RedirectToAction("Index"); }
         }
 
-        // GET: /AdminManagement/Edit/{adminId}
+        /// <summary>
+        /// Line: 125 - 148
+        /// GET: /AdminManagement/Edit/{adminId}
+        /// Displays a form for editing a specific admin account.
+        /// </summary>
+        /// <param name="id">The AdminId of the admin account to edit.</param>
+        /// <returns>The view containing the edit form.</returns>
         [HttpGet]
         public IActionResult Edit(string id) // Receive AdminId
         {
@@ -121,7 +147,14 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading edit admin {id}: {ex.Message}"); TempData["ErrorMessage"] = "Error loading edit page."; return RedirectToAction("Index"); }
         }
 
-        // POST: /AdminManagement/Edit/{adminId}
+        /// <summary>
+        /// Line: 158 - 193
+        /// POST: /AdminManagement/Edit/{adminId}
+        /// Processes the submitted edit form and updates the admin account.
+        /// </summary>
+        /// <param name="id">The AdminId of the admin account to edit.</param>
+        /// <param name="model">The AdminEditViewModel containing the updated data.</param>
+        /// <returns>Redirects to the Index action on success, otherwise returns the edit form with validation errors.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, AdminEditViewModel model) // id is AdminId
@@ -159,7 +192,13 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex) { TempData["ErrorMessage"] = "System error during update."; System.Diagnostics.Debug.WriteLine($"Error saving admin {id}: {ex.Message}"); return View("~/Views/Admin/AdminManagement/Edit.cshtml", model); }
         }
 
-        // GET: /AdminManagement/Delete/{userId}
+        /// <summary>
+        /// Line: 202 - 218
+        /// GET: /AdminManagement/Delete/{userId}
+        /// Displays a confirmation page for deleting an admin account.
+        /// </summary>
+        /// <param name="id">The UserId of the admin account to delete.</param>
+        /// <returns>The view containing the delete confirmation page.</returns>
         [HttpGet]
         public IActionResult Delete(string id) // Receive UserId from link in Index
         {
@@ -178,7 +217,12 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
             catch (Exception ex) { TempData["ErrorMessage"] = "Error loading delete page."; System.Diagnostics.Debug.WriteLine($"Error loading delete admin user {id}: {ex.Message}"); return RedirectToAction("Index"); }
         }
 
-        // POST: /AdminManagement/Delete/{userId}
+        /// <summary>
+        /// POST: /AdminManagement/Delete/{userId}
+        /// Confirms the deletion of an admin account.
+        /// </summary>
+        /// <param name="id">The UserId of the admin account to delete.</param>
+        /// <returns>Redirects to the Index action on success, otherwise displays an error message.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id) // id is UserId
@@ -212,11 +256,20 @@ namespace SchoolManagementSystem.Controllers.AdminControllers
         }
 
         // --- Helper Methods ---
+        /// <summary>
+        /// Loads a list of school programs for use in a dropdown list.
+        /// </summary>
+        /// <param name="selectedProgramId">The ID of the program to pre-select in the list (optional).</param>
         private void LoadSchoolProgramsList(string? selectedProgramId = null)
         {
             try { var programs = _unitOfWork.SchoolPrograms.GetAll()?.OrderBy(p => p.SchoolProgramName).ToList() ?? new List<SchoolProgram>(); ViewBag.SchoolProgramsList = new SelectList(programs, "SchoolProgramId", "SchoolProgramName", selectedProgramId); }
             catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error loading programs: {ex.Message}"); ViewBag.SchoolProgramsList = new SelectList(new List<SchoolProgram>()); TempData["ErrorMessageLoading"] = "Error loading school programs."; }
         }
+
+        /// <summary>
+        /// Logs validation errors from ModelState for debugging purposes.
+        /// </summary>
+        /// <param name="contextId">An identifier to associate with the logged errors.</param>
         private void LogModelStateErrors(string contextId)
         {
             System.Diagnostics.Debug.WriteLine($"[{_currentDateTime:yyyy-MM-dd HH:mm:ss}] ModelState invalid for ID '{contextId}'. Errors:");
