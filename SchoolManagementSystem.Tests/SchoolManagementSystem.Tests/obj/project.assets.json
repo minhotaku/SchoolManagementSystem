@@ -6286,8 +6286,8 @@
     },
     "SchoolManagementSystem/1.0.0": {
       "type": "project",
-      "path": "../../../SchoolManagementSystem/SchoolManagementSystem.csproj",
-      "msbuildProject": "../../../SchoolManagementSystem/SchoolManagementSystem.csproj"
+      "path": "../../SchoolManagementSystem/SchoolManagementSystem.csproj",
+      "msbuildProject": "../../SchoolManagementSystem/SchoolManagementSystem.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -6307,11 +6307,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\tutal\\Apdp\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests.csproj",
+      "projectUniqueName": "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests.csproj",
       "projectName": "SchoolManagementSystem.Tests",
-      "projectPath": "D:\\tutal\\Apdp\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests.csproj",
+      "projectPath": "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests.csproj",
       "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-      "outputPath": "D:\\tutal\\Apdp\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\obj\\",
+      "outputPath": "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem.Tests\\SchoolManagementSystem.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -6334,6 +6334,9 @@
           "projectReferences": {
             "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem.csproj": {
               "projectPath": "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem.csproj"
+            },
+            "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem\\SchoolManagementSystem.csproj": {
+              "projectPath": "D:\\tutal\\SchoolManagementSystem\\SchoolManagementSystem\\SchoolManagementSystem.csproj"
             }
           }
         }
