@@ -1,0 +1,58 @@
+# Thư mục bin và obj (build output)
+bin/
+obj/
+
+# Thư mục ẩn của Visual Studio
+.vs/
+
+# Cấu hình người dùng của Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Thư mục tạm thời
+_Temp/
+
+# Tệp khóa và gói của NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+packages/
+.nuget/
+
+# Tệp DLL, EXE, PDB (build artifacts)
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# Thư mục logs và file log
+logs/
+*.log
+
+# Thư mục publish (sau khi chạy dotnet publish)
+publish/
+out/
+
+# Tệp môi trường (bảo mật)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+.env
+secrets.json
+
+# Thư mục cache và backup của Visual Studio Code
+.vscode/
+.vscode/settings.json
+
+# Tệp tạm thời của ReSharper
+_ReSharper.Caches/
+*.DotSettings.user
+
+# Rider (JetBrains)
+.idea/
+
+# Các tệp không cần thiết khác
+Thumbs.db
+Desktop.ini
