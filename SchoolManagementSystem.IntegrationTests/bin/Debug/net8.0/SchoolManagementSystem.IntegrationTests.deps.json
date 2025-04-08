@@ -1796,19 +1796,6 @@
         }
       },
       "xunit.runner.visualstudio/2.4.5": {},
-      "SchoolManagementSystem/1.0.0": {
-        "dependencies": {
-          "BCrypt": "1.0.0",
-          "BCrypt.Net-Next": "4.0.3",
-          "CsvHelper": "33.0.1"
-        },
-        "runtime": {
-          "SchoolManagementSystem.dll": {}
-        },
-        "compile": {
-          "SchoolManagementSystem.dll": {}
-        }
-      },
       "Microsoft.AspNetCore.Antiforgery/8.0.0.0": {
         "compile": {
           "Microsoft.AspNetCore.Antiforgery.dll": {}
@@ -3614,6 +3601,14 @@
           "WindowsBase.dll": {}
         },
         "compileOnly": true
+      },
+      "SchoolManagementSystem/1.0.0": {
+        "dependencies": {
+          "BCrypt": "1.0.0",
+          "BCrypt.Net-Next": "4.0.3",
+          "CsvHelper": "33.0.1"
+        },
+        "compileOnly": true
       }
     }
   },
@@ -4574,11 +4569,6 @@
       "sha512": "sha512-OwHamvBdUKgqsXfBzWiCW/O98BTx81UKzx2bieIOQI7CZFE5NEQZGi8PBQGIKawDW96xeRffiNf20SjfC0x9hw==",
       "path": "xunit.runner.visualstudio/2.4.5",
       "hashPath": "xunit.runner.visualstudio.2.4.5.nupkg.sha512"
-    },
-    "SchoolManagementSystem/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     },
     "Microsoft.AspNetCore.Antiforgery/8.0.0.0": {
       "type": "referenceassembly",
@@ -6082,6 +6072,11 @@
     },
     "WindowsBase/4.0.0.0": {
       "type": "referenceassembly",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SchoolManagementSystem/1.0.0": {
+      "type": "project",
       "serviceable": false,
       "sha512": ""
     }
